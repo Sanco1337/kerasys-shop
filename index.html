@@ -5,198 +5,387 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Kerasys Do'kon</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream:#FAF7F2; --warm:#F0EAE0; --gold:#B8935A; --gold-light:#D4AF7A;
-  --dark:#1C1610; --text:#2D2416; --muted:#8A7A66; --card:#FFFFFF;
-  --border:rgba(184,147,90,0.2); --success:#4A7C59; --danger:#c0392b;
+  --bg: #0F0F1A;
+  --bg2: #1A1A2E;
+  --bg3: #16213E;
+  --card: #1E1E35;
+  --card2: #252545;
+  --accent: #6C63FF;
+  --accent2: #FF6584;
+  --accent3: #43E97B;
+  --accent4: #F7971E;
+  --text: #F0F0FF;
+  --text2: #A0A0C0;
+  --border: rgba(108,99,255,0.2);
+  --radius: 16px;
+  --radius-sm: 10px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
-.header{background:var(--dark);padding:16px 20px 0;position:sticky;top:0;z-index:100;}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--gold-light);}
-.logo span{color:#fff;font-weight:400;}
-.header-right{display:flex;gap:8px;align-items:center;}
-.cart-btn,.admin-btn{background:rgba(184,147,90,0.15);border:1px solid rgba(184,147,90,0.3);border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--gold-light);font-size:13px;font-weight:500;}
-.admin-btn{font-size:18px;padding:6px 10px;}
-.cart-count{background:var(--gold);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:600;display:none;align-items:center;justify-content:center;}
-.cart-count.visible{display:flex;}
-.cats{display:flex;gap:8px;padding-bottom:14px;overflow-x:auto;scrollbar-width:none;}
-.cats::-webkit-scrollbar{display:none;}
-.cat-btn{white-space:nowrap;padding:6px 14px;border-radius:20px;border:1px solid rgba(184,147,90,0.3);background:transparent;color:rgba(255,255,255,0.5);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
-.cat-btn.active{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:500;}
-.main{padding:20px 16px 120px;}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;margin-bottom:4px;}
-.section-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.product-card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border);transition:transform 0.15s;position:relative;}
-.product-card:active{transform:scale(0.97);}
-.product-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:52px;background:var(--warm);position:relative;overflow:hidden;}
-.product-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.product-img .emoji{position:relative;z-index:1;}
-.badge{position:absolute;top:8px;right:8px;background:var(--gold);color:#fff;font-size:9px;font-weight:600;padding:3px 7px;border-radius:10px;z-index:2;}
-.product-info{padding:10px 12px 12px;}
-.product-name{font-size:13px;font-weight:500;line-height:1.3;margin-bottom:2px;}
-.product-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4;}
-.product-footer{display:flex;align-items:center;justify-content:space-between;}
-.product-price{font-size:14px;font-weight:600;color:var(--gold);}
-.add-btn{width:28px;height:28px;border-radius:8px;background:var(--dark);color:var(--gold-light);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.qty-control{display:none;align-items:center;gap:6px;}
-.qty-control.show{display:flex;}
-.qty-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--warm);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.qty-num{font-size:13px;font-weight:600;min-width:16px;text-align:center;}
-.loading{text-align:center;padding:60px 20px;color:var(--muted);}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-.overlay.open{opacity:1;pointer-events:all;}
-.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-radius:24px 24px 0 0;z-index:201;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);max-height:90vh;display:flex;flex-direction:column;}
-.sheet.open{transform:translateY(0);}
-.sheet-handle{width:36px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px;margin:12px auto 0;flex-shrink:0;}
-.sheet-header{padding:12px 20px 0;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;}
-.sheet-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
-.sheet-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
-.sheet-body{flex:1;overflow-y:auto;padding:12px 20px;scrollbar-width:none;}
-.sheet-body::-webkit-scrollbar{display:none;}
-.cart-empty{text-align:center;padding:40px 0;color:var(--muted);}
-.cart-empty .icon{font-size:48px;margin-bottom:12px;}
-.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.cart-item-icon{width:48px;height:48px;border-radius:12px;background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;position:relative;}
-.cart-item-icon img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.cart-item-info{flex:1;min-width:0;}
-.cart-item-name{font-size:13px;font-weight:500;}
-.cart-item-price{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px;}
-.cart-item-qty{display:flex;align-items:center;gap:8px;}
-.cqty-btn{width:26px;height:26px;border-radius:8px;border:1px solid var(--border);background:var(--warm);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.cqty-num{font-size:13px;font-weight:600;}
-.sheet-footer{padding:12px 20px 20px;flex-shrink:0;border-top:1px solid var(--border);}
-.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-.total-label{font-size:14px;color:var(--muted);}
-.total-price{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;}
-.order-btn{width:100%;padding:15px;background:var(--dark);color:var(--gold-light);border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;}
-.order-btn:disabled{opacity:0.4;cursor:not-allowed;}
-.admin-tabs{display:flex;gap:8px;margin-bottom:16px;}
-.atab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:transparent;font-size:13px;cursor:pointer;color:var(--muted);}
-.atab.active{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
-.admin-product{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:8px;}
-.admin-product-icon{width:44px;height:44px;border-radius:10px;background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;position:relative;}
-.admin-product-icon img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.admin-product-info{flex:1;min-width:0;}
-.admin-product-name{font-size:13px;font-weight:500;}
-.admin-product-price{font-size:12px;color:var(--gold);}
-.admin-actions{display:flex;gap:6px;}
-.edit-btn,.del-btn{padding:6px 10px;border-radius:8px;border:none;font-size:12px;cursor:pointer;font-weight:500;}
-.edit-btn{background:var(--warm);color:var(--text);}
-.del-btn{background:#fde8e8;color:var(--danger);}
-.form-group{margin-bottom:14px;}
-.form-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block;}
-.form-input,.form-select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;}
-.form-input:focus,.form-select:focus{border-color:var(--gold);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.save-btn{width:100%;padding:13px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;}
-.cancel-btn{width:100%;padding:13px;background:var(--warm);color:var(--text);border:none;border-radius:12px;font-size:15px;cursor:pointer;margin-top:8px;}
-.order-card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:10px;}
-.order-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.order-date{font-size:11px;color:var(--muted);}
-.order-status{font-size:11px;padding:3px 8px;border-radius:8px;background:#e8f5e9;color:var(--success);font-weight:500;}
-.order-items{font-size:13px;margin-bottom:6px;line-height:1.6;}
-.order-total{font-size:14px;font-weight:600;color:var(--gold);}
-.order-contact{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:var(--gold-light);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:300;transition:transform 0.3s;white-space:nowrap;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+  padding: 14px 16px 0;
+  position: sticky; top:0; z-index:100;
+  border-bottom: 1px solid var(--border);
+}
+.header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.logo { display:flex; align-items:center; gap:10px; }
+.logo-icon { width:36px; height:36px; background:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.logo-text { font-size:18px; font-weight:900; color:var(--text); letter-spacing:-0.5px; }
+.logo-text span { color:var(--accent); }
+.header-right { display:flex; gap:8px; }
+.hbtn {
+  display:flex; align-items:center; gap:6px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:8px 14px;
+  color:var(--text); font-family:'Nunito',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer;
+  transition: all 0.2s;
+}
+.hbtn:active { transform:scale(0.95); background:var(--accent); }
+.hbtn.admin { padding:8px 10px; }
+.cart-badge {
+  background:var(--accent2); color:#fff;
+  border-radius:20px; min-width:18px; height:18px;
+  font-size:10px; font-weight:800;
+  display:none; align-items:center; justify-content:center; padding:0 4px;
+}
+.cart-badge.on { display:flex; }
+
+/* CATS */
+.cats { display:flex; gap:8px; padding-bottom:12px; overflow-x:auto; scrollbar-width:none; }
+.cats::-webkit-scrollbar { display:none; }
+.cat-pill {
+  white-space:nowrap; padding:7px 16px;
+  border-radius:20px; border:1.5px solid var(--border);
+  background:transparent; color:var(--text2);
+  font-family:'Nunito',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.cat-pill.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* MAIN */
+.main { padding:16px 12px 100px; }
+.page-title { font-size:22px; font-weight:900; margin-bottom:4px; }
+.page-sub { font-size:12px; color:var(--text2); margin-bottom:16px; }
+
+/* GRID */
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.p-card {
+  background:var(--card); border-radius:var(--radius);
+  border:1px solid var(--border); overflow:hidden;
+  transition:transform 0.15s, box-shadow 0.15s;
+  position:relative;
+}
+.p-card:active { transform:scale(0.96); }
+
+/* IMAGE — rasm ustida emoji yo'q! */
+.p-img {
+  width:100%; aspect-ratio:1;
+  background:var(--card2);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.p-img img {
+  width:100%; height:100%;
+  object-fit:cover;
+  position:absolute; inset:0;
+  display:block;
+}
+/* emoji faqat rasm YO'Q bo'lganda ko'rinadi */
+.p-img .fallback { font-size:52px; line-height:1; }
+.p-img img.loaded ~ .fallback { display:none; }
+.p-img img.errored { display:none; }
+
+.p-badge {
+  position:absolute; top:8px; left:8px;
+  background:var(--accent2); color:#fff;
+  font-size:9px; font-weight:800; padding:3px 8px;
+  border-radius:20px; z-index:3; text-transform:uppercase;
+}
+.p-body { padding:10px 12px 12px; }
+.p-name { font-size:13px; font-weight:800; line-height:1.3; margin-bottom:2px; }
+.p-desc { font-size:11px; color:var(--text2); margin-bottom:10px; line-height:1.4; }
+.p-foot { display:flex; align-items:center; justify-content:space-between; }
+.p-price { font-size:14px; font-weight:900; color:var(--accent); }
+.add-btn {
+  width:30px; height:30px; border-radius:9px;
+  background:var(--accent); color:#fff; border:none;
+  font-size:20px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform 0.1s;
+}
+.add-btn:active { transform:scale(0.88); }
+.qty-wrap { display:none; align-items:center; gap:6px; }
+.qty-wrap.on { display:flex; }
+.q-btn {
+  width:26px; height:26px; border-radius:8px;
+  border:1.5px solid var(--border); background:var(--card2);
+  color:var(--text); font-size:15px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.q-num { font-size:14px; font-weight:800; min-width:18px; text-align:center; }
+.inactive-badge {
+  position:absolute; inset:0; background:rgba(0,0,0,0.6);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:800; color:#fff; z-index:5;
+  border-radius:var(--radius);
+}
+
+/* LOADING */
+.loading { text-align:center; padding:60px 20px; color:var(--text2); grid-column:1/-1; }
+.spin { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* OVERLAY + SHEET */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.overlay.on { opacity:1; pointer-events:all; }
+.sheet {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--bg2); border-radius:24px 24px 0 0;
+  z-index:201; transform:translateY(100%);
+  transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+  max-height:92vh; display:flex; flex-direction:column;
+  border-top:1px solid var(--border);
+}
+.sheet.on { transform:translateY(0); }
+.s-handle { width:40px; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; margin:12px auto 0; flex-shrink:0; }
+.s-head { padding:14px 20px 0; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
+.s-title { font-size:20px; font-weight:900; }
+.s-close { background:var(--card2); border:none; width:30px; height:30px; border-radius:8px; color:var(--text2); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.s-body { flex:1; overflow-y:auto; padding:14px 20px; scrollbar-width:none; }
+.s-body::-webkit-scrollbar { display:none; }
+.s-foot { padding:12px 20px 20px; flex-shrink:0; border-top:1px solid var(--border); background:var(--bg2); }
+
+/* CART */
+.empty { text-align:center; padding:50px 0; color:var(--text2); }
+.empty-icon { font-size:56px; margin-bottom:12px; }
+.empty-txt { font-size:15px; font-weight:700; }
+.c-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+.c-thumb {
+  width:52px; height:52px; border-radius:12px;
+  background:var(--card2); flex-shrink:0;
+  overflow:hidden; position:relative;
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+}
+.c-thumb img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.c-thumb img.errored { display:none; }
+.c-info { flex:1; min-width:0; }
+.c-name { font-size:13px; font-weight:800; }
+.c-price { font-size:12px; color:var(--accent); font-weight:700; margin-top:2px; }
+.c-qty { display:flex; align-items:center; gap:8px; }
+.cq-btn { width:28px; height:28px; border-radius:8px; border:1.5px solid var(--border); background:var(--card2); color:var(--text); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.cq-n { font-size:14px; font-weight:800; }
+.total-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.total-lbl { font-size:14px; color:var(--text2); font-weight:700; }
+.total-val { font-size:26px; font-weight:900; color:var(--accent); }
+.big-btn {
+  width:100%; padding:15px; border:none; border-radius:14px;
+  font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+  cursor:pointer; transition:transform 0.1s, opacity 0.2s;
+}
+.big-btn:active { transform:scale(0.97); }
+.big-btn.primary { background:linear-gradient(135deg,var(--accent),#9F7AEA); color:#fff; }
+.big-btn.secondary { background:var(--card2); color:var(--text2); margin-top:8px; }
+.big-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* ORDER FORM */
+.f-group { margin-bottom:14px; }
+.f-label { font-size:12px; color:var(--text2); font-weight:700; margin-bottom:6px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
+.f-input, .f-select {
+  width:100%; padding:12px 14px; border-radius:12px;
+  border:1.5px solid var(--border); background:var(--card);
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:600;
+  color:var(--text); outline:none; transition:border-color 0.2s;
+}
+.f-input:focus, .f-select:focus { border-color:var(--accent); }
+.f-input::placeholder { color:var(--text2); }
+.f-select option { background:var(--card); }
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+/* ADMIN */
+.adm-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.a-tab {
+  flex:1; min-width:0; padding:9px 6px; border-radius:10px;
+  border:1.5px solid var(--border); background:transparent;
+  font-size:12px; font-weight:800; cursor:pointer; color:var(--text2);
+  transition:all 0.2s; white-space:nowrap;
+}
+.a-tab.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* STATS */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.stat-card { background:var(--card); border-radius:14px; border:1px solid var(--border); padding:14px; }
+.stat-icon { font-size:24px; margin-bottom:6px; }
+.stat-val { font-size:22px; font-weight:900; color:var(--accent); }
+.stat-lbl { font-size:11px; color:var(--text2); font-weight:700; margin-top:2px; }
+
+/* ADMIN PRODUCT LIST */
+.adm-p {
+  display:flex; align-items:center; gap:10px;
+  background:var(--card); border-radius:12px;
+  border:1px solid var(--border); padding:10px 12px; margin-bottom:8px;
+}
+.adm-p-thumb {
+  width:46px; height:46px; border-radius:10px;
+  background:var(--card2); flex-shrink:0; overflow:hidden;
+  position:relative; display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+.adm-p-thumb img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.adm-p-thumb img.errored { display:none; }
+.adm-p-info { flex:1; min-width:0; }
+.adm-p-name { font-size:13px; font-weight:800; }
+.adm-p-meta { font-size:11px; color:var(--text2); margin-top:2px; }
+.adm-p-price { color:var(--accent); font-weight:700; }
+.adm-acts { display:flex; gap:6px; flex-shrink:0; }
+.ia-btn {
+  width:30px; height:30px; border-radius:8px; border:none;
+  cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
+  transition:transform 0.1s;
+}
+.ia-btn:active { transform:scale(0.9); }
+.ia-edit { background:rgba(108,99,255,0.15); color:var(--accent); }
+.ia-toggle { background:rgba(67,233,123,0.12); color:var(--accent3); }
+.ia-toggle.off { background:rgba(255,101,132,0.12); color:var(--accent2); }
+.ia-del { background:rgba(255,101,132,0.12); color:var(--accent2); }
+
+/* ORDERS */
+.ord-card { background:var(--card); border-radius:14px; border:1px solid var(--border); padding:14px; margin-bottom:10px; }
+.ord-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.ord-num { font-size:12px; color:var(--text2); font-weight:700; }
+.ord-status {
+  font-size:11px; font-weight:800; padding:4px 10px;
+  border-radius:20px; cursor:pointer;
+}
+.ord-status.yangi { background:rgba(108,99,255,0.2); color:var(--accent); }
+.ord-status.jarayonda { background:rgba(247,151,30,0.2); color:var(--accent4); }
+.ord-status.yetkazildi { background:rgba(67,233,123,0.2); color:var(--accent3); }
+.ord-status.bekor { background:rgba(255,101,132,0.2); color:var(--accent2); }
+.ord-items { font-size:13px; font-weight:600; line-height:1.7; margin-bottom:8px; }
+.ord-total { font-size:15px; font-weight:900; color:var(--accent); margin-bottom:6px; }
+.ord-info { font-size:12px; color:var(--text2); line-height:1.7; }
+.status-picker { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+.sp-btn { padding:6px 12px; border-radius:20px; border:none; font-size:11px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:20px; left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--card2); color:var(--text);
+  border:1px solid var(--border);
+  padding:11px 22px; border-radius:20px;
+  font-size:13px; font-weight:700; z-index:500;
+  transition:transform 0.3s; white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.on { transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div class="logo">Kerasys<span> Do'kon</span></div>
+    <div class="logo">
+      <div class="logo-text">Kerasys<span>Shop</span></div>
+    </div>
     <div class="header-right">
-      <button class="admin-btn" id="adminBtnHeader" style="display:none" onclick="openAdmin()">⚙️</button>
-      <button class="cart-btn" onclick="openCart()">🛒 Savat <span class="cart-count" id="cartCount">0</span></button>
+      <button class="hbtn admin" id="adminBtn" style="display:none" onclick="openAdmin()">⚙️</button>
+      <button class="hbtn" onclick="openCart()">
+        🛒 <span class="cart-badge" id="badge">0</span>
+      </button>
     </div>
   </div>
   <div class="cats" id="catTabs"></div>
 </div>
 
 <div class="main">
-  <div class="section-title" id="sectionTitle">Barcha mahsulotlar</div>
-  <div class="section-sub">Sifatli gigiyena mahsulotlari</div>
-  <div id="productGrid"><div class="loading"><div class="spinner"></div>Yuklanmoqda...</div></div>
+  <div class="page-title" id="pgTitle">Barcha mahsulotlar</div>
+  <div class="page-sub">Sifatli gigiyena mahsulotlari</div>
+  <div id="pgGrid"><div class="grid"><div class="loading"><div class="spin"></div>Yuklanmoqda...</div></div></div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- Cart -->
+<!-- CART SHEET -->
 <div class="sheet" id="cartSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title">🛒 Savat</div>
-    <button class="sheet-close" onclick="closeAll()">✕</button>
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">🛒 Savat</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
   </div>
-  <div class="sheet-body" id="cartBody"></div>
-  <div class="sheet-footer">
+  <div class="s-body" id="cartBody"></div>
+  <div class="s-foot">
     <div class="total-row">
-      <span class="total-label">Jami:</span>
-      <span class="total-price" id="totalPrice">0 so'm</span>
+      <span class="total-lbl">Jami to'lov:</span>
+      <span class="total-val" id="totalVal">0 so'm</span>
     </div>
-    <button class="order-btn" id="orderBtn" onclick="openOrderForm()">Buyurtma berish</button>
+    <button class="big-btn primary" id="orderBtn" onclick="toOrder()">Buyurtma berish →</button>
   </div>
 </div>
 
-<!-- Order Form -->
+<!-- ORDER SHEET -->
 <div class="sheet" id="orderSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title">📋 Buyurtma</div>
-    <button class="sheet-close" onclick="closeOrderSheet()">✕</button>
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">📋 Ma'lumotlar</div>
+    <button class="s-close" onclick="backToCart()">✕</button>
   </div>
-  <div class="sheet-body">
-    <div class="form-group"><label class="form-label">Ismingiz</label><input class="form-input" id="orderName" placeholder="Ism Familiya"></div>
-    <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" id="orderPhone" placeholder="+998901234567" type="tel"></div>
-    <div class="form-group"><label class="form-label">Manzil</label><input class="form-input" id="orderAddress" placeholder="Shahar, ko'cha, uy"></div>
-    <button class="save-btn" onclick="submitOrder()">✅ Buyurtmani yuborish</button>
-    <button class="cancel-btn" onclick="closeOrderSheet()">Bekor qilish</button>
+  <div class="s-body">
+    <div class="f-group"><label class="f-label">Ism Familiya</label><input class="f-input" id="oName" placeholder="Sarvar Karimov"></div>
+    <div class="f-group"><label class="f-label">Telefon</label><input class="f-input" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+    <div class="f-group"><label class="f-label">Manzil</label><input class="f-input" id="oAddr" placeholder="Toshkent, Chilonzor, 5-uy"></div>
+    <div class="f-group"><label class="f-label">Izoh (ixtiyoriy)</label><input class="f-input" id="oNote" placeholder="Eshik raqami va boshqa ma'lumot"></div>
+    <button class="big-btn primary" onclick="submitOrder()">✅ Tasdiqlash va yuborish</button>
+    <button class="big-btn secondary" onclick="backToCart()">← Orqaga</button>
   </div>
 </div>
 
-<!-- Admin -->
+<!-- ADMIN SHEET -->
 <div class="sheet" id="adminSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div class="sheet-title">⚙️ Admin panel</div>
-    <button class="sheet-close" onclick="closeAll()">✕</button>
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">⚙️ Admin</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
   </div>
-  <div class="sheet-body">
-    <div class="admin-tabs">
-      <button class="atab active" onclick="switchAdminTab('products')">Mahsulotlar</button>
-      <button class="atab" onclick="switchAdminTab('orders')">Buyurtmalar</button>
-      <button class="atab" onclick="switchAdminTab('add')">+ Qo'shish</button>
+  <div class="s-body">
+    <div class="adm-tabs">
+      <button class="a-tab on" onclick="aTab('stats',this)">📊 Stat</button>
+      <button class="a-tab" onclick="aTab('products',this)">📦 Mahsulot</button>
+      <button class="a-tab" onclick="aTab('orders',this)">📋 Buyurtma</button>
+      <button class="a-tab" onclick="aTab('add',this)">+ Qo'sh</button>
     </div>
-    <div id="adminProducts"></div>
-    <div id="adminOrders" style="display:none"></div>
-    <div id="adminAdd" style="display:none">
-      <input type="hidden" id="editProductId">
-      <div class="form-group"><label class="form-label">Mahsulot nomi</label><input class="form-input" id="pName" placeholder="Ariel 3kg"></div>
-      <div class="form-group"><label class="form-label">Tavsif</label><input class="form-input" id="pDesc" placeholder="Avtomatik kir yuvish uchun"></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Narx (so'm)</label><input class="form-input" id="pPrice" placeholder="45000" type="number"></div>
-        <div class="form-group"><label class="form-label">Kategoriya</label>
-          <select class="form-select" id="pCat">
-            <option value="kukun">Kukunlar</option>
-            <option value="gel">Gellar</option>
-            <option value="shampun">Shampunlar</option>
-            <option value="sovun">Sovunlar</option>
-            <option value="boshqa">Boshqa</option>
+    <div id="aStats"></div>
+    <div id="aProducts" style="display:none"></div>
+    <div id="aOrders" style="display:none"></div>
+    <div id="aAdd" style="display:none">
+      <input type="hidden" id="editId">
+      <div class="f-group"><label class="f-label">Mahsulot nomi *</label><input class="f-input" id="pName" placeholder="Ariel 3kg"></div>
+      <div class="f-group"><label class="f-label">Tavsif</label><input class="f-input" id="pDesc" placeholder="Avtomatik kir yuvish uchun"></div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">Narx (so'm) *</label><input class="f-input" id="pPrice" type="number" placeholder="45000"></div>
+        <div class="f-group"><label class="f-label">Kategoriya</label>
+          <select class="f-select" id="pCat">
+            <option value="kukun">🧺 Kukunlar</option>
+            <option value="gel">🧴 Gellar</option>
+            <option value="shampun">🚿 Shampunlar</option>
+            <option value="sovun">🧼 Sovunlar</option>
+            <option value="boshqa">📦 Boshqa</option>
           </select>
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Rasm URL (ixtiyoriy)</label><input class="form-input" id="pImg" placeholder="https://...rasm.jpg"></div>
-      <div class="form-group"><label class="form-label">Badge (masalan: Yangi, Arzon)</label><input class="form-input" id="pBadge" placeholder="Ommabop"></div>
-      <button class="save-btn" onclick="saveProduct()">💾 Saqlash</button>
-      <button class="cancel-btn" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Bekor qilish</button>
+      <div class="f-group"><label class="f-label">Rasm URL</label><input class="f-input" id="pImg" placeholder="https://...rasm.jpg"></div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">Badge</label><input class="f-input" id="pBadge" placeholder="Yangi"></div>
+        <div class="f-group"><label class="f-label">Narx (chegirmali)</label><input class="f-input" id="pOldPrice" type="number" placeholder="55000"></div>
+      </div>
+      <button class="big-btn primary" onclick="saveProduct()">💾 Saqlash</button>
+      <button class="big-btn secondary" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor qilish</button>
     </div>
   </div>
 </div>
@@ -205,297 +394,360 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc,
+  doc, onSnapshot, orderBy, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCaS_-p9gxwN2O64WoYLlRERisq2s7CEPs",
-  authDomain: "kerasys-dokon.firebaseapp.com",
-  projectId: "kerasys-dokon",
-  storageBucket: "kerasys-dokon.firebasestorage.app",
-  messagingSenderId: "890867885170",
-  appId: "1:890867885170:web:2d989c60f4d4dbb5348eeb"
+const FB = {
+  apiKey:"AIzaSyCaS_-p9gxwN2O64WoYLlRERisq2s7CEPs",
+  authDomain:"kerasys-dokon.firebaseapp.com",
+  projectId:"kerasys-dokon",
+  storageBucket:"kerasys-dokon.firebasestorage.app",
+  messagingSenderId:"890867885170",
+  appId:"1:890867885170:web:2d989c60f4d4dbb5348eeb"
 };
+const fbApp = initializeApp(FB);
+const db = getFirestore(fbApp);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const ADMIN_USERNAME = "notimetoyouu";
+const ADMIN = "notimetoyouu";
 const tg = window.Telegram?.WebApp;
-if (tg) { tg.ready(); tg.expand(); }
-const isAdmin = tg?.initDataUnsafe?.user?.username === ADMIN_USERNAME;
-if (isAdmin) document.getElementById('adminBtnHeader').style.display = 'flex';
+if(tg){tg.ready();tg.expand();}
+const tgUser = tg?.initDataUnsafe?.user;
+const isAdmin = tgUser?.username===ADMIN;
+if(isAdmin) document.getElementById('adminBtn').style.display='flex';
 
-let allProducts = [];
-let cart = {};
-let currentCat = 'all';
-
-const CATS = [
-  {id:'all',label:'Barchasi'},
+const CATS=[
+  {id:'all',label:'✨ Barchasi'},
   {id:'kukun',label:'🧺 Kukunlar'},
   {id:'gel',label:'🧴 Gellar'},
   {id:'shampun',label:'🚿 Shampunlar'},
   {id:'sovun',label:'🧼 Sovunlar'},
   {id:'boshqa',label:'📦 Boshqa'},
 ];
-const ICONS = {kukun:'🧺',gel:'🧴',shampun:'🚿',sovun:'🧼',boshqa:'📦'};
+const ICONS={kukun:'🧺',gel:'🧴',shampun:'🚿',sovun:'🧼',boshqa:'📦'};
+const STATUSES=['yangi','jarayonda','yetkazildi','bekor'];
+const STATUS_LABELS={yangi:'🟣 Yangi',jarayonda:'🟡 Jarayonda',yetkazildi:'🟢 Yetkazildi',bekor:'🔴 Bekor'};
 
-const fmt = n => Number(n).toLocaleString('uz-UZ') + ' so\'m';
-const $ = id => document.getElementById(id);
+let products=[], cart={}, currentCat='all';
+const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
+const $=id=>document.getElementById(id);
+const g=id=>$(id)?.value.trim();
 
-function showToast(msg) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 2500);
+function toast(msg){
+  const el=$('toast');
+  el.textContent=msg;
+  el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),2500);
 }
-window.showToast = showToast;
+window.toast=toast;
 
-function renderCats() {
-  $('catTabs').innerHTML = CATS.map(c=>
-    `<button class="cat-btn ${c.id===currentCat?'active':''}" onclick="selectCat('${c.id}')">${c.label}</button>`
+/* ── CATEGORIES ── */
+function renderCats(){
+  $('catTabs').innerHTML=CATS.map(c=>
+    `<button class="cat-pill ${c.id===currentCat?'on':''}" onclick="setCat('${c.id}')">${c.label}</button>`
   ).join('');
 }
-
-window.selectCat = id => {
-  currentCat = id;
-  $('sectionTitle').textContent = id==='all' ? 'Barcha mahsulotlar' : CATS.find(c=>c.id===id).label;
-  renderCats();
-  renderProducts();
+window.setCat=id=>{
+  currentCat=id;
+  $('pgTitle').textContent=id==='all'?'Barcha mahsulotlar':CATS.find(c=>c.id===id).label;
+  renderCats(); renderProducts();
 };
 
-function renderProducts() {
-  const items = currentCat==='all' ? allProducts : allProducts.filter(p=>p.cat===currentCat);
-  const el = $('productGrid');
-  if (!items.length) { el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Mahsulot yo\'q</div>'; return; }
-  el.innerHTML = `<div class="grid">${items.map(p=>{
-    const qty = cart[p.id]?.qty||0;
-    const icon = ICONS[p.cat]||'📦';
-    return `<div class="product-card">
-      <div class="product-img">
-        ${p.img?`<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">`:''}
-        <span class="emoji">${icon}</span>
-        ${p.badge?`<div class="badge">${p.badge}</div>`:''}
+/* ── PRODUCTS ── */
+function makeImg(url,icon,cls=''){
+  if(!url) return `<span class="fallback">${icon}</span>`;
+  return `<img src="${url}" alt="" class="${cls}"
+    onload="this.classList.add('loaded')"
+    onerror="this.classList.add('errored')">
+    <span class="fallback" style="position:absolute">${icon}</span>`;
+}
+
+function renderProducts(){
+  const list=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+  const el=$('pgGrid');
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">Mahsulot topilmadi</div>';return;}
+  el.innerHTML=`<div class="grid">${list.map(p=>{
+    const qty=cart[p.id]?.qty||0;
+    const icon=ICONS[p.cat]||'📦';
+    const active=p.active!==false;
+    return `<div class="p-card" style="${!active?'opacity:0.5':''}">
+      ${!active?'<div class="inactive-badge">Nofaol</div>':''}
+      <div class="p-img">
+        ${p.img
+          ?`<img src="${p.img}" alt="${p.name}"
+              onload="this.nextElementSibling.style.display='none'"
+              onerror="this.style.display='none'">
+            <span class="fallback">${icon}</span>`
+          :`<span class="fallback">${icon}</span>`}
+        ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
       </div>
-      <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-desc">${p.desc||''}</div>
-        <div class="product-footer">
-          <div class="product-price">${fmt(p.price)}</div>
-          ${qty===0
+      <div class="p-body">
+        <div class="p-name">${p.name}</div>
+        <div class="p-desc">${p.desc||'&nbsp;'}</div>
+        <div class="p-foot">
+          <div>
+            <div class="p-price">${fmt(p.price)}</div>
+            ${p.oldPrice?`<div style="font-size:10px;color:var(--text2);text-decoration:line-through">${fmt(p.oldPrice)}</div>`:''}
+          </div>
+          ${!active?'':(qty===0
             ?`<button class="add-btn" onclick="addItem('${p.id}')">+</button>`
-            :`<div class="qty-control show">
-                <button class="qty-btn" onclick="removeItem('${p.id}')">−</button>
-                <span class="qty-num">${qty}</span>
-                <button class="qty-btn" onclick="addItem('${p.id}')">+</button>
-              </div>`}
+            :`<div class="qty-wrap on">
+                <button class="q-btn" onclick="rmItem('${p.id}')">−</button>
+                <span class="q-num">${qty}</span>
+                <button class="q-btn" onclick="addItem('${p.id}')">+</button>
+              </div>`)}
         </div>
       </div>
     </div>`;
   }).join('')}</div>`;
 }
 
-// Realtime products
-onSnapshot(collection(db,'products'), snap => {
-  allProducts = snap.docs.map(d=>({id:d.id,...d.data()}));
+// Realtime listen
+onSnapshot(collection(db,'products'),snap=>{
+  products=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderProducts();
+  if(isAdmin) loadAdminProducts();
 });
 
-// Cart
-window.addItem = id => {
-  const p = allProducts.find(x=>x.id===id);
-  if (!p) return;
-  if (!cart[id]) cart[id]={name:p.name,price:p.price,icon:ICONS[p.cat]||'📦',img:p.img||'',qty:0};
+/* ── CART ── */
+window.addItem=id=>{
+  const p=products.find(x=>x.id===id);
+  if(!p||p.active===false)return;
+  if(!cart[id])cart[id]={name:p.name,price:p.price,icon:ICONS[p.cat]||'📦',img:p.img||'',qty:0};
   cart[id].qty++;
   updateCartUI(); renderProducts();
-  showToast(`${p.name} qo'shildi ✓`);
+  toast(`✓ ${p.name} qo'shildi`);
 };
-window.removeItem = id => {
-  if (!cart[id]) return;
+window.rmItem=id=>{
+  if(!cart[id])return;
   cart[id].qty--;
-  if (cart[id].qty<=0) delete cart[id];
+  if(cart[id].qty<=0)delete cart[id];
   updateCartUI(); renderProducts();
 };
 
-function updateCartUI() {
-  const count = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-  const total = Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0);
-  const el = $('cartCount');
-  el.textContent = count;
-  el.classList.toggle('visible',count>0);
-  $('totalPrice').textContent = fmt(total);
-  $('orderBtn').disabled = count===0;
+function updateCartUI(){
+  const cnt=Object.values(cart).reduce((s,i)=>s+i.qty,0);
+  const tot=Object.values(cart).reduce((s,i)=>s+i.price*i.qty,0);
+  const el=$('badge');
+  el.textContent=cnt; el.classList.toggle('on',cnt>0);
+  $('totalVal').textContent=fmt(tot);
+  $('orderBtn').disabled=cnt===0;
 }
 
-window.openCart = () => {
-  renderCartSheet();
-  $('overlay').classList.add('open');
-  $('cartSheet').classList.add('open');
-};
-window.closeAll = () => {
-  $('overlay').classList.remove('open');
-  ['cartSheet','adminSheet','orderSheet'].forEach(id=>$(id).classList.remove('open'));
+window.openCart=()=>{
+  renderCartBody();
+  $('overlay').classList.add('on');
+  $('cartSheet').classList.add('on');
 };
 
-function renderCartSheet() {
-  const items = Object.entries(cart);
-  const body = $('cartBody');
-  if (!items.length) { body.innerHTML='<div class="cart-empty"><div class="icon">🛒</div>Savat bo\'sh</div>'; return; }
-  body.innerHTML = items.map(([id,item])=>`
-    <div class="cart-item">
-      <div class="cart-item-icon">
-        ${item.img?`<img src="${item.img}" onerror="this.style.display='none'">`:''}
-        ${item.icon}
+function renderCartBody(){
+  const items=Object.entries(cart);
+  const b=$('cartBody');
+  if(!items.length){b.innerHTML='<div class="empty"><div class="empty-icon">🛒</div><div class="empty-txt">Savat bo\'sh</div></div>';return;}
+  b.innerHTML=items.map(([id,it])=>`
+    <div class="c-item">
+      <div class="c-thumb">
+        ${it.img?`<img src="${it.img}" onerror="this.classList.add('errored')">`:''}
+        ${it.icon}
       </div>
-      <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-price">${fmt(item.price*item.qty)}</div>
+      <div class="c-info">
+        <div class="c-name">${it.name}</div>
+        <div class="c-price">${fmt(it.price*it.qty)}</div>
       </div>
-      <div class="cart-item-qty">
-        <button class="cqty-btn" onclick="removeCartItem('${id}')">−</button>
-        <span class="cqty-num">${item.qty}</span>
-        <button class="cqty-btn" onclick="addCartItem('${id}')">+</button>
+      <div class="c-qty">
+        <button class="cq-btn" onclick="cRm('${id}')">−</button>
+        <span class="cq-n">${it.qty}</span>
+        <button class="cq-btn" onclick="cAdd('${id}')">+</button>
       </div>
     </div>`).join('');
 }
-window.addCartItem = id => { addItem(id); renderCartSheet(); };
-window.removeCartItem = id => { removeItem(id); renderCartSheet(); };
+window.cAdd=id=>{addItem(id);renderCartBody();};
+window.cRm=id=>{rmItem(id);renderCartBody();};
 
-window.openOrderForm = () => {
-  $('cartSheet').classList.remove('open');
-  $('orderSheet').classList.add('open');
+window.closeAll=()=>{
+  $('overlay').classList.remove('on');
+  ['cartSheet','orderSheet','adminSheet'].forEach(id=>$(id).classList.remove('on'));
 };
-window.closeOrderSheet = () => {
-  $('orderSheet').classList.remove('open');
-  $('cartSheet').classList.add('open');
-  renderCartSheet();
+window.toOrder=()=>{
+  $('cartSheet').classList.remove('on');
+  $('orderSheet').classList.add('on');
+};
+window.backToCart=()=>{
+  $('orderSheet').classList.remove('on');
+  $('cartSheet').classList.add('on');
+  renderCartBody();
 };
 
-window.submitOrder = async () => {
-  const name = $('orderName').value.trim();
-  const phone = $('orderPhone').value.trim();
-  const address = $('orderAddress').value.trim();
-  if (!name||!phone||!address) { showToast('Barcha maydonlarni to\'ldiring!'); return; }
-  const items = Object.values(cart);
-  const total = items.reduce((s,i)=>s+i.price*i.qty,0);
-  const user = tg?.initDataUnsafe?.user;
-  try {
+window.submitOrder=async()=>{
+  const name=g('oName'),phone=g('oPhone'),addr=g('oAddr'),note=g('oNote');
+  if(!name||!phone||!addr){toast('❗ Ism, telefon va manzil kiritilishi shart');return;}
+  const items=Object.values(cart);
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  try{
     await addDoc(collection(db,'orders'),{
-      name, phone, address,
-      telegram: user?`@${user.username||user.first_name}`:'Noma\'lum',
-      items: items.map(i=>({name:i.name,price:i.price,qty:i.qty})),
-      total, status:'yangi', createdAt: new Date()
+      name,phone,addr,note,
+      telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'—',
+      items:items.map(i=>({name:i.name,price:i.price,qty:i.qty})),
+      total, status:'yangi', createdAt:new Date()
     });
-    cart={};
-    updateCartUI(); renderProducts(); closeAll();
-    showToast('Buyurtmangiz qabul qilindi! ✓');
-    ['orderName','orderPhone','orderAddress'].forEach(id=>$(id).value='');
-  } catch(e){ showToast('Xatolik yuz berdi'); }
+    cart={}; updateCartUI(); renderProducts(); closeAll();
+    toast('🎉 Buyurtma qabul qilindi!');
+    ['oName','oPhone','oAddr','oNote'].forEach(id=>$(id).value='');
+  }catch(e){toast('❌ Xatolik: '+e.message);}
 };
 
-// Admin
-window.openAdmin = () => {
-  $('overlay').classList.add('open');
-  $('adminSheet').classList.add('open');
-  loadAdminProducts();
+/* ── ADMIN ── */
+window.openAdmin=()=>{
+  $('overlay').classList.add('on');
+  $('adminSheet').classList.add('on');
+  loadStats();
 };
 
-window.switchAdminTab = tab => {
-  document.querySelectorAll('.atab').forEach((b,i)=>b.classList.toggle('active',['products','orders','add'][i]===tab));
-  $('adminProducts').style.display = tab==='products'?'block':'none';
-  $('adminOrders').style.display = tab==='orders'?'block':'none';
-  $('adminAdd').style.display = tab==='add'?'block':'none';
-  if (tab==='orders') loadAdminOrders();
+let currentATab='stats';
+window.aTab=(name,btn)=>{
+  currentATab=name;
+  document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['aStats','aProducts','aOrders','aAdd'].forEach(id=>$(id).style.display='none');
+  $('a'+name.charAt(0).toUpperCase()+name.slice(1)).style.display='block';
+  if(name==='orders')loadAdminOrders();
+  if(name==='products')loadAdminProducts();
+  if(name==='stats')loadStats();
 };
 
-function loadAdminProducts() {
-  const el = $('adminProducts');
-  if (!allProducts.length) { el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">Mahsulot yo\'q. + Qo\'shish bo\'limiga o\'ting</div>'; return; }
-  el.innerHTML = allProducts.map(p=>`
-    <div class="admin-product">
-      <div class="admin-product-icon">
-        ${p.img?`<img src="${p.img}" onerror="this.style.display='none'">`:''}
+async function loadStats(){
+  const el=$('aStats');
+  try{
+    const pSnap=await getDocs(collection(db,'products'));
+    const oSnap=await getDocs(collection(db,'orders'));
+    const orders=oSnap.docs.map(d=>d.data());
+    const total=orders.reduce((s,o)=>s+(o.total||0),0);
+    const today=new Date().toDateString();
+    const todayOrds=orders.filter(o=>o.createdAt?.toDate?.().toDateString()===today);
+    const todayTotal=todayOrds.reduce((s,o)=>s+(o.total||0),0);
+    const active=pSnap.docs.filter(d=>d.data().active!==false).length;
+    el.innerHTML=`
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val">${pSnap.size}</div><div class="stat-lbl">Jami mahsulot</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val">${active}</div><div class="stat-lbl">Faol mahsulot</div></div>
+        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-val">${orders.length}</div><div class="stat-lbl">Jami buyurtma</div></div>
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">${todayOrds.length}</div><div class="stat-lbl">Bugungi buyurtma</div></div>
+        <div class="stat-card" style="grid-column:1/-1"><div class="stat-icon">💰</div><div class="stat-val" style="font-size:18px">${fmt(total)}</div><div class="stat-lbl">Jami savdo</div></div>
+        <div class="stat-card" style="grid-column:1/-1"><div class="stat-icon">📈</div><div class="stat-val" style="font-size:18px">${fmt(todayTotal)}</div><div class="stat-lbl">Bugungi savdo</div></div>
+      </div>`;
+  }catch(e){el.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik: '+e.message+'</div>';}
+}
+
+function loadAdminProducts(){
+  const el=$('aProducts');
+  if(!products.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Mahsulot yo\'q</div>';return;}
+  el.innerHTML=products.map(p=>{
+    const active=p.active!==false;
+    return `<div class="adm-p">
+      <div class="adm-p-thumb">
+        ${p.img?`<img src="${p.img}" onerror="this.classList.add('errored')">`:''}
         ${ICONS[p.cat]||'📦'}
       </div>
-      <div class="admin-product-info">
-        <div class="admin-product-name">${p.name}</div>
-        <div class="admin-product-price">${fmt(p.price)}</div>
+      <div class="adm-p-info">
+        <div class="adm-p-name">${p.name}</div>
+        <div class="adm-p-meta"><span class="adm-p-price">${fmt(p.price)}</span> · ${active?'✅ Faol':'❌ Nofaol'}</div>
       </div>
-      <div class="admin-actions">
-        <button class="edit-btn" onclick="editProduct('${p.id}')">✏️</button>
-        <button class="del-btn" onclick="deleteProduct('${p.id}')">🗑</button>
+      <div class="adm-acts">
+        <button class="ia-btn ia-edit" onclick="editP('${p.id}')" title="Tahrirlash">✏️</button>
+        <button class="ia-btn ia-toggle ${active?'':'off'}" onclick="toggleP('${p.id}',${active})" title="${active?'O\'chirish':'Yoqish'}">${active?'👁':'🚫'}</button>
+        <button class="ia-btn ia-del" onclick="delP('${p.id}')" title="O'chirish">🗑</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-async function loadAdminOrders() {
-  const el = $('adminOrders');
-  el.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    await new Promise(r=>{
-      onSnapshot(query(collection(db,'orders'),orderBy('createdAt','desc')), snap=>{
-        if (snap.empty){ el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">Buyurtma yo\'q</div>'; r(); return; }
-        el.innerHTML = snap.docs.map(d=>{
-          const o=d.data();
-          const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('uz-UZ') : '';
-          return `<div class="order-card">
-            <div class="order-header"><span class="order-date">${date}</span><span class="order-status">✅ Yangi</span></div>
-            <div class="order-items">${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</div>
-            <div class="order-total">${fmt(o.total)}</div>
-            <div class="order-contact">👤 ${o.name}<br>📱 ${o.phone}<br>📍 ${o.address}<br>✈️ ${o.telegram}</div>
-          </div>`;
-        }).join('');
-        r();
-      });
-    });
-  } catch(e){ el.innerHTML='<div style="color:var(--muted)">Xatolik</div>'; }
+let ordersUnsub=null;
+function loadAdminOrders(){
+  const el=$('aOrders');
+  el.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  if(ordersUnsub)ordersUnsub();
+  ordersUnsub=onSnapshot(query(collection(db,'orders'),orderBy('createdAt','desc')),snap=>{
+    if(snap.empty){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Buyurtma yo\'q</div>';return;}
+    el.innerHTML=snap.docs.map(d=>{
+      const o=d.data(),oid=d.id;
+      const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString('uz-UZ'):'—';
+      const st=o.status||'yangi';
+      return `<div class="ord-card">
+        <div class="ord-top">
+          <span class="ord-num">📄 ${oid.slice(0,8)}</span>
+          <span class="ord-status ${st}">${STATUS_LABELS[st]||st}</span>
+        </div>
+        <div class="ord-items">${o.items.map(i=>`${i.name} ×${i.qty}`).join('<br>')}</div>
+        <div class="ord-total">${fmt(o.total)}</div>
+        <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>📍 ${o.addr}<br>✈️ ${o.telegram}<br>🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
+        <div class="status-picker">
+          ${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--card2)'};color:${s===st?'#fff':'var(--text2)'}" onclick="setStatus('${oid}','${s}')">${STATUS_LABELS[s]}</button>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  });
 }
 
-window.editProduct = id => {
-  const p = allProducts.find(x=>x.id===id);
-  if (!p) return;
-  $('editProductId').value=id;
+window.setStatus=async(id,status)=>{
+  await updateDoc(doc(db,'orders',id),{status});
+  toast(`Status: ${STATUS_LABELS[status]}`);
+};
+
+window.toggleP=async(id,active)=>{
+  await updateDoc(doc(db,'products',id),{active:!active});
+  toast(active?'❌ Mahsulot nofaol qilindi':'✅ Mahsulot faollashtirildi');
+};
+
+window.editP=id=>{
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  $('editId').value=id;
   $('pName').value=p.name;
   $('pDesc').value=p.desc||'';
   $('pPrice').value=p.price;
   $('pCat').value=p.cat;
   $('pImg').value=p.img||'';
   $('pBadge').value=p.badge||'';
-  $('cancelEditBtn').style.display='block';
-  switchAdminTab('add');
+  $('pOldPrice').value=p.oldPrice||'';
+  $('cancelEdit').style.display='block';
+  aTab('add',document.querySelectorAll('.a-tab')[3]);
 };
 
-window.cancelEdit = () => {
-  $('editProductId').value='';
-  ['pName','pDesc','pPrice','pImg','pBadge'].forEach(id=>$(id).value='');
+window.cancelEditFn=()=>{
+  $('editId').value='';
+  ['pName','pDesc','pPrice','pImg','pBadge','pOldPrice'].forEach(id=>$(id).value='');
   $('pCat').value='kukun';
-  $('cancelEditBtn').style.display='none';
-  switchAdminTab('products');
+  $('cancelEdit').style.display='none';
+  aTab('products',document.querySelectorAll('.a-tab')[1]);
 };
 
-window.deleteProduct = async id => {
-  if (!confirm('O\'chirishni tasdiqlaysizmi?')) return;
+window.delP=async id=>{
+  if(!confirm('Mahsulotni o\'chirishni tasdiqlaysizmi?'))return;
   await deleteDoc(doc(db,'products',id));
-  showToast('Mahsulot o\'chirildi');
+  toast('🗑 O\'chirildi');
 };
 
-window.saveProduct = async () => {
-  const name = $('pName').value.trim();
-  const price = parseInt($('pPrice').value);
-  if (!name||!price) { showToast('Nom va narx kiritish shart!'); return; }
-  const data = {
-    name, desc:$('pDesc').value.trim(), price,
-    cat:$('pCat').value, img:$('pImg').value.trim(), badge:$('pBadge').value.trim()
+window.saveProduct=async()=>{
+  const name=g('pName'),price=parseInt($('pPrice').value);
+  if(!name||!price){toast('❗ Nom va narx kiritilishi shart');return;}
+  const data={
+    name,desc:g('pDesc'),price,
+    cat:$('pCat').value,
+    img:g('pImg'),badge:g('pBadge'),
+    oldPrice:parseInt($('pOldPrice').value)||0,
+    active:true
   };
-  const editId = $('editProductId').value;
-  try {
-    if (editId) { await updateDoc(doc(db,'products',editId),data); showToast('Yangilandi ✓'); }
-    else { await addDoc(collection(db,'products'),data); showToast('Qo\'shildi ✓'); }
-    cancelEdit();
-  } catch(e){ showToast('Xatolik'); }
+  const editId=$('editId').value;
+  try{
+    if(editId){await updateDoc(doc(db,'products',editId),data);toast('✅ Yangilandi');}
+    else{await addDoc(collection(db,'products'),data);toast('✅ Qo\'shildi');}
+    cancelEditFn();
+  }catch(e){toast('❌ Xatolik: '+e.message);}
 };
 
-renderCats();
-updateCartUI();
+/* INIT */
+renderCats(); updateCartUI();
 </script>
 </body>
 </html>
