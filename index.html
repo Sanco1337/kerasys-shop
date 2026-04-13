@@ -28,7 +28,6 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* HEADER */
 .hdr{
   background:#FFFFFF;
   padding:14px 16px 12px;
@@ -45,7 +44,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hbtn{background:var(--accent-lt);border:1.5px solid var(--border);border-radius:11px;padding:8px 12px;color:var(--accent);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;}
 .hbtn:active{opacity:0.7;}
 
-/* FLOATING CART */
 .float-cart{
   position:fixed;bottom:24px;right:16px;z-index:150;
   background:linear-gradient(135deg,var(--accent),var(--accent-dk));
@@ -62,10 +60,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .fc-count{font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);}
 .fc-price{font-size:15px;font-weight:900;color:#fff;}
 
-/* MAIN */
 .main{padding:16px 12px 100px;}
 
-/* CATEGORY CARDS */
 .cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .cat-card{
   background:#fff;border-radius:var(--r);
@@ -86,7 +82,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .cat-cnt{font-size:11px;color:var(--text2);font-weight:700;}
 .cat-arr{position:absolute;bottom:14px;right:14px;font-size:16px;color:var(--accent);font-weight:900;}
 
-/* BACK BTN */
 .back-btn{
   display:flex;align-items:center;gap:8px;
   background:#fff;border:1.5px solid var(--border);
@@ -97,7 +92,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .pg-title{font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text);}
 .pg-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
 
-/* PRODUCT GRID */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .p-card{
   background:#fff;border-radius:var(--r);
@@ -139,7 +133,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .q-btn{width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border);background:var(--accent-lt);color:var(--accent);font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .q-n{font-size:14px;font-weight:900;min-width:18px;text-align:center;color:var(--text);}
 
-/* OVERLAY + SHEET */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s;}
 .overlay.on{opacity:1;pointer-events:all;}
 .sheet{
@@ -159,7 +152,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .s-body::-webkit-scrollbar{display:none;}
 .s-foot{padding:12px 20px 20px;flex-shrink:0;border-top:1.5px solid var(--border);background:#fff;}
 
-/* VARIANT PICKER */
 .var-product-info{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px solid var(--border);}
 .var-thumb{width:56px;height:56px;border-radius:12px;background:var(--card2);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:28px;}
 .var-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
@@ -179,7 +171,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .var-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.2s;}
 .var-item.sel .var-item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
 
-/* CART */
 .empty{text-align:center;padding:50px 0;color:var(--text2);}
 .empty-ic{font-size:56px;margin-bottom:12px;}
 .empty-tx{font-size:15px;font-weight:700;}
@@ -198,14 +189,12 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .total-lbl{font-size:14px;color:var(--text2);font-weight:700;}
 .total-val{font-size:26px;font-weight:900;color:var(--accent);}
 
-/* BUTTONS */
 .big-btn{width:100%;padding:15px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.1s,opacity 0.2s;margin-top:8px;}
 .big-btn:active{transform:scale(0.97);}
 .big-btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent-dk));color:#fff;box-shadow:0 4px 16px rgba(31,161,80,0.35);}
 .big-btn.sec{background:var(--accent-lt);color:var(--accent);}
 .big-btn:disabled{opacity:0.3;cursor:not-allowed;}
 
-/* FORM */
 .f-grp{margin-bottom:14px;}
 .f-lbl{font-size:11px;color:var(--text2);font-weight:800;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
 .f-inp,.f-sel,.f-ta{
@@ -227,7 +216,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 }
 .f-info span{color:var(--accent);}
 
-/* SUCCESS */
 .success-box{text-align:center;padding:20px 0;}
 .success-icon{font-size:64px;margin-bottom:12px;}
 .success-title{font-size:22px;font-weight:900;margin-bottom:6px;color:var(--text);}
@@ -240,7 +228,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .order-code{font-size:34px;font-weight:900;color:var(--accent);letter-spacing:6px;}
 .order-code-hint{font-size:11px;color:var(--text2);margin-top:8px;}
 
-/* CONTACT */
 .contact-card{background:var(--bg);border:1.5px solid var(--border);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px;}
 .contact-row{display:flex;align-items:center;gap:12px;}
 .contact-ic{width:42px;height:42px;border-radius:11px;background:var(--accent-lt);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
@@ -248,7 +235,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .contact-val{font-size:15px;font-weight:800;color:var(--text);margin-top:2px;}
 .contact-val a{color:var(--accent);text-decoration:none;}
 
-/* ADMIN */
 .adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
 .a-tab{flex:1;min-width:0;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);white-space:nowrap;}
 .a-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
@@ -288,7 +274,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .ord-info{font-size:12px;color:var(--text2);line-height:1.8;}
 .sp-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
 .sp-btn{padding:6px 12px;border-radius:20px;border:none;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
-.vars-admin{margin-top:10px;padding:14px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);}
+.vars-admin{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);}
 .vars-admin-lbl{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
 .var-tag-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
 .var-tag{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--text);}
@@ -298,17 +284,26 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .var-add-inp:focus{border-color:var(--accent);}
 .var-add-btn{padding:8px 14px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
 
-/* TOAST */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:#fff;border:none;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:500;transition:transform 0.3s;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,0.2);}
-.toast.on{transform:translateX(-50%) translateY(0);}
+.toast{
+  position:fixed;bottom:100px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#1A2E1D;color:#fff;
+  padding:12px 24px;border-radius:12px;
+  font-size:14px;font-weight:700;z-index:999;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s,transform 0.3s;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  white-space:nowrap;
+}
+.toast.show{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
 .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto 12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.loading-tx{text-align:center;color:var(--text2);font-weight:700;padding-bottom:20px;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="logo">
     <div class="logo-ic">🧴</div>
@@ -320,7 +315,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- FLOATING CART -->
 <div class="float-cart hidden" id="floatCart" onclick="openCart()">
   <div class="fc-icon">🛒</div>
   <div class="fc-info">
@@ -329,16 +323,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main" id="mainArea">
   <div class="spin"></div>
-  <div class="loading-tx">Yuklanmoqda...</div>
+  <div style="text-align:center;color:var(--text2);font-weight:700;">Yuklanmoqda...</div>
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- VARIANT PICKER SHEET -->
 <div class="sheet" id="varSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -348,7 +339,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="s-body" id="varBody"></div>
 </div>
 
-<!-- CART SHEET -->
 <div class="sheet" id="cartSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -361,11 +351,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <span class="total-lbl">Jami:</span>
       <span class="total-val" id="totalVal">0 so'm</span>
     </div>
-    <button class="big-btn pri" id="orderBtn" onclick="toOrder()">Buyurtma berish →</button>
+    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled>Buyurtma berish →</button>
   </div>
 </div>
 
-<!-- ORDER FORM SHEET -->
 <div class="sheet" id="orderSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -374,51 +363,49 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
   <div class="s-body">
     <div class="f-info">
-      ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi. Olib ketish vaqtini ko'rsating.
+      ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.
     </div>
     <div class="f-grp"><label class="f-lbl">Ism Familiya *</label><input class="f-inp" id="oName" placeholder="Sarvar Karimov"></div>
     <div class="f-grp"><label class="f-lbl">Telefon *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
     <div class="f-grp"><label class="f-lbl">Olib ketish vaqti *</label>
       <select class="f-sel" id="oTime">
         <option value="">— Tanlang —</option>
-        <option>Bugun soat 10:00–12:00</option>
-        <option>Bugun soat 12:00–14:00</option>
-        <option>Bugun soat 14:00–16:00</option>
-        <option>Bugun soat 16:00–18:00</option>
-        <option>Bugun soat 18:00–20:00</option>
-        <option>Ertaga soat 10:00–12:00</option>
-        <option>Ertaga soat 12:00–14:00</option>
-        <option>Ertaga soat 14:00–16:00</option>
-        <option>Ertaga soat 16:00–18:00</option>
-        <option>Ertaga soat 18:00–20:00</option>
-        <option>Boshqa vaqt (izohda yozing)</option>
+        <option>Bugun 10:00–12:00</option>
+        <option>Bugun 12:00–14:00</option>
+        <option>Bugun 14:00–16:00</option>
+        <option>Bugun 16:00–18:00</option>
+        <option>Bugun 18:00–20:00</option>
+        <option>Ertaga 10:00–12:00</option>
+        <option>Ertaga 12:00–14:00</option>
+        <option>Ertaga 14:00–16:00</option>
+        <option>Ertaga 16:00–18:00</option>
+        <option>Ertaga 18:00–20:00</option>
+        <option>Boshqa (izohda yozing)</option>
       </select>
     </div>
-    <div class="f-grp"><label class="f-lbl">Izoh (ixtiyoriy)</label><textarea class="f-ta" id="oNote" placeholder="Boshqa vaqt yoki qo'shimcha ma'lumot..."></textarea></div>
+    <div class="f-grp"><label class="f-lbl">Izoh</label><textarea class="f-ta" id="oNote" placeholder="Boshqa vaqt yoki ma'lumot..."></textarea></div>
     <button class="big-btn pri" onclick="submitOrder()">✅ Tasdiqlash</button>
     <button class="big-btn sec" onclick="backToCart()">← Orqaga</button>
   </div>
 </div>
 
-<!-- SUCCESS SHEET -->
 <div class="sheet" id="successSheet">
   <div class="s-handle"></div>
   <div class="s-body">
     <div class="success-box">
       <div class="success-icon">🎉</div>
       <div class="success-title">Buyurtma qabul qilindi!</div>
-      <div class="success-sub">Siz belgilagan vaqtda kelib olishingiz mumkin.<br>Quyidagi kodni saqlang:</div>
+      <div class="success-sub">Siz belgilagan vaqtda kelib olishingiz mumkin.<br>Kodni saqlang:</div>
       <div class="order-code-box">
         <div class="order-code-lbl">Buyurtma kodi</div>
         <div class="order-code" id="successCode">------</div>
-        <div class="order-code-hint">Do'konga kelganingizda shu kodni ko'rsating</div>
+        <div class="order-code-hint">Do'konga kelganda shu kodni ko'rsating</div>
       </div>
       <button class="big-btn pri" onclick="closeAll()">Davom etish 🛍</button>
     </div>
   </div>
 </div>
 
-<!-- CONTACT SHEET -->
 <div class="sheet" id="contactSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -430,7 +417,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <div class="contact-row">
         <div class="contact-ic">📱</div>
         <div>
-          <div class="contact-lbl">Telefon raqam</div>
+          <div class="contact-lbl">Telefon</div>
           <div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div>
         </div>
       </div>
@@ -445,15 +432,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="contact-ic">🏪</div>
         <div>
           <div class="contact-lbl">Yetkazib berish</div>
-          <div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish. Buyurtma qilsangiz vaqtida tayyor bo'ladi.</div>
+          <div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish</div>
         </div>
       </div>
     </div>
-    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Qo'ng'iroq qilish</button>
+    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Qo'ng'iroq</button>
   </div>
 </div>
 
-<!-- ADMIN SHEET -->
 <div class="sheet" id="adminSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -471,7 +457,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div id="aStats"></div>
     <div id="aSearch" style="display:none">
       <div class="search-box">
-        <input class="search-inp" id="codeSearch" placeholder="Buyurtma kodini kiriting...">
+        <input class="search-inp" id="codeSearch" placeholder="Buyurtma kodi...">
         <button class="search-btn" onclick="searchOrder()">Qidir</button>
       </div>
       <div id="searchResult"></div>
@@ -480,10 +466,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div id="aOrders" style="display:none"></div>
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
-      <div class="f-grp"><label class="f-lbl">Mahsulot nomi *</label><input class="f-inp" id="pName" placeholder="Yumos konditsioner"></div>
-      <div class="f-grp"><label class="f-lbl">Tavsif</label><input class="f-inp" id="pDesc" placeholder="Kir yuvish konditsioneri"></div>
+      <div class="f-grp"><label class="f-lbl">Nomi *</label><input class="f-inp" id="pName" placeholder="Yumos konditsioner"></div>
+      <div class="f-grp"><label class="f-lbl">Tavsif</label><input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun"></div>
       <div class="f-row">
-        <div class="f-grp"><label class="f-lbl">Narx (so'm) *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
+        <div class="f-grp"><label class="f-lbl">Narx *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
         <div class="f-grp"><label class="f-lbl">Kategoriya</label>
           <select class="f-sel" id="pCat">
             <option value="kukun">🧺 Kukunlar</option>
@@ -498,17 +484,17 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="f-grp"><label class="f-lbl">Rasm URL</label><input class="f-inp" id="pImg" placeholder="https://..."></div>
         <div class="f-grp"><label class="f-lbl">Badge</label><input class="f-inp" id="pBadge" placeholder="Yangi"></div>
       </div>
-      <div class="f-grp"><label class="f-lbl">Chegirma (eski narx)</label><input class="f-inp" id="pOld" type="number" placeholder="30000"></div>
+      <div class="f-grp"><label class="f-lbl">Eski narx (chegirma)</label><input class="f-inp" id="pOld" type="number" placeholder="30000"></div>
       <div class="vars-admin">
         <div class="vars-admin-lbl">Xillar (variantlar)</div>
         <div class="var-tag-list" id="varTagList"></div>
         <div class="var-add-row">
-          <input class="var-add-inp" id="varInput" placeholder="Masalan: Lavanda 1L">
-          <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
+          <input class="var-add-inp" id="varInput" placeholder="Masalan: Lavanda">
+          <button class="var-add-btn" onclick="addVarTag()">+</button>
         </div>
       </div>
       <button class="big-btn pri" style="margin-top:14px" onclick="saveProduct()">💾 Saqlash</button>
-      <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor qilish</button>
+      <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor</button>
     </div>
   </div>
 </div>
@@ -517,10 +503,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore,collection,addDoc,updateDoc,deleteDoc,
-  doc,onSnapshot,orderBy,query,where,getDocs,limit
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,orderBy,query,where,getDocs,limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const FB={
   apiKey:"AIzaSyCaS_-p9gxwN2O64WoYLlRERisq2s7CEPs",
@@ -552,14 +535,23 @@ const STATUSES=['yangi','jarayonda','tayyor','bekor'];
 const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
 
 let products=[],cart={},currentPage='cats',currentCat=null,editVars=[];
+let toastTimer=null;
 const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
 const $=id=>document.getElementById(id);
 const g=id=>$(id)?.value?.trim()||'';
 
-function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),2500);}
+function toast(msg){
+  const el=$('toast');
+  if(toastTimer) clearTimeout(toastTimer);
+  el.textContent=msg;
+  el.classList.add('show');
+  toastTimer=setTimeout(()=>{
+    el.classList.remove('show');
+    toastTimer=null;
+  },2000);
+}
 window.toast=toast;
 
-/* ── PAGES ── */
 function renderCatsPage(){
   currentPage='cats';
   const counts={};
@@ -587,7 +579,7 @@ function renderProductsPage(){
     <div class="pg-title">${cat.icon} ${cat.label}</div>
     <div class="pg-sub">${list.length} ta mahsulot</div>
     ${!list.length
-      ?'<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">Bu kategoriyada mahsulot yo\'q</div>'
+      ?'<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">Mahsulot yo\'q</div>'
       :`<div class="grid">${list.map(p=>{
         const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
         const icon=ICONS[p.cat]||'📦';
@@ -595,7 +587,7 @@ function renderProductsPage(){
         return `<div class="p-card">
           <div class="p-img">
             ${p.img
-              ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.classList.add('err');this.nextElementSibling.style.display='flex'">
+              ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                 <span class="p-fallback" style="display:none">${icon}</span>`
               :`<span class="p-fallback">${icon}</span>`}
             ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
@@ -609,13 +601,13 @@ function renderProductsPage(){
                 ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
               </div>
               ${hasVars
-                ?`<button class="add-btn" onclick="openVarPicker('${p.id}')">+</button>`
+                ?`<button class="add-btn" onclick="event.stopPropagation();openVarPicker('${p.id}')">+</button>`
                 :(qty===0
-                  ?`<button class="add-btn" onclick="addSimple('${p.id}')">+</button>`
+                  ?`<button class="add-btn" onclick="event.stopPropagation();addSimple('${p.id}')">+</button>`
                   :`<div class="qty-w on">
-                      <button class="q-btn" onclick="rmSimple('${p.id}')">−</button>
+                      <button class="q-btn" onclick="event.stopPropagation();rmSimple('${p.id}')">−</button>
                       <span class="q-n">${qty}</span>
-                      <button class="q-btn" onclick="addSimple('${p.id}')">+</button>
+                      <button class="q-btn" onclick="event.stopPropagation();addSimple('${p.id}')">+</button>
                     </div>`)}
             </div>
           </div>
@@ -630,7 +622,6 @@ onSnapshot(collection(db,'products'),snap=>{
   if(isAdmin)loadAdminProducts();
 });
 
-/* ── CART ── */
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
 window.addSimple=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
@@ -648,9 +639,10 @@ window.rmSimple=id=>{
   updateCartUI();renderProductsPage();
 };
 
+let varSelected=null;
 window.openVarPicker=pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
-  let selVar=null;
+  varSelected=null;
   const icon=ICONS[p.cat]||'📦';
   function render(){
     $('varBody').innerHTML=`
@@ -664,21 +656,22 @@ window.openVarPicker=pid=>{
       <div class="var-label">Xilini tanlang:</div>
       <div class="var-list">
         ${p.variants.map(v=>`
-          <div class="var-item ${selVar===v?'sel':''}" onclick="selV('${v}')">
+          <div class="var-item ${varSelected===v?'sel':''}" onclick="varSelect('${v.replace(/'/g,"\\'")}')">
             <span class="var-item-name">${v}</span>
-            <span class="var-item-check">${selVar===v?'✓':''}</span>
+            <span class="var-item-check">${varSelected===v?'✓':''}</span>
           </div>`).join('')}
       </div>
-      <button class="big-btn pri" onclick="addVar('${pid}')" ${!selVar?'disabled':''}>Savatga qo'shish</button>`;
+      <button class="big-btn pri" id="varAddBtn" onclick="confirmVar('${pid}')" ${!varSelected?'disabled':''}>Savatga qo'shish</button>`;
   }
-  window.selV=v=>{selVar=v;render();};
-  window.addVar=pid2=>{
-    if(!selVar)return;
-    const key=cartKey(pid2,selVar);
-    if(!cart[key])cart[key]={pid:pid2,name:p.name,price:p.price,icon,img:p.img||'',variant:selVar,qty:0};
+  window.varSelect=v=>{varSelected=v;render();};
+  window.confirmVar=pid2=>{
+    if(!varSelected)return;
+    const p2=products.find(x=>x.id===pid2);if(!p2)return;
+    const key=cartKey(pid2,varSelected);
+    if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
     cart[key].qty++;
     updateCartUI();renderProductsPage();closeAll();
-    toast(`✓ ${p.name} (${selVar}) qo'shildi`);
+    toast(`✓ ${p2.name} (${varSelected})`);
   };
   render();
   $('overlay').classList.add('on');$('varSheet').classList.add('on');
@@ -703,10 +696,7 @@ function renderCartBody(){
   if(!items.length){b.innerHTML='<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">Savat bo\'sh</div></div>';return;}
   b.innerHTML=items.map(([key,it])=>`
     <div class="c-item">
-      <div class="c-thumb">
-        ${it.img?`<img src="${it.img}" onerror="this.classList.add('err')">`:''}
-        ${it.icon}
-      </div>
+      <div class="c-thumb">${it.img?`<img src="${it.img}" onerror="this.classList.add('err')">`:''}${it.icon}</div>
       <div class="c-info">
         <div class="c-name">${it.name}</div>
         ${it.variant?`<div class="c-var">📌 ${it.variant}</div>`:''}
@@ -733,8 +723,8 @@ function genCode(){
   let r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];return r;
 }
 window.submitOrder=async()=>{
-  const name=g('oName'),phone=g('oPhone'),time=g('oTime'),note=g('oNote');
-  if(!name||!phone||!time){toast('❗ Ism, telefon va vaqt kiritilishi shart');return;}
+  const name=g('oName'),phone=g('oPhone'),time=$('oTime').value,note=g('oNote');
+  if(!name||!phone||!time){toast('❗ Ism, telefon va vaqt kiritilsin');return;}
   const items=Object.values(cart);
   const total=items.reduce((s,i)=>s+i.price*i.qty,0);
   const code=genCode();
@@ -750,8 +740,8 @@ window.submitOrder=async()=>{
     $('successCode').textContent=code;
     $('successSheet').classList.add('on');
     ['oName','oPhone','oNote'].forEach(id=>$(id).value='');
-    $('oTime').selectedIndex=0;
-  }catch(e){toast('❌ Xatolik: '+e.message);}
+    $('oTime').value='';
+  }catch(e){toast('❌ Xatolik');}
 };
 
 window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').classList.add('on');};
@@ -778,13 +768,12 @@ async function loadStats(){
     const today=new Date().toDateString();
     const todayOrds=orders.filter(o=>o.createdAt?.toDate?.().toDateString()===today);
     const todayTotal=todayOrds.reduce((s,o)=>s+(o.total||0),0);
-    const byStatus={};STATUSES.forEach(s=>byStatus[s]=orders.filter(o=>o.status===s).length);
     el.innerHTML=`
       <div class="stats-grid">
         <div class="stat-c"><div class="stat-ic">📦</div><div class="stat-v">${pSnap.size}</div><div class="stat-l">Mahsulotlar</div></div>
-        <div class="stat-c"><div class="stat-ic">🛒</div><div class="stat-v">${orders.length}</div><div class="stat-l">Jami buyurtma</div></div>
+        <div class="stat-c"><div class="stat-ic">🛒</div><div class="stat-v">${orders.length}</div><div class="stat-l">Buyurtmalar</div></div>
         <div class="stat-c"><div class="stat-ic">📅</div><div class="stat-v">${todayOrds.length}</div><div class="stat-l">Bugun</div></div>
-        <div class="stat-c"><div class="stat-ic">✅</div><div class="stat-v">${byStatus.tayyor||0}</div><div class="stat-l">Tayyor</div></div>
+        <div class="stat-c"><div class="stat-ic">✅</div><div class="stat-v">${orders.filter(o=>o.status==='tayyor').length}</div><div class="stat-l">Tayyor</div></div>
         <div class="stat-c" style="grid-column:1/-1"><div class="stat-ic">💰</div><div class="stat-v" style="font-size:18px">${fmt(total)}</div><div class="stat-l">Jami savdo</div></div>
         <div class="stat-c" style="grid-column:1/-1"><div class="stat-ic">📈</div><div class="stat-v" style="font-size:18px">${fmt(todayTotal)}</div><div class="stat-l">Bugungi savdo</div></div>
       </div>`;
@@ -798,7 +787,7 @@ window.searchOrder=async()=>{
   el.innerHTML='<div class="spin"></div>';
   try{
     const snap=await getDocs(query(collection(db,'orders'),where('code','==',code),limit(1)));
-    if(snap.empty){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">❌ Buyurtma topilmadi</div>';return;}
+    if(snap.empty){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px">❌ Topilmadi</div>';return;}
     const d=snap.docs[0];el.innerHTML=renderOrdCard(d.id,d.data());
   }catch(e){el.innerHTML='<div style="color:var(--text2)">Xatolik</div>';}
 };
@@ -807,16 +796,11 @@ function renderOrdCard(oid,o){
   const st=o.status||'yangi';
   const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString('uz-UZ'):'—';
   return `<div class="ord-card">
-    <div class="ord-top">
-      <span class="ord-code-badge">${o.code}</span>
-      <span class="ord-status ${st}">${S_LABEL[st]||st}</span>
-    </div>
+    <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${S_LABEL[st]||st}</span></div>
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
     <div class="ord-total">Jami: ${fmt(o.total)}</div>
     <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
-    <div class="sp-wrap">
-      ${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'#fff':'var(--accent)'}" onclick="setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}
-    </div>
+    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'#fff':'var(--accent)'}" onclick="setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
   </div>`;
 }
 
@@ -825,7 +809,7 @@ function loadAdminOrders(){
   const el=$('aOrders');el.innerHTML='<div class="spin"></div>';
   if(ordUnsub)ordUnsub();
   ordUnsub=onSnapshot(query(collection(db,'orders'),orderBy('createdAt','desc')),snap=>{
-    if(snap.empty){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Buyurtma yo\'q</div>';return;}
+    if(snap.empty){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px">Buyurtma yo\'q</div>';return;}
     el.innerHTML=snap.docs.map(d=>renderOrdCard(d.id,d.data())).join('');
   });
 }
@@ -833,18 +817,12 @@ window.setSt=async(id,status)=>{await updateDoc(doc(db,'orders',id),{status});to
 
 function loadAdminProducts(){
   const el=$('aProducts');if(!el)return;
-  if(!products.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Mahsulot yo\'q</div>';return;}
+  if(!products.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px">Mahsulot yo\'q</div>';return;}
   el.innerHTML=products.map(p=>{
     const active=p.active!==false;
     return `<div class="adm-p">
-      <div class="adm-thumb">
-        ${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}
-        ${ICONS[p.cat]||'📦'}
-      </div>
-      <div class="adm-info">
-        <div class="adm-name">${p.name}</div>
-        <div class="adm-meta">${fmt(p.price)} · ${active?'✅ Faol':'❌ Nofaol'}${p.variants?.length?` · 🔀 ${p.variants.length} xil`:''}</div>
-      </div>
+      <div class="adm-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${ICONS[p.cat]||'📦'}</div>
+      <div class="adm-info"><div class="adm-name">${p.name}</div><div class="adm-meta">${fmt(p.price)} · ${active?'✅':'❌'}${p.variants?.length?` · ${p.variants.length} xil`:''}</div></div>
       <div class="adm-acts">
         <button class="ia edit" onclick="editP('${p.id}')">✏️</button>
         <button class="ia tog ${active?'':'off'}" onclick="togP('${p.id}',${active})">${active?'👁':'🚫'}</button>
@@ -856,13 +834,13 @@ function loadAdminProducts(){
 
 window.addVarTag=()=>{
   const inp=$('varInput'),val=inp.value.trim();
-  if(!val)return;if(!editVars.includes(val))editVars.push(val);
+  if(!val)return;
+  if(!editVars.includes(val))editVars.push(val);
   inp.value='';renderVarTags();
 };
 window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);renderVarTags();};
 function renderVarTags(){
-  $('varTagList').innerHTML=editVars.map(v=>`
-    <div class="var-tag">${v}<button class="var-tag-del" onclick="removeVarTag('${v}')">✕</button></div>`).join('');
+  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}<button class="var-tag-del" onclick="removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
 }
 window.editP=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
@@ -877,21 +855,22 @@ window.cancelEditFn=()=>{
   $('editId').value='';
   ['pName','pDesc','pPrice','pImg','pBadge','pOld'].forEach(id=>$(id).value='');
   $('pCat').value='kukun';editVars=[];renderVarTags();
+  $('varInput').value='';
   $('cancelEdit').style.display='none';
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
 window.togP=async(id,active)=>{await updateDoc(doc(db,'products',id),{active:!active});toast(active?'❌ Nofaol':'✅ Faol');};
-window.delP=async id=>{if(!confirm('O\'chirishni tasdiqlaysizmi?'))return;await deleteDoc(doc(db,'products',id));toast('🗑 O\'chirildi');};
+window.delP=async id=>{if(!confirm('O\'chirish?'))return;await deleteDoc(doc(db,'products',id));toast('🗑 O\'chirildi');};
 window.saveProduct=async()=>{
   const name=g('pName'),price=parseInt($('pPrice').value);
-  if(!name||!price){toast('❗ Nom va narx kiritilishi shart');return;}
+  if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
   const data={name,desc:g('pDesc'),price,cat:$('pCat').value,img:g('pImg'),badge:g('pBadge'),oldPrice:parseInt($('pOld').value)||0,variants:editVars,active:true};
   const editId=g('editId');
   try{
     if(editId){await updateDoc(doc(db,'products',editId),data);toast('✅ Yangilandi');}
     else{await addDoc(collection(db,'products'),data);toast('✅ Qo\'shildi');}
     cancelEditFn();
-  }catch(e){toast('❌ Xatolik: '+e.message);}
+  }catch(e){toast('❌ Xatolik');}
 };
 updateCartUI();
 </script>
