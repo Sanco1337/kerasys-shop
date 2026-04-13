@@ -552,7 +552,7 @@ function toast(msg){
 }
 window.toast=toast;
 
-function renderCatsPage(){
+window.renderCatsPage=function(){
   currentPage='cats';
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
@@ -561,21 +561,21 @@ function renderCatsPage(){
     <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Xohlagan kategoriyani tanlang</div>
     <div class="cats-grid">
       ${CATS.map(c=>`
-        <div class="cat-card" onclick="openCat('${c.id}')">
+        <div class="cat-card" onclick="window.openCat('${c.id}')">
           <div class="cat-ic">${c.icon}</div>
           <div class="cat-nm">${c.label}</div>
           <div class="cat-cnt">${counts[c.id]||0} ta mahsulot</div>
           <div class="cat-arr">→</div>
         </div>`).join('')}
     </div>`;
-}
+};
 window.openCat=id=>{currentCat=id;currentPage='products';renderProductsPage();};
 
 function renderProductsPage(){
   const cat=CATS.find(c=>c.id===currentCat);
   const list=products.filter(p=>p.cat===currentCat&&p.active!==false);
   $('mainArea').innerHTML=`
-    <div class="back-btn" onclick="renderCatsPage()">← Orqaga</div>
+    <div class="back-btn" onclick="window.renderCatsPage()">← Orqaga</div>
     <div class="pg-title">${cat.icon} ${cat.label}</div>
     <div class="pg-sub">${list.length} ta mahsulot</div>
     ${!list.length
@@ -601,13 +601,13 @@ function renderProductsPage(){
                 ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
               </div>
               ${hasVars
-                ?`<button class="add-btn" onclick="event.stopPropagation();openVarPicker('${p.id}')">+</button>`
+                ?`<button class="add-btn" onclick="event.stopPropagation();window.openVarPicker('${p.id}')">+</button>`
                 :(qty===0
-                  ?`<button class="add-btn" onclick="event.stopPropagation();addSimple('${p.id}')">+</button>`
+                  ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>`
                   :`<div class="qty-w on">
-                      <button class="q-btn" onclick="event.stopPropagation();rmSimple('${p.id}')">−</button>
+                      <button class="q-btn" onclick="event.stopPropagation();window.rmSimple('${p.id}')">−</button>
                       <span class="q-n">${qty}</span>
-                      <button class="q-btn" onclick="event.stopPropagation();addSimple('${p.id}')">+</button>
+                      <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>
                     </div>`)}
             </div>
           </div>
@@ -702,9 +702,9 @@ function renderCartBody(){
         ${it.variant?`<div class="c-var">📌 ${it.variant}</div>`:''}
         <div class="c-price">${fmt(it.price*it.qty)}</div>
         <div class="c-qty">
-          <button class="cq-btn" onclick="cRm('${key}')">−</button>
+          <button class="cq-btn" onclick="window.cRm('${key}')">−</button>
           <span class="cq-n">${it.qty}</span>
-          <button class="cq-btn" onclick="cAdd('${key}')">+</button>
+          <button class="cq-btn" onclick="window.cAdd('${key}')">+</button>
         </div>
       </div>
     </div>`).join('');
