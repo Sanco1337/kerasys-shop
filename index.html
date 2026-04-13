@@ -188,12 +188,26 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .total-lbl{font-size:14px;color:var(--text2);font-weight:700;}
 .total-val{font-size:26px;font-weight:900;color:var(--accent);}
+.discount-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px 14px;background:var(--accent-lt);border-radius:10px;}
+.discount-lbl{font-size:13px;color:var(--accent);font-weight:700;}
+.discount-val{font-size:15px;font-weight:900;color:var(--accent-dk);}
 
 .big-btn{width:100%;padding:15px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.1s,opacity 0.2s;margin-top:8px;}
 .big-btn:active{transform:scale(0.97);}
 .big-btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent-dk));color:#fff;box-shadow:0 4px 16px rgba(31,161,80,0.35);}
 .big-btn.sec{background:var(--accent-lt);color:var(--accent);}
+.big-btn.gold{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;}
 .big-btn:disabled{opacity:0.3;cursor:not-allowed;}
+
+.promo-input-wrap{display:flex;gap:8px;margin-bottom:14px;}
+.promo-input{flex:1;padding:12px 14px;border-radius:12px;border:2px dashed var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--text);outline:none;text-transform:uppercase;letter-spacing:2px;text-align:center;}
+.promo-input:focus{border-color:var(--accent);}
+.promo-input::placeholder{color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;}
+.promo-apply{padding:12px 18px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.promo-applied{background:var(--accent-lt);border:1.5px solid var(--accent);border-radius:10px;padding:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.promo-applied-info{font-size:13px;font-weight:700;color:var(--accent);}
+.promo-applied-code{font-size:16px;font-weight:900;color:var(--accent-dk);letter-spacing:2px;}
+.promo-remove{background:none;border:none;color:var(--a2);font-size:20px;cursor:pointer;padding:4px;}
 
 .f-grp{margin-bottom:14px;}
 .f-lbl{font-size:11px;color:var(--text2);font-weight:800;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
@@ -235,6 +249,46 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .contact-val{font-size:15px;font-weight:800;color:var(--text);margin-top:2px;}
 .contact-val a{color:var(--accent);text-decoration:none;}
 
+/* PROFILE */
+.profile-header{text-align:center;padding:20px;background:var(--card);border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:16px;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-dk));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;}
+.profile-name{font-size:18px;font-weight:900;color:var(--text);}
+.profile-phone{font-size:13px;color:var(--text2);margin-top:4px;}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.prof-stat{background:var(--card);border-radius:var(--rs);border:1.5px solid var(--border);padding:14px;text-align:center;}
+.prof-stat-val{font-size:20px;font-weight:900;color:var(--accent);}
+.prof-stat-lbl{font-size:11px;color:var(--text2);font-weight:700;margin-top:4px;}
+.prof-stat.highlight{background:var(--accent-lt);border-color:var(--accent);}
+
+.my-code-section{background:var(--card);border-radius:var(--r);border:2px solid var(--accent);padding:18px;margin-bottom:16px;text-align:center;}
+.my-code-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;}
+.my-code-value{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:4px;margin-bottom:8px;}
+.my-code-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+.my-code-progress{height:8px;background:var(--border);border-radius:4px;margin-top:12px;overflow:hidden;}
+.my-code-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-dk));border-radius:4px;transition:width 0.5s;}
+
+.order-history-item{background:var(--card);border-radius:var(--r);border:1.5px solid var(--border);padding:14px;margin-bottom:10px;}
+.oh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.oh-code{font-size:15px;font-weight:900;color:var(--accent);letter-spacing:2px;}
+.oh-date{font-size:11px;color:var(--text2);}
+.oh-status{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;display:inline-block;}
+.oh-status.yangi{background:rgba(31,161,80,0.12);color:var(--accent);}
+.oh-status.jarayonda{background:rgba(245,158,11,0.12);color:var(--a4);}
+.oh-status.tayyor{background:rgba(31,161,80,0.2);color:var(--accent-dk);}
+.oh-status.bekor{background:rgba(255,107,138,0.12);color:var(--a2);}
+.oh-items{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.oh-total{font-size:15px;font-weight:900;color:var(--accent);}
+
+.no-code-section{background:var(--card);border-radius:var(--r);border:1.5px solid var(--border);padding:24px;text-align:center;}
+.no-code-icon{font-size:48px;margin-bottom:12px;}
+.no-code-title{font-size:16px;font-weight:900;color:var(--text);margin-bottom:8px;}
+.no-code-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
+.no-code-progress-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;}
+.no-code-progress-bar{height:10px;background:var(--border);border-radius:5px;margin-bottom:8px;}
+.no-code-progress-fill{height:100%;background:var(--accent);border-radius:5px;}
+.no-code-progress-text{font-size:14px;font-weight:800;color:var(--accent);}
+
+/* ADMIN */
 .adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
 .a-tab{flex:1;min-width:0;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);white-space:nowrap;}
 .a-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
@@ -284,6 +338,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .var-add-inp:focus{border-color:var(--accent);}
 .var-add-btn{padding:8px 14px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
 
+/* PROMO CODES ADMIN */
+.promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.promo-code-item{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;}
+.promo-code-val{font-size:14px;font-weight:900;color:var(--accent);letter-spacing:2px;}
+.promo-code-used{font-size:11px;color:var(--text2);margin-top:2px;}
+.promo-code-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.promo-code-btn.take{background:var(--a2);color:#fff;}
+.promo-code-btn.give{background:var(--accent);color:#fff;}
+
 .toast{
   position:fixed;bottom:100px;left:50%;
   transform:translateX(-50%) translateY(20px);
@@ -311,6 +374,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
   <div class="hdr-right">
     <button class="hbtn" onclick="openContact()" style="font-size:18px;padding:8px 10px;">📞</button>
+    <button class="hbtn" onclick="openProfile()" style="font-size:18px;padding:8px 10px;">👤</button>
     <button class="hbtn" id="adminBtn" style="display:none;font-size:18px;padding:8px 10px;" onclick="openAdmin()">⚙️</button>
   </div>
 </div>
@@ -345,8 +409,25 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="s-title">🛒 Savat</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
-  <div class="s-body" id="cartBody"></div>
+  <div class="s-body">
+    <div class="promo-input-wrap" id="promoWrap">
+      <input type="text" class="promo-input" id="promoInput" placeholder="Promo kod (ixtiyoriy)">
+      <button class="promo-apply" onclick="applyPromo()">Qo'llash</button>
+    </div>
+    <div class="promo-applied" id="promoApplied" style="display:none">
+      <div>
+        <div class="promo-applied-info">5% chegirma</div>
+        <div class="promo-applied-code" id="appliedCode"></div>
+      </div>
+      <button class="promo-remove" onclick="removePromo()">✕</button>
+    </div>
+    <div id="cartBody"></div>
+  </div>
   <div class="s-foot">
+    <div class="discount-row" id="discountRow" style="display:none">
+      <span class="discount-lbl">Chegirma (5%)</span>
+      <span class="discount-val" id="discountVal">-0 so'm</span>
+    </div>
     <div class="total-row">
       <span class="total-lbl">Jami:</span>
       <span class="total-val" id="totalVal">0 so'm</span>
@@ -416,28 +497,28 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="contact-card">
       <div class="contact-row">
         <div class="contact-ic">📱</div>
-        <div>
-          <div class="contact-lbl">Telefon</div>
-          <div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div>
-        </div>
+        <div><div class="contact-lbl">Telefon</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">⏰</div>
-        <div>
-          <div class="contact-lbl">Ish vaqti</div>
-          <div class="contact-val">9:00 — 21:00</div>
-        </div>
+        <div><div class="contact-lbl">Ish vaqti</div><div class="contact-val">9:00 — 21:00</div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">🏪</div>
-        <div>
-          <div class="contact-lbl">Yetkazib berish</div>
-          <div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish</div>
-        </div>
+        <div><div class="contact-lbl">Yetkazib berish</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish</div></div>
       </div>
     </div>
     <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Qo'ng'iroq</button>
   </div>
+</div>
+
+<div class="sheet" id="profileSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">👤 Profil</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body" id="profileBody"></div>
 </div>
 
 <div class="sheet" id="adminSheet">
@@ -452,6 +533,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <button class="a-tab" onclick="aTab('search',this)">🔍 Qidir</button>
       <button class="a-tab" onclick="aTab('products',this)">📦 List</button>
       <button class="a-tab" onclick="aTab('orders',this)">📋 Ord</button>
+      <button class="a-tab" onclick="aTab('promo',this)">🎫 Promo</button>
       <button class="a-tab" onclick="aTab('add',this)">➕ Qo'sh</button>
     </div>
     <div id="aStats"></div>
@@ -464,6 +546,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
     <div id="aProducts" style="display:none"></div>
     <div id="aOrders" style="display:none"></div>
+    <div id="aPromo" style="display:none"></div>
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
       <div class="f-grp"><label class="f-lbl">Nomi *</label><input class="f-inp" id="pName" placeholder="Yumos konditsioner"></div>
@@ -534,7 +617,11 @@ const ICONS={kukun:'🧺',gel:'🧴',shampun:'🚿',sovun:'🧼',boshqa:'📦'};
 const STATUSES=['yangi','jarayonda','tayyor','bekor'];
 const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
 
+const PROMO_GOAL=1000000;
+const PROMO_DISCOUNT=0.05;
+
 let products=[],cart={},currentPage='cats',currentCat=null,editVars=[];
+let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
 const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
 const $=id=>document.getElementById(id);
@@ -545,14 +632,20 @@ function toast(msg){
   if(toastTimer) clearTimeout(toastTimer);
   el.textContent=msg;
   el.classList.add('show');
-  toastTimer=setTimeout(()=>{
-    el.classList.remove('show');
-    toastTimer=null;
-  },2000);
+  toastTimer=setTimeout(()=>{el.classList.remove('show');toastTimer=null;},2000);
 }
 window.toast=toast;
 
-window.renderCatsPage=function(){
+function genCode(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];return r;
+}
+function genPromoCode(){
+  const c='0123456789';
+  let r='PRM';for(let i=0;i<4;i++)r+=c[Math.floor(Math.random()*c.length)];return r;
+}
+
+function renderCatsPage(){
   currentPage='cats';
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
@@ -568,7 +661,7 @@ window.renderCatsPage=function(){
           <div class="cat-arr">→</div>
         </div>`).join('')}
     </div>`;
-};
+}
 window.openCat=id=>{currentCat=id;currentPage='products';renderProductsPage();};
 
 function renderProductsPage(){
@@ -647,21 +740,18 @@ window.openVarPicker=pid=>{
   function render(){
     $('varBody').innerHTML=`
       <div class="var-product-info">
-        <div class="var-thumb">
-          ${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}
-          ${icon}
-        </div>
+        <div class="var-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${icon}</div>
         <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(p.price)}</div></div>
       </div>
       <div class="var-label">Xilini tanlang:</div>
       <div class="var-list">
         ${p.variants.map(v=>`
-          <div class="var-item ${varSelected===v?'sel':''}" onclick="varSelect('${v.replace(/'/g,"\\'")}')">
+          <div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}')">
             <span class="var-item-name">${v}</span>
             <span class="var-item-check">${varSelected===v?'✓':''}</span>
           </div>`).join('')}
       </div>
-      <button class="big-btn pri" id="varAddBtn" onclick="confirmVar('${pid}')" ${!varSelected?'disabled':''}>Savatga qo'shish</button>`;
+      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>Savatga qo'shish</button>`;
   }
   window.varSelect=v=>{varSelected=v;render();};
   window.confirmVar=pid2=>{
@@ -680,16 +770,27 @@ window.openVarPicker=pid=>{
 function updateCartUI(){
   const items=Object.values(cart);
   const cnt=items.reduce((s,i)=>s+i.qty,0);
-  const tot=items.reduce((s,i)=>s+i.price*i.qty,0);
+  let tot=items.reduce((s,i)=>s+i.price*i.qty,0);
+  let discount=0;
+  if(appliedPromo) {discount=Math.round(tot*PROMO_DISCOUNT);tot-=discount;}
   const fc=$('floatCart');
   fc.classList.toggle('hidden',cnt===0);
   $('fcCount').textContent=cnt+' mahsulot';
   $('fcPrice').textContent=fmt(tot);
   $('totalVal').textContent=fmt(tot);
+  $('discountVal').textContent='-'+fmt(discount);
+  $('discountRow').style.display=discount>0?'flex':'none';
   $('orderBtn').disabled=cnt===0;
 }
 
-window.openCart=()=>{renderCartBody();$('overlay').classList.add('on');$('cartSheet').classList.add('on');};
+window.openCart=()=>{
+  renderCartBody();
+  $('overlay').classList.add('on');
+  $('cartSheet').classList.add('on');
+  $('promoInput').value=promoCode||'';
+  $('promoApplied').style.display=appliedPromo?'flex':'none';
+  if(appliedPromo)$('appliedCode').textContent=appliedPromo;
+};
 function renderCartBody(){
   const items=Object.entries(cart);
   const b=$('cartBody');
@@ -711,51 +812,166 @@ function renderCartBody(){
 }
 window.cAdd=key=>{if(!cart[key])return;cart[key].qty++;updateCartUI();renderCartBody();};
 window.cRm=key=>{if(!cart[key])return;cart[key].qty--;if(cart[key].qty<=0)delete cart[key];updateCartUI();renderCartBody();};
+
+window.applyPromo=async()=>{
+  const code=$('promoInput').value.trim().toUpperCase();
+  if(!code){toast('Kod kiriting');return;}
+  if(appliedPromo){toast('Sizda allaqachon promo kod bor');return;}
+  try{
+    const snap=await getDocs(collection(db,'promocodes'));
+    const found=snap.docs.find(d=>d.data().code===code&&!d.data().used);
+    if(!found){toast('❌ Promo kod noto\'g\'ri yoki ishlatilgan');return;}
+    appliedPromo=code;
+    promoCode=code;
+    $('promoApplied').style.display='flex';
+    $('appliedCode').textContent=code;
+    $('promoInput').value='';
+    updateCartUI();
+    toast('✅ 5% chegirma qo\'llandi!');
+  }catch(e){toast('Xatolik');}
+};
+window.removePromo=()=>{
+  appliedPromo=null;
+  promoCode=null;
+  $('promoApplied').style.display='none';
+  $('promoInput').value='';
+  updateCartUI();
+  toast('Promo kod olib tashlandi');
+};
+
 window.closeAll=()=>{
   $('overlay').classList.remove('on');
-  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet'].forEach(id=>$(id).classList.remove('on'));
+  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet'].forEach(id=>$(id).classList.remove('on'));
 };
 window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');};
 window.backToCart=()=>{$('orderSheet').classList.remove('on');$('cartSheet').classList.add('on');renderCartBody();};
 
-function genCode(){
-  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];return r;
-}
 window.submitOrder=async()=>{
   const name=g('oName'),phone=g('oPhone'),time=$('oTime').value,note=g('oNote');
   if(!name||!phone||!time){toast('❗ Ism, telefon va vaqt kiritilsin');return;}
   const items=Object.values(cart);
-  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  let total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  let discount=0;
+  if(appliedPromo){discount=Math.round(total*PROMO_DISCOUNT);total-=discount;}
   const code=genCode();
+  const userId=tgUser?.id?.toString()||tgUser?.username||phone;
   try{
     await addDoc(collection(db,'orders'),{
       code,name,phone,time,note,
       telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'—',
+      userId,
       items:items.map(i=>({name:i.name,price:i.price,qty:i.qty,variant:i.variant||null})),
-      total,status:'yangi',createdAt:new Date()
+      total,originalTotal:items.reduce((s,i)=>s+i.price*i.qty,0),
+      discount,promoCode:appliedPromo||null,
+      status:'yangi',createdAt:new Date()
     });
-    cart={};updateCartUI();
+    if(appliedPromo){
+      const snap2=await getDocs(collection(db,'promocodes'));
+      const myPromo=snap2.docs.find(d=>d.data().code===appliedPromo);
+      if(myPromo) await updateDoc(doc(db,'promocodes',myPromo.id),{used:true,usedBy:userId,usedAt:new Date()});
+    }
+    cart={};appliedPromo=null;promoCode=null;
+    updateCartUI();
     $('orderSheet').classList.remove('on');
     $('successCode').textContent=code;
     $('successSheet').classList.add('on');
     ['oName','oPhone','oNote'].forEach(id=>$(id).value='');
     $('oTime').value='';
+    loadMyOrders();
   }catch(e){toast('❌ Xatolik');}
 };
 
 window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').classList.add('on');};
+
+/* PROFILE */
+window.openProfile=async()=>{
+  $('overlay').classList.add('on');
+  $('profileSheet').classList.add('on');
+  loadMyOrders();
+};
+
+async function loadMyOrders(){
+  const userId=tgUser?.id?.toString()||tgUser?.username||'';
+  const phone=tgUser?.phone||'';
+  const body=$('profileBody');
+  body.innerHTML='<div class="spin"></div>';
+  try{
+    let orders=[];
+    if(userId){
+      const snap1=await getDocs(query(collection(db,'orders'),where('userId','==',userId)));
+      orders=[...snap1.docs];
+    }
+    if(phone){
+      const snap2=await getDocs(query(collection(db,'orders'),where('phone','==',phone)));
+      snap2.docs.forEach(d=>{if(!orders.find(o=>o.id===d.id))orders.push(d);});
+    }
+    orders.sort((a,b)=>b.data().createdAt?.seconds-a.data().createdAt?.seconds);
+    const totalSpent=orders.filter(o=>o.data().status!=='bekor').reduce((s,o)=>s+(o.data().total||0),0);
+    const promoSnap=await getDocs(query(collection(db,'promocodes'),where('usedBy','==',userId)));
+    const myCode=promoSnap.docs[0]?.data()?.code||null;
+    const progress=Math.min((totalSpent/PROMO_GOAL)*100,100);
+    const remaining=PROMO_GOAL-totalSpent;
+    body.innerHTML=`
+      <div class="profile-header">
+        <div class="profile-avatar">${tgUser?.first_name?.[0]||'👤'}</div>
+        <div class="profile-name">${tgUser?.first_name||'Mijoz'}</div>
+        <div class="profile-phone">${tgUser?.username?'@'+tgUser.username:phone||''}</div>
+      </div>
+      <div class="profile-stats">
+        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">Buyurtmalar</div></div>
+        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">Jami sarflangan</div></div>
+      </div>
+      ${myCode?`
+        <div class="my-code-section">
+          <div class="my-code-badge">🎁 Sizning promo kodingiz</div>
+          <div class="my-code-value">${myCode}</div>
+          <div class="my-code-desc">5% chegirma barcha haridlaringizda!</div>
+        </div>
+      `:`
+        <div class="no-code-section">
+          <div class="no-code-icon">🏆</div>
+          <div class="no-code-title">1 000 000 so'm sarflanganda promo kod!</div>
+          <div class="no-code-desc">Bizning do'konimizda ko'proq xarid qiling va keyingi haridlaringizda 5% chegirma oling!</div>
+          <div class="no-code-progress-title">Progress: ${fmt(totalSpent)} / ${fmt(PROMO_GOAL)}</div>
+          <div class="no-code-progress-bar"><div class="no-code-progress-fill" style="width:${progress}%"></div></div>
+          <div class="no-code-progress-text">${remaining>0?fmt(remaining)+' qoldi':'🎉 Promo kodingiz tayyor!'}</div>
+        </div>
+      `}
+      <div style="font-size:16px;font-weight:900;margin:20px 0 12px">📋 Buyurtmalar tarixi</div>
+      ${!orders.length?'<div style="text-align:center;padding:30px;color:var(--text2)">Buyurtma yo\'q</div>':
+        orders.map(d=>{
+          const o=d.data();
+          const st=o.status||'yangi';
+          const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleDateString('uz-UZ'):'—';
+          return `<div class="order-history-item">
+            <div class="oh-top">
+              <span class="oh-code">${o.code}</span>
+              <span class="oh-status ${st}">${S_LABEL[st]||st}</span>
+            </div>
+            <div class="oh-date">${date} · 🕐 ${o.time||'—'}</div>
+            <div class="oh-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty}`).join(', ')}</div>
+            <div class="oh-total">${fmt(o.total)}${o.discount?` <span style="font-size:12px;color:var(--a2)">(-${fmt(o.discount)})</span>`:''}</div>
+          </div>`;
+        }).join('')}
+    `;
+  }catch(e){body.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik</div>';}
+}
+
+/* ADMIN */
 window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();};
 
+let adminTab='stats';
 window.aTab=(name,btn)=>{
+  adminTab=name;
   document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  ['aStats','aSearch','aProducts','aOrders','aAdd'].forEach(id=>$(id).style.display='none');
-  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',add:'aAdd'};
+  ['aStats','aSearch','aProducts','aOrders','aPromo','aAdd'].forEach(id=>$(id).style.display='none');
+  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',promo:'aPromo',add:'aAdd'};
   $(map[name]).style.display='block';
   if(name==='orders')loadAdminOrders();
   if(name==='products')loadAdminProducts();
   if(name==='stats')loadStats();
+  if(name==='promo')loadPromoCodes();
 };
 
 async function loadStats(){
@@ -780,6 +996,45 @@ async function loadStats(){
   }catch(e){el.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik</div>';}
 }
 
+async function loadPromoCodes(){
+  const el=$('aPromo');
+  el.innerHTML='<div class="spin"></div>';
+  try{
+    let snap=await getDocs(collection(db,'promocodes'));
+    if(snap.empty){
+      const batch=[];
+      for(let i=0;i<20;i++) batch.push({code:genPromoCode(),used:false,createdAt:new Date()});
+      for(const d of batch) await addDoc(collection(db,'promocodes'),d);
+      snap=await getDocs(collection(db,'promocodes'));
+    }
+    const codes=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const available=codes.filter(c=>!c.used).length;
+    el.innerHTML=`
+      <div style="background:var(--accent-lt);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">
+        <div style="font-size:14px;color:var(--text2);font-weight:700">Jami promo kodlar</div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent)">${codes.length}</div>
+        <div style="font-size:12px;color:var(--text2)">${available} ta mavjud, ${codes.length-available} ta ishlatilgan</div>
+      </div>
+      <div class="promo-grid">
+        ${codes.map(c=>`<div class="promo-code-item">
+          <div>
+            <div class="promo-code-val">${c.code}</div>
+            <div class="promo-code-used">${c.used?(c.usedBy||'ishlatilgan'):'✅ Mavjud'}</div>
+          </div>
+          ${!c.used?`<button class="promo-code-btn take" onclick="takePromo('${c.id}')" title="Olib qo'yish">✕</button>`:''}
+        </div>`).join('')}
+      </div>
+    `;
+  }catch(e){el.innerHTML='<div style="color:var(--text2)">Xatolik</div>';}
+}
+
+window.takePromo=async id=>{
+  if(!confirm('Promo kodni olib tashlamoqchimisiz?'))return;
+  await deleteDoc(doc(db,'promocodes',id));
+  toast('🗑 Olib tashlandi');
+  loadPromoCodes();
+};
+
 window.searchOrder=async()=>{
   const code=$('codeSearch').value.trim().toUpperCase();
   const el=$('searchResult');
@@ -798,9 +1053,9 @@ function renderOrdCard(oid,o){
   return `<div class="ord-card">
     <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${S_LABEL[st]||st}</span></div>
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
-    <div class="ord-total">Jami: ${fmt(o.total)}</div>
+    <div class="ord-total">Jami: ${fmt(o.total)}${o.discount?` (chegirma: -${fmt(o.discount)})`:''}</div>
     <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
-    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'#fff':'var(--accent)'}" onclick="setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
+    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'#fff':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
   </div>`;
 }
 
@@ -824,9 +1079,9 @@ function loadAdminProducts(){
       <div class="adm-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${ICONS[p.cat]||'📦'}</div>
       <div class="adm-info"><div class="adm-name">${p.name}</div><div class="adm-meta">${fmt(p.price)} · ${active?'✅':'❌'}${p.variants?.length?` · ${p.variants.length} xil`:''}</div></div>
       <div class="adm-acts">
-        <button class="ia edit" onclick="editP('${p.id}')">✏️</button>
-        <button class="ia tog ${active?'':'off'}" onclick="togP('${p.id}',${active})">${active?'👁':'🚫'}</button>
-        <button class="ia del" onclick="delP('${p.id}')">🗑</button>
+        <button class="ia edit" onclick="window.editP('${p.id}')">✏️</button>
+        <button class="ia tog ${active?'':'off'}" onclick="window.togP('${p.id}',${active})">${active?'👁':'🚫'}</button>
+        <button class="ia del" onclick="window.delP('${p.id}')">🗑</button>
       </div>
     </div>`;
   }).join('');
@@ -834,13 +1089,12 @@ function loadAdminProducts(){
 
 window.addVarTag=()=>{
   const inp=$('varInput'),val=inp.value.trim();
-  if(!val)return;
-  if(!editVars.includes(val))editVars.push(val);
+  if(!val)return;if(!editVars.includes(val))editVars.push(val);
   inp.value='';renderVarTags();
 };
 window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);renderVarTags();};
 function renderVarTags(){
-  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}<button class="var-tag-del" onclick="removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}<button class="var-tag-del" onclick="window.removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
 }
 window.editP=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
@@ -849,7 +1103,7 @@ window.editP=id=>{
   $('pBadge').value=p.badge||'';$('pOld').value=p.oldPrice||'';
   editVars=[...(p.variants||[])];renderVarTags();
   $('cancelEdit').style.display='block';
-  aTab('add',document.querySelectorAll('.a-tab')[4]);
+  aTab('add',document.querySelectorAll('.a-tab')[5]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';
