@@ -8,6 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
+  /* DARK MODE RANGLARI */
+body.dark {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1f242c;
+  --card: #161b22;
+  --card2: #21262d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --border: rgba(240,246,252,0.1);
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+/* Dark modeda header va sheetlar oq bo'lib qolmasligi uchun */
+body.dark .hdr, body.dark .sheet, body.dark .cat-card, body.dark .p-card, body.dark .s-foot {
+  background: var(--bg2);
+}
   --bg:#F5FAF6;
   --bg2:#FFFFFF;
   --bg3:#EDF7EF;
@@ -373,6 +389,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="logo-tx">Kerasys<span>Shop</span></div>
   </div>
   <div class="hdr-right">
+    <button onclick="toggleTheme()" class="hbtn" style="padding: 8px 10px;">     <span id="theme-icon">🌙</span>   </button>      <button class="hbtn" id="adminBtn" style="display:none" onclick="openAdmin()">⚙️</button>   <button class="hbtn" onclick="openProfile()">👤</button> </div> 
     <button class="hbtn" onclick="openContact()" style="font-size:18px;padding:8px 10px;">📞</button>
     <button class="hbtn" onclick="openProfile()" style="font-size:18px;padding:8px 10px;">👤</button>
     <button class="hbtn" id="adminBtn" style="display:none;font-size:18px;padding:8px 10px;" onclick="openAdmin()">⚙️</button>
@@ -583,6 +600,31 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 
 <div class="toast" id="toast"></div>
+
+// Mavzuni saqlash va yuklash funksiyasi
+function toggleTheme() {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
+    
+    body.classList.toggle('dark');
+    
+    if (body.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+        icon.innerText = '☀️';
+    } else {
+        localStorage.setItem('theme', 'light');
+        icon.innerText = '🌙';
+    }
+}
+
+// Sahifa yuklanganda oxirgi tanlovni tiklash
+(function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+    }
+})();
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
