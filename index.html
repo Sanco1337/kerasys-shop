@@ -385,8 +385,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="logo-tx">Kerasys<span>Shop</span></div>
   </div>
   <div class="hdr-right">
-    <button class="hbtn" id="langBtn" onclick="toggleLang()">🇷🇺</button>
-    <button class="hbtn" id="themeBtn" onclick="toggleTheme()">🌙</button>
     <button class="hbtn" onclick="openContact()" style="font-size:18px;padding:8px 10px;">📞</button>
     <button class="hbtn" onclick="openProfile()" style="font-size:18px;padding:8px 10px;">👤</button>
     <button class="hbtn" id="adminBtn" style="display:none;font-size:18px;padding:8px 10px;" onclick="openAdmin()">⚙️</button>
@@ -411,7 +409,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="varSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">${t('pickVariant')}</div>
+    <div class="s-title" id="varSheetTitle">Xilini tanlang</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="varBody"></div>
@@ -518,10 +516,16 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="profileSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">👤 Profil</div>
+    <div class="s-title" id="profileTitle">👤 Profil</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
-  <div class="s-body" id="profileBody"></div>
+  <div class="s-body">
+    <div style="display:flex;gap:10px;margin-bottom:16px;">
+      <button class="hbtn" style="flex:1" onclick="toggleTheme()" id="themeBtnProfile">🌙 ${currentLang==='uz'?'Qorong\'u':'Тёмная'}</button>
+      <button class="hbtn" style="flex:1" onclick="toggleLang()" id="langBtnProfile">${currentLang==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek'}</button>
+    </div>
+    <div id="profileBody"></div>
+  </div>
 </div>
 
 <div class="sheet" id="adminSheet">
@@ -605,8 +609,6 @@ const db=getFirestore(fbApp);
 
 if(localStorage.getItem('lang'))currentLang=localStorage.getItem('lang');
 if(isDarkTheme)document.body.classList.add('dark');
-$('langBtn').textContent=currentLang==='uz'?'🇷🇺':'🇺🇿';
-$('themeBtn').textContent=isDarkTheme?'☀️':'🌙';
 renderTimeSelect();
 
 const ADMIN="notimetoyouu";
@@ -663,16 +665,19 @@ window.toast=toast;
 
 window.toggleLang=()=>{
   currentLang=currentLang==='uz'?'ru':'uz';
-  $('langBtn').textContent=currentLang==='uz'?'🇷🇺':'🇺🇿';
+  if($('langBtnProfile'))$('langBtnProfile').textContent=currentLang==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek';
   localStorage.setItem('lang',currentLang);
   if(currentPage==='cats')renderCatsPage();
   else if(currentPage==='products')renderProductsPage();
   renderTimeSelect();
+  if($('profileTitle')){
+    $('profileTitle').textContent=currentLang==='uz'?'👤 Profil':'👤 Профиль';
+  }
 };
 window.toggleTheme=()=>{
   isDarkTheme=!isDarkTheme;
   document.body.classList.toggle('dark',isDarkTheme);
-  $('themeBtn').textContent=isDarkTheme?'☀️':'🌙';
+  if($('themeBtnProfile'))$('themeBtnProfile').textContent=isDarkTheme?'☀️ '+(currentLang==='uz'?'Yorug\'':'Светлая'):'🌙 '+(currentLang==='uz'?'Qorong\'u':'Тёмная');
   localStorage.setItem('darkTheme',isDarkTheme);
 };
 function renderTimeSelect(){
@@ -782,6 +787,7 @@ window.openVarPicker=pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
   varSelected=null;varSelectedPrice=null;
   const icon=ICONS[p.cat]||'📦';
+  $('varSheetTitle').textContent=t('pickVariant');
   function render(){
     $('varBody').innerHTML=`
       <div class="var-product-info">
