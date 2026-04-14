@@ -1129,4 +1129,46 @@ window.saveProduct=async()=>{
 updateCartUI();
 </script>
 </body>
+  <script>
+  (function() {
+    function activateBackButton() {
+      // GitHub shablonidagi "Go to parent directory" va chapga strelka belgilarini topamiz
+      const selectors = [
+        '[title="Go to parent directory"]',
+        '.octicon-arrow-left',
+        'a[href="#"]'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          const clickable = el.closest('a') || el.closest('tr') || el;
+          
+          // Tugmani vizual ravishda bosiladigan qilamiz
+          clickable.style.cursor = 'pointer';
+          
+          clickable.onclick = function(e) {
+            // Agar u orqaga qaytish qatori bo'lsa yoki bo'sh link bo'lsa
+            if (this.innerText.trim() === '..' || this.getAttribute('href') === '#' || !this.getAttribute('href')) {
+              e.preventDefault();
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                console.log("Orqaga qaytish uchun tarix mavjud emas.");
+              }
+            }
+          };
+        });
+      });
+    }
+
+    // Sahifa yuklanganda ishga tushiramiz
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', activateBackButton);
+    } else {
+      activateBackButton();
+    }
+  })();
+</script>
+
 </html>
