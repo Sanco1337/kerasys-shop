@@ -601,28 +601,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div class="toast" id="toast"></div>
 
-
-function toggleTheme() {
-    const body = document.body;
-    const icon = document.getElementById('theme-icon');
-    
-    body.classList.toggle('dark');
-    
-    if (body.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-        icon.innerText = '☀️';
-    } else {
-        localStorage.setItem('theme', 'light');
-        icon.innerText = '🌙';
-    }
-}
-
-// Sahifa yuklanganda oxirgi tanlovni tiklash
-(function() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark');
-        document.getElementById('theme-icon').innerText = '☀️';
     }
 })();
 
