@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
+<html lang="uz" style="--tg-viewport-height: 100vh; --tg-viewport-stable-height: 100vh;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Kerasys Shop</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5FAF6;
@@ -36,11 +34,13 @@ body.dark{
   --border:rgba(255,255,255,0.1);
   --shadow:0 2px 16px rgba(0,0,0,0.3);
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{
+  margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
 .hdr{
-  background:#FFFFFF;
+  background:var(--card);
   padding:14px 16px 12px;
   border-bottom:1.5px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
@@ -69,13 +69,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .fc-icon{font-size:22px;}
 .fc-info{display:flex;flex-direction:column;}
 .fc-count{font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);}
-.fc-price{font-size:15px;font-weight:900;color:#fff;}
+.fc-price{font-size:15px;font-weight:900;color:var(--card);}
 
 .main{padding:16px 12px 100px;}
 
 .cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .cat-card{
-  background:#fff;border-radius:var(--r);
+  background:var(--card);border-radius:var(--r);
   border:1.5px solid var(--border);padding:20px 16px;
   cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;
   display:flex;flex-direction:column;align-items:flex-start;gap:8px;
@@ -95,7 +95,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 .back-btn{
   display:flex;align-items:center;gap:8px;
-  background:#fff;border:1.5px solid var(--border);
+  background:var(--card);border:1.5px solid var(--border);
   border-radius:12px;padding:9px 16px;margin-bottom:14px;
   cursor:pointer;font-size:14px;font-weight:700;color:var(--text2);
   box-shadow:var(--shadow);
@@ -105,7 +105,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .p-card{
-  background:#fff;border-radius:var(--r);
+  background:var(--card);border-radius:var(--r);
   border:1.5px solid var(--border);overflow:hidden;
   transition:transform 0.15s;position:relative;
   box-shadow:var(--shadow);
@@ -121,7 +121,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .p-fallback{font-size:48px;line-height:1;z-index:1;position:relative;}
 .p-badge{
   position:absolute;top:8px;left:8px;
-  background:var(--accent);color:#fff;
+  background:var(--accent);color:var(--card);
   font-size:9px;font-weight:800;padding:3px 8px;
   border-radius:20px;z-index:3;text-transform:uppercase;
 }
@@ -133,7 +133,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .p-oldprice{font-size:10px;color:var(--text2);text-decoration:line-through;}
 .add-btn{
   width:30px;height:30px;border-radius:9px;
-  background:var(--accent);color:#fff;border:none;
+  background:var(--accent);color:var(--card);border:none;
   font-size:20px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:transform 0.1s;box-shadow:0 3px 10px rgba(31,161,80,0.3);
@@ -148,7 +148,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .overlay.on{opacity:1;pointer-events:all;}
 .sheet{
   position:fixed;bottom:0;left:0;right:0;
-  background:#fff;border-radius:24px 24px 0 0;
+  background:var(--card);border-radius:24px 24px 0 0;
   z-index:201;transform:translateY(100%);
   transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
   max-height:92vh;display:flex;flex-direction:column;
@@ -161,7 +161,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .s-close{background:var(--accent-lt);border:none;width:30px;height:30px;border-radius:8px;color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;}
 .s-body{flex:1;overflow-y:auto;padding:14px 20px;scrollbar-width:none;}
 .s-body::-webkit-scrollbar{display:none;}
-.s-foot{padding:12px 20px 20px;flex-shrink:0;border-top:1.5px solid var(--border);background:#fff;}
+.s-foot{padding:12px 20px 20px;flex-shrink:0;border-top:1.5px solid var(--border);background:var(--card);}
 
 .var-product-info{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px solid var(--border);}
 .var-thumb{width:56px;height:56px;border-radius:12px;background:var(--card2);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:28px;}
@@ -181,7 +181,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .var-item-name{font-size:14px;font-weight:700;color:var(--text);}
 .var-item-price{font-size:12px;color:var(--text2);font-weight:600;}
 .var-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.2s;}
-.var-item.sel .var-item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
+.var-item.sel .var-item-check{background:var(--accent);border-color:var(--accent);color:var(--card);}
 
 .empty{text-align:center;padding:50px 0;color:var(--text2);}
 .empty-ic{font-size:56px;margin-bottom:12px;}
@@ -206,16 +206,16 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 .big-btn{width:100%;padding:15px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.1s,opacity 0.2s;margin-top:8px;}
 .big-btn:active{transform:scale(0.97);}
-.big-btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent-dk));color:#fff;box-shadow:0 4px 16px rgba(31,161,80,0.35);}
+.big-btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent-dk));color:var(--card);box-shadow:0 4px 16px rgba(31,161,80,0.35);}
 .big-btn.sec{background:var(--accent-lt);color:var(--accent);}
-.big-btn.gold{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;}
+.big-btn.gold{background:linear-gradient(135deg,#F59E0B,#D97706);color:var(--card);}
 .big-btn:disabled{opacity:0.3;cursor:not-allowed;}
 
 .promo-input-wrap{display:flex;gap:8px;margin-bottom:14px;}
 .promo-input{flex:1;padding:12px 14px;border-radius:12px;border:2px dashed var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--text);outline:none;text-transform:uppercase;letter-spacing:2px;text-align:center;}
 .promo-input:focus{border-color:var(--accent);}
 .promo-input::placeholder{color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;}
-.promo-apply{padding:12px 18px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.promo-apply{padding:12px 18px;border-radius:12px;border:none;background:var(--accent);color:var(--card);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 .promo-applied{background:var(--accent-lt);border:1.5px solid var(--accent);border-radius:10px;padding:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
 .promo-applied-info{font-size:13px;font-weight:700;color:var(--accent);}
 .promo-applied-code{font-size:16px;font-weight:900;color:var(--accent-dk);letter-spacing:2px;}
@@ -233,7 +233,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .f-inp:focus,.f-sel:focus,.f-ta:focus{border-color:var(--accent);}
 .f-inp::placeholder{color:var(--text2);}
 .f-ta{resize:none;min-height:70px;}
-.f-sel option{background:#fff;}
+.f-sel option{background:var(--card);}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .f-info{
   background:var(--accent-lt);border:1.5px solid var(--border);
@@ -277,7 +277,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .setting-btn:active{transform:scale(0.97);}
 
 .my-code-section{background:var(--card);border-radius:var(--r);border:2px solid var(--accent);padding:18px;margin-bottom:16px;text-align:center;}
-.my-code-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;}
+.my-code-badge{background:var(--accent);color:var(--card);font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;}
 .my-code-value{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:4px;margin-bottom:8px;}
 .my-code-desc{font-size:12px;color:var(--text2);line-height:1.6;}
 .my-code-progress{height:8px;background:var(--border);border-radius:4px;margin-top:12px;overflow:hidden;}
@@ -307,9 +307,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 /* ADMIN */
 .adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
 .a-tab{flex:1;min-width:0;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);white-space:nowrap;}
-.a-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.a-tab.on{background:var(--accent);border-color:var(--accent);color:var(--card);}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.stat-c{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:14px;box-shadow:var(--shadow);}
+.stat-c{background:var(--card);border-radius:14px;border:1.5px solid var(--border);padding:14px;box-shadow:var(--shadow);}
 .stat-ic{font-size:22px;margin-bottom:4px;}
 .stat-v{font-size:20px;font-weight:900;color:var(--accent);}
 .stat-l{font-size:11px;color:var(--text2);font-weight:700;}
@@ -317,9 +317,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .search-inp{flex:1;padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;}
 .search-inp:focus{border-color:var(--accent);}
 .search-inp::placeholder{color:var(--text2);}
-.search-btn{padding:10px 16px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.search-btn{padding:10px 16px;border-radius:12px;border:none;background:var(--accent);color:var(--card);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 .adm-p{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);padding:10px 12px;margin-bottom:8px;}
-.adm-thumb{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--border);flex-shrink:0;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.adm-thumb{width:44px;height:44px;border-radius:10px;background:var(--card);border:1px solid var(--border);flex-shrink:0;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:20px;}
 .adm-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
 .adm-thumb img.err{display:none;}
 .adm-info{flex:1;min-width:0;}
@@ -329,9 +329,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .ia{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 .ia.edit{background:var(--accent-lt);color:var(--accent);}
 .ia.tog{background:#e8faf2;color:#1FA150;}
-.ia.tog.off{background:#fff0f3;color:var(--a2);}
-.ia.del{background:#fff0f3;color:var(--a2);}
-.ord-card{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);}
+.ia.tog.off{background:var(--card)0f3;color:var(--a2);}
+.ia.del{background:var(--card)0f3;color:var(--a2);}
+.ord-card{background:var(--card);border-radius:14px;border:1.5px solid var(--border);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);}
 .ord-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .ord-code-badge{font-size:14px;font-weight:900;color:var(--accent);letter-spacing:2px;}
 .ord-status{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;}
@@ -347,13 +347,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .vars-admin{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);}
 .vars-admin-lbl{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
 .var-tag-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.var-tag{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--text);}
+.var-tag{display:flex;align-items:center;gap:5px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--text);}
 .var-tag-price{font-size:10px;color:var(--accent);font-weight:600;}
 .var-tag-del{background:none;border:none;color:var(--a2);font-size:14px;cursor:pointer;padding:0;}
 .var-add-row{display:flex;gap:8px;}
-.var-add-inp{flex:1;padding:8px 12px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);outline:none;}
+.var-add-inp{flex:1;padding:8px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);outline:none;}
 .var-add-inp:focus{border-color:var(--accent);}
-.var-add-btn{padding:8px 14px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.var-add-btn{padding:8px 14px;border-radius:9px;border:none;background:var(--accent);color:var(--card);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
 
 /* PROMO CODES ADMIN */
 .promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
@@ -361,13 +361,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .promo-code-val{font-size:14px;font-weight:900;color:var(--accent);letter-spacing:2px;}
 .promo-code-used{font-size:11px;color:var(--text2);margin-top:2px;}
 .promo-code-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
-.promo-code-btn.take{background:var(--a2);color:#fff;}
-.promo-code-btn.give{background:var(--accent);color:#fff;}
+.promo-code-btn.take{background:var(--a2);color:var(--card);}
+.promo-code-btn.give{background:var(--accent);color:var(--card);}
 
 .toast{
   position:fixed;bottom:100px;left:50%;
   transform:translateX(-50%) translateY(20px);
-  background:#1A2E1D;color:#fff;
+  background:#1A2E1D;color:var(--card);
   padding:12px 24px;border-radius:12px;
   font-size:14px;font-weight:700;z-index:999;
   opacity:0;pointer-events:none;
@@ -399,15 +399,47 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="float-cart hidden" id="floatCart" onclick="openCart()">
   <div class="fc-icon">🛒</div>
   <div class="fc-info">
-    <div class="fc-count" id="fcCount">0 mahsulot</div>
+    <div class="fc-count" id="fcCount">0 товаров</div>
     <div class="fc-price" id="fcPrice">0 so'm</div>
   </div>
 </div>
 
 <div class="main" id="mainArea">
-  <div class="spin"></div>
-  <div style="text-align:center;color:var(--text2);font-weight:700;">Yuklanmoqda...</div>
-</div>
+    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">Категории</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Выберите категорию</div>
+    <div class="cats-grid">
+      
+        <div class="cat-card" onclick="window.openCat('kukun')">
+          <div class="cat-ic">🧺</div>
+          <div class="cat-nm">Стиральные порошки</div>
+          <div class="cat-cnt">7 товаров</div>
+          <div class="cat-arr">→</div>
+        </div>
+        <div class="cat-card" onclick="window.openCat('gel')">
+          <div class="cat-ic">🧴</div>
+          <div class="cat-nm">Гели</div>
+          <div class="cat-cnt">0 товаров</div>
+          <div class="cat-arr">→</div>
+        </div>
+        <div class="cat-card" onclick="window.openCat('shampun')">
+          <div class="cat-ic">🚿</div>
+          <div class="cat-nm">Шампуни</div>
+          <div class="cat-cnt">1 товаров</div>
+          <div class="cat-arr">→</div>
+        </div>
+        <div class="cat-card" onclick="window.openCat('sovun')">
+          <div class="cat-ic">🧼</div>
+          <div class="cat-nm">Мыло</div>
+          <div class="cat-cnt">1 товаров</div>
+          <div class="cat-arr">→</div>
+        </div>
+        <div class="cat-card" onclick="window.openCat('boshqa')">
+          <div class="cat-ic">📦</div>
+          <div class="cat-nm">Другие товары</div>
+          <div class="cat-cnt">1 товаров</div>
+          <div class="cat-arr">→</div>
+        </div>
+    </div></div>
 
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
@@ -423,17 +455,17 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="cartSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">🛒 Savat</div>
+    <div class="s-title">🛒 Корзина</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="promo-input-wrap" id="promoWrap">
-      <input type="text" class="promo-input" id="promoInput" placeholder="Promo kod (ixtiyoriy)">
-      <button class="promo-apply" onclick="applyPromo()">Qo'llash</button>
+      <input type="text" class="promo-input" id="promoInput" placeholder="Промокод (необязательно)">
+      <button class="promo-apply" onclick="applyPromo()">Применить</button>
     </div>
     <div class="promo-applied" id="promoApplied" style="display:none">
       <div>
-        <div class="promo-applied-info">5% chegirma</div>
+        <div class="promo-applied-info">5% скидка</div>
         <div class="promo-applied-code" id="appliedCode"></div>
       </div>
       <button class="promo-remove" onclick="removePromo()">✕</button>
@@ -442,14 +474,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
   <div class="s-foot">
     <div class="discount-row" id="discountRow" style="display:none">
-      <span class="discount-lbl">Chegirma (5%)</span>
+      <span class="discount-lbl">Скидка (5%)</span>
       <span class="discount-val" id="discountVal">-0 so'm</span>
     </div>
     <div class="total-row">
-      <span class="total-lbl">Jami:</span>
+      <span class="total-lbl">Итого:</span>
       <span class="total-val" id="totalVal">0 so'm</span>
     </div>
-    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled>Buyurtma berish →</button>
+    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled="">Оформить заказ →</button>
   </div>
 </div>
 
@@ -463,27 +495,27 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="f-info">
       ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.
     </div>
-    <div class="f-grp"><label class="f-lbl">Ism Familiya *</label><input class="f-inp" id="oName" placeholder="Sarvar Karimov"></div>
-    <div class="f-grp"><label class="f-lbl">Telefon *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
-    <div class="f-grp"><label class="f-lbl">Olib ketish vaqti *</label>
+    <div class="f-grp"><label class="f-lbl">Имя Фамилия *</label><input class="f-inp" id="oName" placeholder="Иван Иванов"></div>
+    <div class="f-grp"><label class="f-lbl">Телефон *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+    <div class="f-grp"><label class="f-lbl">Время получения *</label>
       <select class="f-sel" id="oTime">
-        <option value="">— Tanlang —</option>
-        <option>Bugun 10:00–12:00</option>
-        <option>Bugun 12:00–14:00</option>
-        <option>Bugun 14:00–16:00</option>
-        <option>Bugun 16:00–18:00</option>
-        <option>Bugun 18:00–20:00</option>
-        <option>Ertaga 10:00–12:00</option>
-        <option>Ertaga 12:00–14:00</option>
-        <option>Ertaga 14:00–16:00</option>
-        <option>Ertaga 16:00–18:00</option>
-        <option>Ertaga 18:00–20:00</option>
-        <option>Boshqa (izohda yozing)</option>
+        <option value="">— Выберите —</option>
+        <option>Сегодня 10:00–12:00</option>
+        <option>Сегодня 12:00–14:00</option>
+        <option>Сегодня 14:00–16:00</option>
+        <option>Сегодня 16:00–18:00</option>
+        <option>Сегодня 18:00–20:00</option>
+        <option>Завтра 10:00–12:00</option>
+        <option>Завтра 12:00–14:00</option>
+        <option>Завтра 14:00–16:00</option>
+        <option>Завтра 16:00–18:00</option>
+        <option>Завтра 18:00–20:00</option>
+        <option>Другое (напишите в комментарии)</option>
       </select>
     </div>
-    <div class="f-grp"><label class="f-lbl">Izoh</label><textarea class="f-ta" id="oNote" placeholder="Boshqa vaqt yoki ma'lumot..."></textarea></div>
-    <button class="big-btn pri" onclick="submitOrder()">✅ Tasdiqlash</button>
-    <button class="big-btn sec" onclick="backToCart()">← Orqaga</button>
+    <div class="f-grp"><label class="f-lbl">Комментарий</label><textarea class="f-ta" id="oNote" placeholder="Другое время или информация..."></textarea></div>
+    <button class="big-btn pri" onclick="submitOrder()">✅ Подтвердить</button>
+    <button class="big-btn sec" onclick="backToCart()">← Назад</button>
   </div>
 </div>
 
@@ -492,14 +524,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="s-body">
     <div class="success-box">
       <div class="success-icon">🎉</div>
-      <div class="success-title">Buyurtma qabul qilindi!</div>
-      <div class="success-sub">Siz belgilagan vaqtda kelib olishingiz mumkin.<br>Kodni saqlang:</div>
+      <div class="success-title">Заказ принят!</div>
+      <div class="success-sub">Вы можете забрать в указанное время.<br>Сохраните код:</div>
       <div class="order-code-box">
-        <div class="order-code-lbl">Buyurtma kodi</div>
+        <div class="order-code-lbl">Код заказа</div>
         <div class="order-code" id="successCode">------</div>
-        <div class="order-code-hint">Do'konga kelganda shu kodni ko'rsating</div>
+        <div class="order-code-hint">Покажите этот код в магазине</div>
       </div>
-      <button class="big-btn pri" onclick="closeAll()">Davom etish 🛍</button>
+      <button class="big-btn pri" onclick="closeAll()">Продолжить 🛍</button>
     </div>
   </div>
 </div>
@@ -507,32 +539,32 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="contactSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">📞 Aloqa</div>
+    <div class="s-title">📞 Контакты</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="contact-card">
       <div class="contact-row">
         <div class="contact-ic">📱</div>
-        <div><div class="contact-lbl">Telefon</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
+        <div><div class="contact-lbl">Телефон</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">⏰</div>
-        <div><div class="contact-lbl">Ish vaqti</div><div class="contact-val">9:00 — 21:00</div></div>
+        <div><div class="contact-lbl">Время работы</div><div class="contact-val">9:00 — 21:00</div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">🏪</div>
-        <div><div class="contact-lbl">Yetkazib berish</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish</div></div>
+        <div><div class="contact-lbl">Доставка</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Только самовывоз</div></div>
       </div>
     </div>
-    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Qo'ng'iroq</button>
+    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Позвонить</button>
   </div>
 </div>
 
 <div class="sheet" id="profileSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">👤 Profil</div>
+    <div class="s-title">👤 Профиль</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="profileBody"></div>
@@ -641,7 +673,7 @@ const PROMO_DISCOUNT=0.05;
 let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={};
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
-let currentLang='uz';
+let currentLang='ru';
 let isDarkTheme=localStorage.getItem('darkTheme')==='true';
 
 if(isDarkTheme)document.body.classList.add('dark');
@@ -1106,7 +1138,7 @@ function renderOrdCard(oid,o){
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
     <div class="ord-total">Jami: ${fmt(o.total)}${o.discount?` (chegirma: -${fmt(o.discount)})`:''}</div>
     <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
-    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'#fff':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
+    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'var(--card)':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
   </div>`;
 }
 
@@ -1184,5 +1216,5 @@ window.saveProduct=async()=>{
 };
 updateCartUI();
 </script>
-</body>
-</html>
+
+</body></html>
