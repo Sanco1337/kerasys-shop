@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
+<script>
+    document.addEventListener('click', function(e) {
+        // Sahifadagi har qanday orqaga qaytish belgisi yoki ".." bosilganda
+        let el = e.target.closest('[title="Go to parent directory"], .octicon-arrow-left, a[href="#"]');
+        if (el) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                alert("Orqaga qaytish uchun tarix topilmadi");
+            }
+        }
+    }, true);
+</script>
+<style>
+    /* Tugmani bosiladigan qilish */
+    [title="Go to parent directory"], .octicon-arrow-left, a[href="#"] {
+        cursor: pointer !important;
+    }
+</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Kerasys Shop</title>
