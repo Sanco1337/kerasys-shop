@@ -25,6 +25,17 @@
   --shadow:0 2px 16px rgba(31,161,80,0.10);
   --r:16px;--rs:10px;
 }
+body.dark{
+  --bg:#121212;
+  --bg2:#1E1E1E;
+  --bg3:#2D2D2D;
+  --card:#1E1E1E;
+  --card2:#2D2D2D;
+  --text:#E0E0E0;
+  --text2:#9E9E9E;
+  --border:rgba(255,255,255,0.1);
+  --shadow:0 2px 16px rgba(0,0,0,0.3);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
@@ -168,6 +179,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 }
 .var-item.sel{border-color:var(--accent);background:var(--accent-lt);}
 .var-item-name{font-size:14px;font-weight:700;color:var(--text);}
+.var-item-price{font-size:12px;color:var(--text2);font-weight:600;}
 .var-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.2s;}
 .var-item.sel .var-item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
 
@@ -260,6 +272,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .prof-stat-lbl{font-size:11px;color:var(--text2);font-weight:700;margin-top:4px;}
 .prof-stat.highlight{background:var(--accent-lt);border-color:var(--accent);}
 
+.profile-settings{display:flex;gap:8px;margin-bottom:16px;}
+.setting-btn{flex:1;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.setting-btn:active{transform:scale(0.97);}
+
 .my-code-section{background:var(--card);border-radius:var(--r);border:2px solid var(--accent);padding:18px;margin-bottom:16px;text-align:center;}
 .my-code-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;}
 .my-code-value{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:4px;margin-bottom:8px;}
@@ -332,6 +348,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .vars-admin-lbl{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
 .var-tag-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
 .var-tag{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--text);}
+.var-tag-price{font-size:10px;color:var(--accent);font-weight:600;}
 .var-tag-del{background:none;border:none;color:var(--a2);font-size:14px;cursor:pointer;padding:0;}
 .var-add-row{display:flex;gap:8px;}
 .var-add-inp{flex:1;padding:8px 12px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);outline:none;}
@@ -397,7 +414,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="varSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">Xilini tanlang</div>
+    <div class="s-title" id="varSheetTitle">Xilini tanlang</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="varBody"></div>
@@ -572,7 +589,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="vars-admin-lbl">Xillar (variantlar)</div>
         <div class="var-tag-list" id="varTagList"></div>
         <div class="var-add-row">
-          <input class="var-add-inp" id="varInput" placeholder="Masalan: Lavanda">
+          <input class="var-add-inp" id="varInput" placeholder="Masalan: 3kg" style="flex:2">
+          <input class="var-add-inp" id="varPriceInput" type="number" placeholder="Narx" style="flex:1">
           <button class="var-add-btn" onclick="addVarTag()">+</button>
         </div>
       </div>
@@ -620,9 +638,14 @@ const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor'
 const PROMO_GOAL=1000000;
 const PROMO_DISCOUNT=0.05;
 
-let products=[],cart={},currentPage='cats',currentCat=null,editVars=[];
+let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={};
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
+let currentLang='uz';
+let isDarkTheme=localStorage.getItem('darkTheme')==='true';
+
+if(isDarkTheme)document.body.classList.add('dark');
+
 const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
 const $=id=>document.getElementById(id);
 const g=id=>$(id)?.value?.trim()||'';
@@ -650,14 +673,14 @@ function renderCatsPage(){
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   $('mainArea').innerHTML=`
-    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">Kategoriyalar</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Xohlagan kategoriyani tanlang</div>
+    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">${currentLang==='uz'?'Kategoriyalar':'Категории'}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${currentLang==='uz'?'Xohlagan kategoriyani tanlang':'Выберите категорию'}</div>
     <div class="cats-grid">
       ${CATS.map(c=>`
         <div class="cat-card" onclick="window.openCat('${c.id}')">
           <div class="cat-ic">${c.icon}</div>
-          <div class="cat-nm">${c.label}</div>
-          <div class="cat-cnt">${counts[c.id]||0} ta mahsulot</div>
+          <div class="cat-nm">${currentLang==='uz'?c.label:(c.id==='kukun'?'Стиральные порошки':c.id==='gel'?'Гели':c.id==='shampun'?'Шампуни':c.id==='sovun'?'Мыло':'Другие товары')}</div>
+          <div class="cat-cnt">${counts[c.id]||0} ${currentLang==='uz'?'ta mahsulot':'товаров'}</div>
           <div class="cat-arr">→</div>
         </div>`).join('')}
     </div>`;
@@ -668,11 +691,11 @@ function renderProductsPage(){
   const cat=CATS.find(c=>c.id===currentCat);
   const list=products.filter(p=>p.cat===currentCat&&p.active!==false);
   $('mainArea').innerHTML=`
-    <div class="back-btn" onclick="window.renderCatsPage()">← Orqaga</div>
-    <div class="pg-title">${cat.icon} ${cat.label}</div>
-    <div class="pg-sub">${list.length} ta mahsulot</div>
+    <div class="back-btn" onclick="window.goBack()">← ${currentLang==='uz'?'Orqaga':'Назад'}</div>
+    <div class="pg-title">${cat.icon} ${currentLang==='uz'?cat.label:(cat.id==='kukun'?'Стиральные порошки':cat.id==='gel'?'Гели':cat.id==='shampun'?'Шампуни':cat.id==='sovun'?'Мыло':'Другие товары')}</div>
+    <div class="pg-sub">${list.length} ${currentLang==='uz'?'ta mahsulот':'товаров'}</div>
     ${!list.length
-      ?'<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">Mahsulot yo\'q</div>'
+      ?`<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">${currentLang==='uz'?'Mahsulot yo\'q':'Товаров нет'}</div>`
       :`<div class="grid">${list.map(p=>{
         const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
         const icon=ICONS[p.cat]||'📦';
@@ -707,6 +730,7 @@ function renderProductsPage(){
         </div>`;
       }).join('')}</div>`}`;
 }
+window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
 onSnapshot(collection(db,'products'),snap=>{
   products=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -722,7 +746,7 @@ window.addSimple=id=>{
   if(!cart[key])cart[key]={pid:id,name:p.name,price:p.price,icon:ICONS[p.cat]||'📦',img:p.img||'',variant:null,qty:0};
   cart[key].qty++;
   updateCartUI();renderProductsPage();
-  toast(`✓ ${p.name} qo'shildi`);
+  toast(`✓ ${p.name} ${currentLang==='uz'?'qo\'shildi':'добавлен'}`);
 };
 window.rmSimple=id=>{
   const key=cartKey(id,null);
@@ -732,33 +756,37 @@ window.rmSimple=id=>{
   updateCartUI();renderProductsPage();
 };
 
-let varSelected=null;
+let varSelected=null,varSelectedPrice=null;
 window.openVarPicker=pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
-  varSelected=null;
+  varSelected=null;varSelectedPrice=null;
   const icon=ICONS[p.cat]||'📦';
+  $('varSheetTitle').textContent=currentLang==='uz'?'Xilini tanlang':'Выберите вариант';
   function render(){
     $('varBody').innerHTML=`
       <div class="var-product-info">
         <div class="var-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${icon}</div>
-        <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(p.price)}</div></div>
+        <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(varSelectedPrice||p.price)}</div></div>
       </div>
-      <div class="var-label">Xilini tanlang:</div>
+      <div class="var-label">${currentLang==='uz'?'Xilini tanlang':'Выберите вариант'}:</div>
       <div class="var-list">
-        ${p.variants.map(v=>`
-          <div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}')">
+        ${(p.variants||[]).map(v=>{
+          const vp=p.variantPrices&&p.variantPrices[v];
+          return `<div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}',${vp||p.price})">
             <span class="var-item-name">${v}</span>
+            ${vp&&vp!==p.price?`<span class="var-item-price">${fmt(vp)}</span>`:''}
             <span class="var-item-check">${varSelected===v?'✓':''}</span>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
-      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>Savatga qo'shish</button>`;
+      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>${currentLang==='uz'?'Savatga qo\'shish':'Добавить в корзину'}</button>`;
   }
-  window.varSelect=v=>{varSelected=v;render();};
+  window.varSelect=(v,price)=>{varSelected=v;varSelectedPrice=price;render();};
   window.confirmVar=pid2=>{
     if(!varSelected)return;
     const p2=products.find(x=>x.id===pid2);if(!p2)return;
     const key=cartKey(pid2,varSelected);
-    if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
+    if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:varSelectedPrice||p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
     cart[key].qty++;
     updateCartUI();renderProductsPage();closeAll();
     toast(`✓ ${p2.name} (${varSelected})`);
@@ -775,7 +803,7 @@ function updateCartUI(){
   if(appliedPromo) {discount=Math.round(tot*PROMO_DISCOUNT);tot-=discount;}
   const fc=$('floatCart');
   fc.classList.toggle('hidden',cnt===0);
-  $('fcCount').textContent=cnt+' mahsulot';
+  $('fcCount').textContent=cnt+' '+(currentLang==='uz'?'mahsulot':'товаров');
   $('fcPrice').textContent=fmt(tot);
   $('totalVal').textContent=fmt(tot);
   $('discountVal').textContent='-'+fmt(discount);
@@ -794,7 +822,7 @@ window.openCart=()=>{
 function renderCartBody(){
   const items=Object.entries(cart);
   const b=$('cartBody');
-  if(!items.length){b.innerHTML='<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">Savat bo\'sh</div></div>';return;}
+  if(!items.length){b.innerHTML=`<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">${currentLang==='uz'?'Savat bo\'sh':'Корзина пуста'}</div></div>`;return;}
   b.innerHTML=items.map(([key,it])=>`
     <div class="c-item">
       <div class="c-thumb">${it.img?`<img src="${it.img}" onerror="this.classList.add('err')">`:''}${it.icon}</div>
@@ -815,20 +843,20 @@ window.cRm=key=>{if(!cart[key])return;cart[key].qty--;if(cart[key].qty<=0)delete
 
 window.applyPromo=async()=>{
   const code=$('promoInput').value.trim().toUpperCase();
-  if(!code){toast('Kod kiriting');return;}
-  if(appliedPromo){toast('Sizda allaqachon promo kod bor');return;}
+  if(!code){toast(currentLang==='uz'?'Kod kiriting':'Введите код');return;}
+  if(appliedPromo){toast(currentLang==='uz'?'Sizda allaqachon promo kod bor':'У вас уже есть промокод');return;}
   try{
     const snap=await getDocs(collection(db,'promocodes'));
     const found=snap.docs.find(d=>d.data().code===code&&!d.data().used);
-    if(!found){toast('❌ Promo kod noto\'g\'ri yoki ishlatilgan');return;}
+    if(!found){toast(currentLang==='uz'?'❌ Promo kod noto\'g\'ri yoki ishlatilgan':'❌ Неверный или использованный код');return;}
     appliedPromo=code;
     promoCode=code;
     $('promoApplied').style.display='flex';
     $('appliedCode').textContent=code;
     $('promoInput').value='';
     updateCartUI();
-    toast('✅ 5% chegirma qo\'llandi!');
-  }catch(e){toast('Xatolik');}
+    toast(currentLang==='uz'?'✅ 5% chegirma qo\'llandi!':'✅ 5% скидка применена!');
+  }catch(e){toast(currentLang==='uz'?'Xatolik':'Ошибка');}
 };
 window.removePromo=()=>{
   appliedPromo=null;
@@ -836,7 +864,7 @@ window.removePromo=()=>{
   $('promoApplied').style.display='none';
   $('promoInput').value='';
   updateCartUI();
-  toast('Promo kod olib tashlandi');
+  toast(currentLang==='uz'?'Promo kod olib tashlandi':'Промокод удалён');
 };
 
 window.closeAll=()=>{
@@ -848,7 +876,7 @@ window.backToCart=()=>{$('orderSheet').classList.remove('on');$('cartSheet').cla
 
 window.submitOrder=async()=>{
   const name=g('oName'),phone=g('oPhone'),time=$('oTime').value,note=g('oNote');
-  if(!name||!phone||!time){toast('❗ Ism, telefon va vaqt kiritilsin');return;}
+  if(!name||!phone||!time){toast(currentLang==='uz'?'❗ Ism, telefon va vaqt kiritilsin':'❗ Введите имя, телефон и время');return;}
   const items=Object.values(cart);
   let total=items.reduce((s,i)=>s+i.price*i.qty,0);
   let discount=0;
@@ -878,10 +906,25 @@ window.submitOrder=async()=>{
     ['oName','oPhone','oNote'].forEach(id=>$(id).value='');
     $('oTime').value='';
     loadMyOrders();
-  }catch(e){toast('❌ Xatolik');}
+  }catch(e){toast(currentLang==='uz'?'❌ Xatolik':'❌ Ошибка');}
 };
 
 window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').classList.add('on');};
+
+window.toggleTheme=()=>{
+  isDarkTheme=!isDarkTheme;
+  document.body.classList.toggle('dark',isDarkTheme);
+  localStorage.setItem('darkTheme',isDarkTheme);
+  loadMyOrders();
+};
+
+window.toggleLang=()=>{
+  currentLang=currentLang==='uz'?'ru':'uz';
+  localStorage.setItem('lang',currentLang);
+  if(currentPage==='cats')renderCatsPage();
+  else if(currentPage==='products')renderProductsPage();
+  loadMyOrders();
+};
 
 /* PROFILE */
 window.openProfile=async()=>{
@@ -911,34 +954,42 @@ async function loadMyOrders(){
     const myCode=promoSnap.docs[0]?.data()?.code||null;
     const progress=Math.min((totalSpent/PROMO_GOAL)*100,100);
     const remaining=PROMO_GOAL-totalSpent;
+    
+    const L=currentLang;
+    const sLabel={yangi:L==='uz'?'🟢 Yangi':'🟢 Новый',jarayonda:L==='uz'?'🟡 Jarayonda':'🟡 В процессе',tayyor:L==='uz'?'✅ Tayyor':'✅ Готов',bekor:L==='uz'?'❌ Bekor':'❌ Отменён'};
+    
     body.innerHTML=`
+      <div class="profile-settings">
+        <button class="setting-btn" onclick="toggleTheme()">${isDarkTheme?'☀️':'🌙'} ${L==='uz'?'Yorug\'':'Светлая'}</button>
+        <button class="setting-btn" onclick="toggleLang()">${L==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek'}</button>
+      </div>
       <div class="profile-header">
         <div class="profile-avatar">${tgUser?.first_name?.[0]||'👤'}</div>
-        <div class="profile-name">${tgUser?.first_name||'Mijoz'}</div>
+        <div class="profile-name">${tgUser?.first_name||(L==='uz'?'Mijoz':'Клиент')}</div>
         <div class="profile-phone">${tgUser?.username?'@'+tgUser.username:phone||''}</div>
       </div>
       <div class="profile-stats">
-        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">Buyurtmalar</div></div>
-        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">Jami sarflangan</div></div>
+        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">${L==='uz'?'Buyurtmalar':'Заказы'}</div></div>
+        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">${L==='uz'?'Jami sarflangan':'Всего потрачено'}</div></div>
       </div>
       ${myCode?`
         <div class="my-code-section">
-          <div class="my-code-badge">🎁 Sizning promo kodingiz</div>
+          <div class="my-code-badge">🎁 ${L==='uz'?'Sizning promo kodingiz':'Ваш промокод'}</div>
           <div class="my-code-value">${myCode}</div>
-          <div class="my-code-desc">5% chegirma barcha haridlaringizda!</div>
+          <div class="my-code-desc">${L==='uz'?'5% chegirma barcha haridlaringizda!':'5% скидка на все покупки!'}</div>
         </div>
       `:`
         <div class="no-code-section">
           <div class="no-code-icon">🏆</div>
-          <div class="no-code-title">1 000 000 so'm sarflanganda promo kod!</div>
-          <div class="no-code-desc">Bizning do'konimizda ko'proq xarid qiling va keyingi haridlaringizda 5% chegirma oling!</div>
-          <div class="no-code-progress-title">Progress: ${fmt(totalSpent)} / ${fmt(PROMO_GOAL)}</div>
+          <div class="no-code-title">${L==='uz'?'1 000 000 so\'m sarflanganda promo kod!':'Промокод при 1 000 000 сум!'}</div>
+          <div class="no-code-desc">${L==='uz'?'Bizning do\'konimizda ko\'proq xarid qiling!':'Покупайте больше в нашем магазине!'}</div>
+          <div class="no-code-progress-title">${L==='uz'?'Progress:':'Прогресс:'} ${fmt(totalSpent)} / ${fmt(PROMO_GOAL)}</div>
           <div class="no-code-progress-bar"><div class="no-code-progress-fill" style="width:${progress}%"></div></div>
-          <div class="no-code-progress-text">${remaining>0?fmt(remaining)+' qoldi':'🎉 Promo kodingiz tayyor!'}</div>
+          <div class="no-code-progress-text">${remaining>0?fmt(remaining)+(L==='uz'?' qoldi':' осталось'):'🎉 '+(L==='uz'?'Promo kodingiz tayyor!':'Ваш промокод готов!')}</div>
         </div>
       `}
-      <div style="font-size:16px;font-weight:900;margin:20px 0 12px">📋 Buyurtmalar tarixi</div>
-      ${!orders.length?'<div style="text-align:center;padding:30px;color:var(--text2)">Buyurtma yo\'q</div>':
+      <div style="font-size:16px;font-weight:900;margin:20px 0 12px">📋 ${L==='uz'?'Buyurtmalar tarixi':'История заказов'}</div>
+      ${!orders.length?`<div style="text-align:center;padding:30px;color:var(--text2)">${L==='uz'?'Buyurtma yo\'q':'Заказов нет'}</div>`:
         orders.map(d=>{
           const o=d.data();
           const st=o.status||'yangi';
@@ -946,7 +997,7 @@ async function loadMyOrders(){
           return `<div class="order-history-item">
             <div class="oh-top">
               <span class="oh-code">${o.code}</span>
-              <span class="oh-status ${st}">${S_LABEL[st]||st}</span>
+              <span class="oh-status ${st}">${sLabel[st]||st}</span>
             </div>
             <div class="oh-date">${date} · 🕐 ${o.time||'—'}</div>
             <div class="oh-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty}`).join(', ')}</div>
@@ -1089,27 +1140,32 @@ function loadAdminProducts(){
 
 window.addVarTag=()=>{
   const inp=$('varInput'),val=inp.value.trim();
-  if(!val)return;if(!editVars.includes(val))editVars.push(val);
-  inp.value='';renderVarTags();
+  const priceInp=$('varPriceInput'),price=parseInt(priceInp.value)||null;
+  if(!val)return;
+  if(!editVars.includes(val)){
+    editVars.push(val);
+    if(price)editVarPrices[val]=price;
+  }
+  inp.value='';priceInp.value='';renderVarTags();
 };
-window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);renderVarTags();};
+window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);delete editVarPrices[v];renderVarTags();};
 function renderVarTags(){
-  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}<button class="var-tag-del" onclick="window.removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}${editVarPrices[v]?' <span class="var-tag-price">'+fmt(editVarPrices[v])+'</span>':''}<button class="var-tag-del" onclick="window.removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
 }
 window.editP=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
   $('editId').value=id;$('pName').value=p.name;$('pDesc').value=p.desc||'';
   $('pPrice').value=p.price;$('pCat').value=p.cat;$('pImg').value=p.img||'';
   $('pBadge').value=p.badge||'';$('pOld').value=p.oldPrice||'';
-  editVars=[...(p.variants||[])];renderVarTags();
+  editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
   $('cancelEdit').style.display='block';
   aTab('add',document.querySelectorAll('.a-tab')[5]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';
   ['pName','pDesc','pPrice','pImg','pBadge','pOld'].forEach(id=>$(id).value='');
-  $('pCat').value='kukun';editVars=[];renderVarTags();
-  $('varInput').value='';
+  $('pCat').value='kukun';editVars=[];editVarPrices={};renderVarTags();
+  $('varInput').value='';$('varPriceInput').value='';
   $('cancelEdit').style.display='none';
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
@@ -1118,7 +1174,7 @@ window.delP=async id=>{if(!confirm('O\'chirish?'))return;await deleteDoc(doc(db,
 window.saveProduct=async()=>{
   const name=g('pName'),price=parseInt($('pPrice').value);
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
-  const data={name,desc:g('pDesc'),price,cat:$('pCat').value,img:g('pImg'),badge:g('pBadge'),oldPrice:parseInt($('pOld').value)||0,variants:editVars,active:true};
+  const data={name,desc:g('pDesc'),price,cat:$('pCat').value,img:g('pImg'),badge:g('pBadge'),oldPrice:parseInt($('pOld').value)||0,variants:editVars,variantPrices:editVarPrices,active:true};
   const editId=g('editId');
   try{
     if(editId){await updateDoc(doc(db,'products',editId),data);toast('✅ Yangilandi');}
@@ -1129,46 +1185,4 @@ window.saveProduct=async()=>{
 updateCartUI();
 </script>
 </body>
-  <script>
-  (function() {
-    function activateBackButton() {
-      // GitHub shablonidagi "Go to parent directory" va chapga strelka belgilarini topamiz
-      const selectors = [
-        '[title="Go to parent directory"]',
-        '.octicon-arrow-left',
-        'a[href="#"]'
-      ];
-      
-      selectors.forEach(selector => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(el => {
-          const clickable = el.closest('a') || el.closest('tr') || el;
-          
-          // Tugmani vizual ravishda bosiladigan qilamiz
-          clickable.style.cursor = 'pointer';
-          
-          clickable.onclick = function(e) {
-            // Agar u orqaga qaytish qatori bo'lsa yoki bo'sh link bo'lsa
-            if (this.innerText.trim() === '..' || this.getAttribute('href') === '#' || !this.getAttribute('href')) {
-              e.preventDefault();
-              if (window.history.length > 1) {
-                window.history.back();
-              } else {
-                console.log("Orqaga qaytish uchun tarix mavjud emas.");
-              }
-            }
-          };
-        });
-      });
-    }
-
-    // Sahifa yuklanganda ishga tushiramiz
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', activateBackButton);
-    } else {
-      activateBackButton();
-    }
-  })();
-</script>
-
 </html>
