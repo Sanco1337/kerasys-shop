@@ -49,6 +49,56 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+<div id="theme-toggle-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+    <button id="theme-toggle-btn" style="
+        padding: 10px 15px; 
+        border-radius: 20px; 
+        border: 1px solid #d0d7de; 
+        background: var(--color-canvas-subtle); 
+        color: var(--color-fg-default);
+        cursor: pointer;
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    ">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">Dark Mode</span>
+    </button>
+</div>
+
+<script>
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    const htmlEl = document.documentElement;
+
+    // Avvalgi tanlovni xotiradan tekshirish
+    const savedTheme = localStorage.getItem('theme') || 'auto';
+    applyTheme(savedTheme);
+
+    themeBtn.addEventListener('click', () => {
+        const currentMode = htmlEl.getAttribute('data-color-mode');
+        const newMode = currentMode === 'dark' ? 'light' : 'dark';
+        applyTheme(newMode);
+    });
+
+    function applyTheme(mode) {
+        htmlEl.setAttribute('data-color-mode', mode);
+        localStorage.setItem('theme', mode);
+        
+        if (mode === 'dark') {
+            themeIcon.innerText = '☀️';
+            themeText.innerText = 'Light Mode';
+            themeBtn.style.borderColor = '#30363d';
+        } else {
+            themeIcon.innerText = '🌙';
+            themeText.innerText = 'Dark Mode';
+            themeBtn.style.borderColor = '#d0d7de';
+        }
+    }
+</script>
 
 .hdr{
   background:#FFFFFF;
