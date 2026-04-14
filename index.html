@@ -25,17 +25,6 @@
   --shadow:0 2px 16px rgba(31,161,80,0.10);
   --r:16px;--rs:10px;
 }
-body.dark{
-  --bg:#121212;
-  --bg2:#1E1E1E;
-  --bg3:#2D2D2D;
-  --card:#1E1E1E;
-  --card2:#2D2D2D;
-  --text:#E0E0E0;
-  --text2:#9E9E9E;
-  --border:rgba(255,255,255,0.1);
-  --shadow:0 2px 16px rgba(0,0,0,0.3);
-}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
@@ -179,7 +168,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 }
 .var-item.sel{border-color:var(--accent);background:var(--accent-lt);}
 .var-item-name{font-size:14px;font-weight:700;color:var(--text);}
-.var-item-price{font-size:12px;color:var(--text2);font-weight:600;}
 .var-item-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.2s;}
 .var-item.sel .var-item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
 
@@ -409,7 +397,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="varSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title" id="varSheetTitle">Xilini tanlang</div>
+    <div class="s-title">Xilini tanlang</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="varBody"></div>
@@ -418,17 +406,17 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="cartSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">🛒 ${t('cart')}</div>
+    <div class="s-title">🛒 Savat</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="promo-input-wrap" id="promoWrap">
-      <input type="text" class="promo-input" id="promoInput" placeholder="${t('addPromo')}">
-      <button class="promo-apply" onclick="applyPromo()">${t('applyPromo')}</button>
+      <input type="text" class="promo-input" id="promoInput" placeholder="Promo kod (ixtiyoriy)">
+      <button class="promo-apply" onclick="applyPromo()">Qo'llash</button>
     </div>
     <div class="promo-applied" id="promoApplied" style="display:none">
       <div>
-        <div class="promo-applied-info">${currentLang==='uz'?'5% chegirma':'5% скидка'}</div>
+        <div class="promo-applied-info">5% chegirma</div>
         <div class="promo-applied-code" id="appliedCode"></div>
       </div>
       <button class="promo-remove" onclick="removePromo()">✕</button>
@@ -437,37 +425,48 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
   <div class="s-foot">
     <div class="discount-row" id="discountRow" style="display:none">
-      <span class="discount-lbl">${t('discount')}</span>
+      <span class="discount-lbl">Chegirma (5%)</span>
       <span class="discount-val" id="discountVal">-0 so'm</span>
     </div>
     <div class="total-row">
-      <span class="total-lbl">${t('total')}</span>
+      <span class="total-lbl">Jami:</span>
       <span class="total-val" id="totalVal">0 so'm</span>
     </div>
-    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled>${t('orderBtn')}</button>
+    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled>Buyurtma berish →</button>
   </div>
 </div>
 
 <div class="sheet" id="orderSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">📋 ${currentLang==='uz'?'Buyurtma':'Заказ'}</div>
+    <div class="s-title">📋 Buyurtma</div>
     <button class="s-close" onclick="backToCart()">←</button>
   </div>
   <div class="s-body">
     <div class="f-info">
-      ℹ️ ${currentLang==='uz'?'Bizda <span>yetkazib berish yo\'q</span>. Buyurtma qilib, kelganingizda tayyor bo\'ladi.':'У нас <span>нет доставки</span>. Заказ будет готов к вашему приходу.'}
+      ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.
     </div>
-    <div class="f-grp"><label class="f-lbl">${t('name')}</label><input class="f-inp" id="oName" placeholder="${currentLang==='uz'?'Sarvar Karimov':'Иван Иванов'}"></div>
-    <div class="f-grp"><label class="f-lbl">${t('phone')}</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
-    <div class="f-grp"><label class="f-lbl">${t('time')} *</label>
+    <div class="f-grp"><label class="f-lbl">Ism Familiya *</label><input class="f-inp" id="oName" placeholder="Sarvar Karimov"></div>
+    <div class="f-grp"><label class="f-lbl">Telefon *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+    <div class="f-grp"><label class="f-lbl">Olib ketish vaqti *</label>
       <select class="f-sel" id="oTime">
-        ${timeOptions[currentLang].map(v=>`<option value="${v}">${v}</option>`).join('')}
+        <option value="">— Tanlang —</option>
+        <option>Bugun 10:00–12:00</option>
+        <option>Bugun 12:00–14:00</option>
+        <option>Bugun 14:00–16:00</option>
+        <option>Bugun 16:00–18:00</option>
+        <option>Bugun 18:00–20:00</option>
+        <option>Ertaga 10:00–12:00</option>
+        <option>Ertaga 12:00–14:00</option>
+        <option>Ertaga 14:00–16:00</option>
+        <option>Ertaga 16:00–18:00</option>
+        <option>Ertaga 18:00–20:00</option>
+        <option>Boshqa (izohda yozing)</option>
       </select>
     </div>
-    <div class="f-grp"><label class="f-lbl">${t('note')}</label><textarea class="f-ta" id="oNote" placeholder="${currentLang==='uz'?'Boshqa vaqt yoki ma\'lumot...':'Другое время или информация...'}"></textarea></div>
-    <button class="big-btn pri" onclick="submitOrder()">${t('submit')}</button>
-    <button class="big-btn sec" onclick="backToCart()">${t('backBtn')}</button>
+    <div class="f-grp"><label class="f-lbl">Izoh</label><textarea class="f-ta" id="oNote" placeholder="Boshqa vaqt yoki ma'lumot..."></textarea></div>
+    <button class="big-btn pri" onclick="submitOrder()">✅ Tasdiqlash</button>
+    <button class="big-btn sec" onclick="backToCart()">← Orqaga</button>
   </div>
 </div>
 
@@ -476,14 +475,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="s-body">
     <div class="success-box">
       <div class="success-icon">🎉</div>
-      <div class="success-title">${t('successTitle')}</div>
-      <div class="success-sub">${t('successSub')}</div>
+      <div class="success-title">Buyurtma qabul qilindi!</div>
+      <div class="success-sub">Siz belgilagan vaqtda kelib olishingiz mumkin.<br>Kodni saqlang:</div>
       <div class="order-code-box">
-        <div class="order-code-lbl">${t('orderCodeLabel')}</div>
+        <div class="order-code-lbl">Buyurtma kodi</div>
         <div class="order-code" id="successCode">------</div>
-        <div class="order-code-hint">${t('codeHint')}</div>
+        <div class="order-code-hint">Do'konga kelganda shu kodni ko'rsating</div>
       </div>
-      <button class="big-btn pri" onclick="closeAll()">${t('continueBtn')}</button>
+      <button class="big-btn pri" onclick="closeAll()">Davom etish 🛍</button>
     </div>
   </div>
 </div>
@@ -491,41 +490,35 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="sheet" id="contactSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">${t('contact')}</div>
+    <div class="s-title">📞 Aloqa</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="contact-card">
       <div class="contact-row">
         <div class="contact-ic">📱</div>
-        <div><div class="contact-lbl">${t('phoneLabel')}</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
+        <div><div class="contact-lbl">Telefon</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">⏰</div>
-        <div><div class="contact-lbl">${t('workTime')}</div><div class="contact-val">9:00 — 21:00</div></div>
+        <div><div class="contact-lbl">Ish vaqti</div><div class="contact-val">9:00 — 21:00</div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">🏪</div>
-        <div><div class="contact-lbl">${t('delivery')}</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">${t('pickupOnly')}</div></div>
+        <div><div class="contact-lbl">Yetkazib berish</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Faqat olib ketish</div></div>
       </div>
     </div>
-    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">${t('call')}</button>
+    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Qo'ng'iroq</button>
   </div>
 </div>
 
 <div class="sheet" id="profileSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title" id="profileTitle">👤 Profil</div>
+    <div class="s-title">👤 Profil</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
-  <div class="s-body">
-    <div style="display:flex;gap:10px;margin-bottom:16px;">
-      <button class="hbtn" style="flex:1" onclick="toggleTheme()" id="themeBtnProfile">🌙 ${currentLang==='uz'?'Qorong\'u':'Тёмная'}</button>
-      <button class="hbtn" style="flex:1" onclick="toggleLang()" id="langBtnProfile">${currentLang==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek'}</button>
-    </div>
-    <div id="profileBody"></div>
-  </div>
+  <div class="s-body" id="profileBody"></div>
 </div>
 
 <div class="sheet" id="adminSheet">
@@ -579,8 +572,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="vars-admin-lbl">Xillar (variantlar)</div>
         <div class="var-tag-list" id="varTagList"></div>
         <div class="var-add-row">
-          <input class="var-add-inp" id="varInput" placeholder="Masalan: 3kg" style="flex:2">
-          <input class="var-add-inp" id="varPriceInput" type="number" placeholder="Narx" style="flex:1">
+          <input class="var-add-inp" id="varInput" placeholder="Masalan: Lavanda">
           <button class="var-add-btn" onclick="addVarTag()">+</button>
         </div>
       </div>
@@ -607,10 +599,6 @@ const FB={
 const fbApp=initializeApp(FB);
 const db=getFirestore(fbApp);
 
-if(localStorage.getItem('lang'))currentLang=localStorage.getItem('lang');
-if(isDarkTheme)document.body.classList.add('dark');
-renderTimeSelect();
-
 const ADMIN="notimetoyouu";
 const tg=window.Telegram?.WebApp;
 if(tg){tg.ready();tg.expand();}
@@ -619,37 +607,22 @@ const isAdmin=tgUser?.username===ADMIN;
 if(isAdmin) document.getElementById('adminBtn').style.display='flex';
 
 const CATS=[
-  {id:'kukun',label:'Kir yuvish kukunlari',labelRu:'Стиральные порошки',icon:'🧺'},
-  {id:'gel',label:'Gellar',labelRu:'Гели',icon:'🧴'},
-  {id:'shampun',label:'Shampunlar',labelRu:'Шампуни',icon:'🚿'},
-  {id:'sovun',label:'Sovunlar',labelRu:'Мыло',icon:'🧼'},
-  {id:'boshqa',label:'Boshqa mahsulotlar',labelRu:'Другие товары',icon:'📦'},
+  {id:'kukun',label:'Kir yuvish kukunlari',icon:'🧺'},
+  {id:'gel',label:'Gellar',icon:'🧴'},
+  {id:'shampun',label:'Shampunlar',icon:'🚿'},
+  {id:'sovun',label:'Sovunlar',icon:'🧼'},
+  {id:'boshqa',label:'Boshqa mahsulotlar',icon:'📦'},
 ];
 const ICONS={kukun:'🧺',gel:'🧴',shampun:'🚿',sovun:'🧼',boshqa:'📦'};
 const STATUSES=['yangi','jarayonda','tayyor','bekor'];
-const S_LABEL={
-  uz:{yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'},
-  ru:{yangi:'🟢 Новый',jarayonda:'🟡 В процессе',tayyor:'✅ Готов',bekor:'❌ Отменён'}
-};
+const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
 
 const PROMO_GOAL=1000000;
 const PROMO_DISCOUNT=0.05;
 
-let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={};
+let products=[],cart={},currentPage='cats',currentCat=null,editVars=[];
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
-let currentLang='uz';
-let isDarkTheme=localStorage.getItem('darkTheme')==='true';
-const translations={
-  uz:{categories:'Kategoriyalar',chooseCat:'Xohlagan kategoriyani tanlang',back:'Orqaga',products:'mahsulot',noProducts:'Mahsulot yo\'q',cart:'Savat',emptyCart:'Savat bo\'sh',total:'Jami:',orderBtn:'Buyurtma berish →',name:'Ism Familiya *',phone:'Telefon *',time:'Olib ketish vaqti *',note:'Izoh',submit:'✅ Tasdiqlash',backBtn:'← Orqaga',pickVariant:'Xilini tanlang:',addToCart:'Savatga qo\'shish',profile:'Profil',orders:'Buyurtmalar',spent:'Jami sarflangan',noOrders:'Buyurtma yo\'q',promoTitle:'1 000 000 so\'m sarflanganda promo kod!',promoDesc:'Bizning do\'konimizda ko\'proq xarid qiling va keyingi haridlaringizda 5% chegirma oling!',progress:'Progress:',remaining:'qoldi',ready:'🎉 Promo kodingiz tayyor!',yourPromo:'🎁 Sizning promo kodingiz',discountDesc:'5% chegirma barcha haridlaringizda!',contact:'📞 Aloqa',phoneLabel:'Telefon',workTime:'Ish vaqti',delivery:'Yetkazib berish',pickupOnly:'Faqat olib ketish',call:'📞 Qo\'ng\'iroq',successTitle:'Buyurtma qabul qilindi!',successSub:'Siz belgilagan vaqtda kelib olishingiz mumkin.\nKodni saqlang:',orderCodeLabel:'Buyurtma kodi',codeHint:'Do\'konga kelganda shu kodni ko\'rsating',continueBtn:'Davom etish 🛍',selectTime:'',addPromo:'Promo kod (ixtiyoriy)',applyPromo:'Qo\'llash',discount:'Chegirma (5%)',items:'mahsulot'},
-  ru:{categories:'Категории',chooseCat:'Выберите категорию',back:'Назад',products:'товаров',noProducts:'Товаров нет',cart:'Корзина',emptyCart:'Корзина пуста',total:'Итого:',orderBtn:'Оформить заказ →',name:'Имя Фамилия *',phone:'Телефон *',time:'Время получения *',note:'Комментарий',submit:'✅ Подтвердить',backBtn:'← Назад',pickVariant:'Выберите вариант:',addToCart:'Добавить в корзину',profile:'Профиль',orders:'Заказы',spent:'Всего потрачено',noOrders:'Заказов нет',promoTitle:'Промокод при 1 000 000 сум!',promoDesc:'Покупайте больше в нашем магазине и получите 5% скидку на следующие покупки!',progress:'Прогресс:',remaining:'осталось',ready:'🎉 Ваш промокод готов!',yourPromo:'🎁 Ваш промокод',discountDesc:'5% скидка на все покупки!',contact:'📞 Контакты',phoneLabel:'Телефон',workTime:'Время работы',delivery:'Доставка',pickupOnly:'Только самовызов',call:'📞 Позвонить',successTitle:'Заказ принят!',successSub:'Вы можете забрать в указанное время.\nСохраните код:',orderCodeLabel:'Код заказа',codeHint:'Покажите этот код в магазине',continueBtn:'Продолжить 🛍',selectTime:'— Выберите —',addPromo:'Промокод (необязательно)',applyPromo:'Применить',discount:'Скидка (5%)',items:'товар'}
-};
-const timeOptions={
-  uz:['— Tanlang —','Bugun 10:00–12:00','Bugun 12:00–14:00','Bugun 14:00–16:00','Bugun 16:00–18:00','Bugun 18:00–20:00','Ertaga 10:00–12:00','Ertaga 12:00–14:00','Ertaga 14:00–16:00','Ertaga 16:00–18:00','Ertaga 18:00–20:00','Boshqa (izohda yozing)'],
-  ru:['— Выберите —','Сегодня 10:00–12:00','Сегодня 12:00–14:00','Сегодня 14:00–16:00','Сегодня 16:00–18:00','Сегодня 18:00–20:00','Завтра 10:00–12:00','Завтра 12:00–14:00','Завтра 14:00–16:00','Завтра 16:00–18:00','Завтра 18:00–20:00','Другое (напишите в комментарии)']
-};
-const t=k=>translations[currentLang][k]||k;
-if(isDarkTheme)document.body.classList.add('dark');
 const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
 const $=id=>document.getElementById(id);
 const g=id=>$(id)?.value?.trim()||'';
@@ -662,28 +635,6 @@ function toast(msg){
   toastTimer=setTimeout(()=>{el.classList.remove('show');toastTimer=null;},2000);
 }
 window.toast=toast;
-
-window.toggleLang=()=>{
-  currentLang=currentLang==='uz'?'ru':'uz';
-  if($('langBtnProfile'))$('langBtnProfile').textContent=currentLang==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek';
-  localStorage.setItem('lang',currentLang);
-  if(currentPage==='cats')renderCatsPage();
-  else if(currentPage==='products')renderProductsPage();
-  renderTimeSelect();
-  if($('profileTitle')){
-    $('profileTitle').textContent=currentLang==='uz'?'👤 Profil':'👤 Профиль';
-  }
-};
-window.toggleTheme=()=>{
-  isDarkTheme=!isDarkTheme;
-  document.body.classList.toggle('dark',isDarkTheme);
-  if($('themeBtnProfile'))$('themeBtnProfile').textContent=isDarkTheme?'☀️ '+(currentLang==='uz'?'Yorug\'':'Светлая'):'🌙 '+(currentLang==='uz'?'Qorong\'u':'Тёмная');
-  localStorage.setItem('darkTheme',isDarkTheme);
-};
-function renderTimeSelect(){
-  const sel=$('oTime');
-  sel.innerHTML=timeOptions[currentLang].map((v,i)=>`<option value="${v}">${v}</option>`).join('');
-}
 
 function genCode(){
   const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -699,14 +650,14 @@ function renderCatsPage(){
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   $('mainArea').innerHTML=`
-    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">${t('categories')}</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${t('chooseCat')}</div>
+    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">Kategoriyalar</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Xohlagan kategoriyani tanlang</div>
     <div class="cats-grid">
       ${CATS.map(c=>`
         <div class="cat-card" onclick="window.openCat('${c.id}')">
           <div class="cat-ic">${c.icon}</div>
-          <div class="cat-nm">${currentLang==='uz'?c.label:c.labelRu}</div>
-          <div class="cat-cnt">${counts[c.id]||0} ${t('products')}</div>
+          <div class="cat-nm">${c.label}</div>
+          <div class="cat-cnt">${counts[c.id]||0} ta mahsulot</div>
           <div class="cat-arr">→</div>
         </div>`).join('')}
     </div>`;
@@ -717,11 +668,11 @@ function renderProductsPage(){
   const cat=CATS.find(c=>c.id===currentCat);
   const list=products.filter(p=>p.cat===currentCat&&p.active!==false);
   $('mainArea').innerHTML=`
-    <div class="back-btn" onclick="window.goBack()">← ${t('back')}</div>
-    <div class="pg-title">${cat.icon} ${currentLang==='uz'?cat.label:cat.labelRu}</div>
-    <div class="pg-sub">${list.length} ${t('products')}</div>
+    <div class="back-btn" onclick="window.renderCatsPage()">← Orqaga</div>
+    <div class="pg-title">${cat.icon} ${cat.label}</div>
+    <div class="pg-sub">${list.length} ta mahsulot</div>
     ${!list.length
-      ?`<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">${t('noProducts')}</div>`
+      ?'<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">Mahsulot yo\'q</div>'
       :`<div class="grid">${list.map(p=>{
         const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
         const icon=ICONS[p.cat]||'📦';
@@ -756,7 +707,6 @@ function renderProductsPage(){
         </div>`;
       }).join('')}</div>`}`;
 }
-window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
 onSnapshot(collection(db,'products'),snap=>{
   products=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -782,37 +732,33 @@ window.rmSimple=id=>{
   updateCartUI();renderProductsPage();
 };
 
-let varSelected=null,varSelectedPrice=null;
+let varSelected=null;
 window.openVarPicker=pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
-  varSelected=null;varSelectedPrice=null;
+  varSelected=null;
   const icon=ICONS[p.cat]||'📦';
-  $('varSheetTitle').textContent=t('pickVariant');
   function render(){
     $('varBody').innerHTML=`
       <div class="var-product-info">
         <div class="var-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${icon}</div>
-        <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(varSelectedPrice||p.price)}</div></div>
+        <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(p.price)}</div></div>
       </div>
-      <div class="var-label">${t('pickVariant')}</div>
+      <div class="var-label">Xilini tanlang:</div>
       <div class="var-list">
-        ${(p.variants||[]).map(v=>{
-          const vp=p.variantPrices&&p.variantPrices[v];
-          return `<div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}',${vp||p.price})">
+        ${p.variants.map(v=>`
+          <div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}')">
             <span class="var-item-name">${v}</span>
-            ${vp&&vp!==p.price?`<span class="var-item-price">${fmt(vp)}</span>`:''}
             <span class="var-item-check">${varSelected===v?'✓':''}</span>
-          </div>`;
-        }).join('')}
+          </div>`).join('')}
       </div>
-      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>${t('addToCart')}</button>`;
+      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>Savatga qo'shish</button>`;
   }
-  window.varSelect=(v,price)=>{varSelected=v;varSelectedPrice=price;render();};
+  window.varSelect=v=>{varSelected=v;render();};
   window.confirmVar=pid2=>{
     if(!varSelected)return;
     const p2=products.find(x=>x.id===pid2);if(!p2)return;
     const key=cartKey(pid2,varSelected);
-    if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:varSelectedPrice||p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
+    if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
     cart[key].qty++;
     updateCartUI();renderProductsPage();closeAll();
     toast(`✓ ${p2.name} (${varSelected})`);
@@ -829,7 +775,7 @@ function updateCartUI(){
   if(appliedPromo) {discount=Math.round(tot*PROMO_DISCOUNT);tot-=discount;}
   const fc=$('floatCart');
   fc.classList.toggle('hidden',cnt===0);
-  $('fcCount').textContent=cnt+' '+t('items');
+  $('fcCount').textContent=cnt+' mahsulot';
   $('fcPrice').textContent=fmt(tot);
   $('totalVal').textContent=fmt(tot);
   $('discountVal').textContent='-'+fmt(discount);
@@ -848,7 +794,7 @@ window.openCart=()=>{
 function renderCartBody(){
   const items=Object.entries(cart);
   const b=$('cartBody');
-  if(!items.length){b.innerHTML=`<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">${t('emptyCart')}</div></div>`;return;}
+  if(!items.length){b.innerHTML='<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">Savat bo\'sh</div></div>';return;}
   b.innerHTML=items.map(([key,it])=>`
     <div class="c-item">
       <div class="c-thumb">${it.img?`<img src="${it.img}" onerror="this.classList.add('err')">`:''}${it.icon}</div>
@@ -965,34 +911,34 @@ async function loadMyOrders(){
     const myCode=promoSnap.docs[0]?.data()?.code||null;
     const progress=Math.min((totalSpent/PROMO_GOAL)*100,100);
     const remaining=PROMO_GOAL-totalSpent;
-body.innerHTML=`
+    body.innerHTML=`
       <div class="profile-header">
         <div class="profile-avatar">${tgUser?.first_name?.[0]||'👤'}</div>
-        <div class="profile-name">${tgUser?.first_name||(currentLang==='uz'?'Mijoz':'Клиент')}</div>
+        <div class="profile-name">${tgUser?.first_name||'Mijoz'}</div>
         <div class="profile-phone">${tgUser?.username?'@'+tgUser.username:phone||''}</div>
       </div>
       <div class="profile-stats">
-        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">${t('orders')}</div></div>
-        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">${t('spent')}</div></div>
+        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">Buyurtmalar</div></div>
+        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">Jami sarflangan</div></div>
       </div>
       ${myCode?`
         <div class="my-code-section">
-          <div class="my-code-badge">${t('yourPromo')}</div>
+          <div class="my-code-badge">🎁 Sizning promo kodingiz</div>
           <div class="my-code-value">${myCode}</div>
-          <div class="my-code-desc">${t('discountDesc')}</div>
+          <div class="my-code-desc">5% chegirma barcha haridlaringizda!</div>
         </div>
       `:`
         <div class="no-code-section">
           <div class="no-code-icon">🏆</div>
-          <div class="no-code-title">${t('promoTitle')}</div>
-          <div class="no-code-desc">${t('promoDesc')}</div>
-          <div class="no-code-progress-title">${t('progress')} ${fmt(totalSpent)} / ${fmt(PROMO_GOAL)}</div>
+          <div class="no-code-title">1 000 000 so'm sarflanganda promo kod!</div>
+          <div class="no-code-desc">Bizning do'konimizda ko'proq xarid qiling va keyingi haridlaringizda 5% chegirma oling!</div>
+          <div class="no-code-progress-title">Progress: ${fmt(totalSpent)} / ${fmt(PROMO_GOAL)}</div>
           <div class="no-code-progress-bar"><div class="no-code-progress-fill" style="width:${progress}%"></div></div>
-          <div class="no-code-progress-text">${remaining>0?fmt(remaining)+' '+t('remaining'):t('ready')}</div>
+          <div class="no-code-progress-text">${remaining>0?fmt(remaining)+' qoldi':'🎉 Promo kodingiz tayyor!'}</div>
         </div>
       `}
-      <div style="font-size:16px;font-weight:900;margin:20px 0 12px">📋 ${currentLang==='uz'?'Buyurtmalar tarixi':'История заказов'}</div>
-      ${!orders.length?`<div style="text-align:center;padding:30px;color:var(--text2)">${t('noOrders')}</div>`:
+      <div style="font-size:16px;font-weight:900;margin:20px 0 12px">📋 Buyurtmalar tarixi</div>
+      ${!orders.length?'<div style="text-align:center;padding:30px;color:var(--text2)">Buyurtma yo\'q</div>':
         orders.map(d=>{
           const o=d.data();
           const st=o.status||'yangi';
@@ -1000,11 +946,12 @@ body.innerHTML=`
           return `<div class="order-history-item">
             <div class="oh-top">
               <span class="oh-code">${o.code}</span>
-              <span class="oh-status ${st}">${S_LABEL[currentLang][st]||st}</span>
+              <span class="oh-status ${st}">${S_LABEL[st]||st}</span>
             </div>
             <div class="oh-date">${date} · 🕐 ${o.time||'—'}</div>
             <div class="oh-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty}`).join(', ')}</div>
-            <div class="oh-total">${fmt(o.total)}${o.discount?` <span style="font-size:12px;color:var(--a2)">(-${fmt(o.discount)})</span>`:''}</div></div>`;
+            <div class="oh-total">${fmt(o.total)}${o.discount?` <span style="font-size:12px;color:var(--a2)">(-${fmt(o.discount)})</span>`:''}</div>
+          </div>`;
         }).join('')}
     `;
   }catch(e){body.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik</div>';}
@@ -1142,32 +1089,27 @@ function loadAdminProducts(){
 
 window.addVarTag=()=>{
   const inp=$('varInput'),val=inp.value.trim();
-  const priceInp=$('varPriceInput'),price=parseInt(priceInp.value)||null;
-  if(!val)return;
-  if(!editVars.includes(val)){
-    editVars.push(val);
-    if(price)editVarPrices[val]=price;
-  }
-  inp.value='';priceInp.value='';renderVarTags();
+  if(!val)return;if(!editVars.includes(val))editVars.push(val);
+  inp.value='';renderVarTags();
 };
-window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);delete editVarPrices[v];renderVarTags();};
+window.removeVarTag=v=>{editVars=editVars.filter(x=>x!==v);renderVarTags();};
 function renderVarTags(){
-  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}${editVarPrices[v]?' <span style="color:var(--accent)">'+fmt(editVarPrices[v])+'</span>':''}<button class="var-tag-del" onclick="window.removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+  $('varTagList').innerHTML=editVars.map(v=>`<div class="var-tag">${v}<button class="var-tag-del" onclick="window.removeVarTag('${v.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
 }
 window.editP=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
   $('editId').value=id;$('pName').value=p.name;$('pDesc').value=p.desc||'';
   $('pPrice').value=p.price;$('pCat').value=p.cat;$('pImg').value=p.img||'';
   $('pBadge').value=p.badge||'';$('pOld').value=p.oldPrice||'';
-  editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
+  editVars=[...(p.variants||[])];renderVarTags();
   $('cancelEdit').style.display='block';
   aTab('add',document.querySelectorAll('.a-tab')[5]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';
   ['pName','pDesc','pPrice','pImg','pBadge','pOld'].forEach(id=>$(id).value='');
-  $('pCat').value='kukun';editVars=[];editVarPrices={};renderVarTags();
-  $('varInput').value='';$('varPriceInput').value='';
+  $('pCat').value='kukun';editVars=[];renderVarTags();
+  $('varInput').value='';
   $('cancelEdit').style.display='none';
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
@@ -1176,7 +1118,7 @@ window.delP=async id=>{if(!confirm('O\'chirish?'))return;await deleteDoc(doc(db,
 window.saveProduct=async()=>{
   const name=g('pName'),price=parseInt($('pPrice').value);
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
-  const data={name,desc:g('pDesc'),price,cat:$('pCat').value,img:g('pImg'),badge:g('pBadge'),oldPrice:parseInt($('pOld').value)||0,variants:editVars,variantPrices:editVarPrices,active:true};
+  const data={name,desc:g('pDesc'),price,cat:$('pCat').value,img:g('pImg'),badge:g('pBadge'),oldPrice:parseInt($('pOld').value)||0,variants:editVars,active:true};
   const editId=g('editId');
   try{
     if(editId){await updateDoc(doc(db,'products',editId),data);toast('✅ Yangilandi');}
@@ -1187,4 +1129,46 @@ window.saveProduct=async()=>{
 updateCartUI();
 </script>
 </body>
+  <script>
+  (function() {
+    function activateBackButton() {
+      // GitHub shablonidagi "Go to parent directory" va chapga strelka belgilarini topamiz
+      const selectors = [
+        '[title="Go to parent directory"]',
+        '.octicon-arrow-left',
+        'a[href="#"]'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          const clickable = el.closest('a') || el.closest('tr') || el;
+          
+          // Tugmani vizual ravishda bosiladigan qilamiz
+          clickable.style.cursor = 'pointer';
+          
+          clickable.onclick = function(e) {
+            // Agar u orqaga qaytish qatori bo'lsa yoki bo'sh link bo'lsa
+            if (this.innerText.trim() === '..' || this.getAttribute('href') === '#' || !this.getAttribute('href')) {
+              e.preventDefault();
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                console.log("Orqaga qaytish uchun tarix mavjud emas.");
+              }
+            }
+          };
+        });
+      });
+    }
+
+    // Sahifa yuklanganda ishga tushiramiz
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', activateBackButton);
+    } else {
+      activateBackButton();
+    }
+  })();
+</script>
+
 </html>
