@@ -719,7 +719,42 @@ function renderCatsPage(){
 }
 window.openCat=id=>{currentCat=id;currentPage='products';renderProductsPage();};
 
-function renderProductsPage(){
+function render(){
+  $('varBody').innerHTML=`
+    <div class="var-product-info">
+      <div class="var-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${icon}</div>
+      <div>
+        <div class="var-name">${p.name}</div>
+        <div class="var-price">${fmt(varSelectedPrice||p.price)}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <div id="descText" style="display:none; background: var(--bg3); padding: 12px; border-radius: 12px; font-size: 13px; color: var(--text2); line-height: 1.5; border: 1px solid var(--border); margin-bottom: 10px; animation: fadeIn 0.3s ease;">
+        ${p.desc || (currentLang === 'uz' ? 'Ma’lumot mavjud emas' : 'Описание отсутствует')}
+      </div>
+      <button onclick="event.stopPropagation(); document.getElementById('descText').style.display='block'; this.style.display='none'" 
+              style="width: 100%; padding: 10px; background: var(--accent-lt); color: var(--accent); border: 1.5px solid var(--accent); border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+        ℹ️ ${currentLang === 'uz' ? 'Batafsil ma’lumot' : 'Подробнее'}
+      </button>
+    </div>
+
+    <div class="var-label">${currentLang==='uz'?'Xilini tanlang':'Выберите вариант'}:</div>
+    <div class="var-list">
+      ${(p.variants||[]).map(v=>{
+        const vp=p.variantPrices&&p.variantPrices[v];
+        return `<div class="var-item ${varSelected===v?'sel':''}" onclick="window.varSelect('${v.replace(/'/g,"\\'")}',${vp||p.price})">
+          <span class="var-item-name">${v}</span>
+          ${vp&&vp!==p.price?`<span class="var-item-price">${fmt(vp)}</span>`:''}
+          <span class="var-item-check">${varSelected===v?'✓':''}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${(!varSelected && (p.variants?.length > 0))?'disabled':''}>
+      ${currentLang==='uz'?'Savatga qo\'shish':'Добавить в корзиnu'}
+    </button>`;
+}
+
   const cat=CATS.find(c=>c.id===currentCat);
   const list=products.filter(p=>p.cat===currentCat&&p.active!==false);
   $('mainArea').innerHTML=`
@@ -732,35 +767,26 @@ function renderProductsPage(){
         const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
         const icon=ICONS[p.cat]||'📦';
         const hasVars=p.variants&&p.variants.length>0;
-        return `<div class="p-card">
-          <div class="p-img">
-            ${p.img
-              ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                <span class="p-fallback" style="display:none">${icon}</span>`
-              :`<span class="p-fallback">${icon}</span>`}
-            ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
-          </div>
-          <div class="p-body">
-            <div class="p-name">${p.name}</div>
-            <div class="p-desc">${p.desc||''}</div>
-            <div class="p-foot">
-              <div>
-                <div class="p-price">${fmt(p.price)}</div>
-                ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
-              </div>
-              ${hasVars
-                ?`<button class="add-btn" onclick="event.stopPropagation();window.openVarPicker('${p.id}')">+</button>`
-                :(qty===0
-                  ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>`
-                  :`<div class="qty-w on">
-                      <button class="q-btn" onclick="event.stopPropagation();window.rmSimple('${p.id}')">−</button>
-                      <span class="q-n">${qty}</span>
-                      <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>
-                    </div>`)}
-            </div>
-          </div>
-        </div>`;
-      }).join('')}</div>`}`;
+return `<div class="p-card" onclick="window.openVarPicker('${p.id}')">
+  <div class="p-img">
+    ${p.img
+      ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span class="p-fallback" style="display:none">${icon}</span>`
+      :`<span class="p-fallback">${icon}</span>`}
+    ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
+  </div>
+  <div class="p-body">
+    <div class="p-name" style="height: 34px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${p.name}</div>
+    <div class="p-foot">
+      <div>
+        <div class="p-price">${fmt(p.price)}</div>
+        ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
+      </div>
+      <button class="add-btn" style="pointer-events: none;">+</button>
+    </div>
+  </div>
+</div>`;
+
 }
 window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
