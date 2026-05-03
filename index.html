@@ -40,10 +40,24 @@ body.dark{
 *{
   margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
 }
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+html{
+  background-color:#F5FAF6 !important;
+}
+html.dark-mode{
+  background-color:#0F0F0F !important;
+}
+body{
+  font-family:'Nunito',sans-serif;
+  background-color:var(--bg) !important;
+  background:var(--bg) !important;
+  color:var(--text);
+  min-height:100vh;
+  min-height:-webkit-fill-available;
+  overflow-x:hidden;
+}
 
 .hdr{
-background:var(–card);
+background:var(–card) !important;
 padding:14px 16px 12px;
 border-bottom:1.5px solid var(–border);
 display:flex;align-items:center;justify-content:space-between;
@@ -78,7 +92,7 @@ transition:transform 0.2s;min-width:130px;
 
 .cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .cat-card{
-background:var(–card);border-radius:var(–r);
+background:var(–card) !important;border-radius:var(–r);
 border:1.5px solid var(–border);padding:20px 16px;
 cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;
 display:flex;flex-direction:column;align-items:flex-start;gap:8px;
@@ -108,7 +122,7 @@ box-shadow:var(–shadow);
 
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .p-card{
-background:var(–card);border-radius:var(–r);
+background:var(–card) !important;border-radius:var(–r);
 border:1.5px solid var(–border);overflow:hidden;
 transition:transform 0.15s;position:relative;
 box-shadow:var(–shadow);
@@ -151,7 +165,9 @@ transition:transform 0.1s;box-shadow:0 3px 10px rgba(31,161,80,0.3);
 .overlay.on{opacity:1;pointer-events:all;}
 .sheet{
 position:fixed;bottom:0;left:0;right:0;
-background:var(–card);border-radius:24px 24px 0 0;
+background:var(–card) !important;
+background-color:var(–card) !important;
+border-radius:24px 24px 0 0;
 z-index:201;transform:translateY(100%);
 transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
 max-height:92vh;display:flex;flex-direction:column;
@@ -823,7 +839,15 @@ const db=getFirestore(fbApp);
 
 const ADMIN="notimetoyouu";
 const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();}
+if(tg){
+  tg.ready();
+  tg.expand();
+  // Fon rangini darhol o'rnatish
+  const bgColor=isDarkTheme?'#0F0F0F':'#F5FAF6';
+  const hdrColor=isDarkTheme?'#1C1C1C':'#FFFFFF';
+  try{tg.setBackgroundColor(bgColor);}catch(e){}
+  try{tg.setHeaderColor(hdrColor);}catch(e){}
+}
 const tgUser=tg?.initDataUnsafe?.user;
 // isAdmin: Telegram username to'g'ri kelsa YOKI URL da ?admin=1 bo'lsa (test uchun)
 const isAdmin=tgUser?.username===ADMIN||window.location.search.includes('admin=1');
@@ -850,7 +874,27 @@ let toastTimer=null;
 let currentLang='ru';
 let isDarkTheme=localStorage.getItem('darkTheme')==='true';
 
-if(isDarkTheme)document.body.classList.add('dark');
+function applyTheme(){
+  if(isDarkTheme){
+    document.body.classList.add('dark');
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.style.backgroundColor='#0F0F0F';
+    document.body.style.backgroundColor='#0F0F0F';
+  } else {
+    document.body.classList.remove('dark');
+    document.documentElement.classList.remove('dark-mode');
+    document.documentElement.style.backgroundColor='#F5FAF6';
+    document.body.style.backgroundColor='#F5FAF6';
+  }
+  // Telegram WebApp background color
+  if(window.Telegram?.WebApp?.setBackgroundColor){
+    try{ window.Telegram.WebApp.setBackgroundColor(isDarkTheme?'#0F0F0F':'#F5FAF6'); }catch(e){}
+  }
+  if(window.Telegram?.WebApp?.setHeaderColor){
+    try{ window.Telegram.WebApp.setHeaderColor(isDarkTheme?'#1C1C1C':'#FFFFFF'); }catch(e){}
+  }
+}
+applyTheme();
 
 const fmt=n=>Number(n).toLocaleString('uz-UZ')+' so\'m';
 const $=id=>document.getElementById(id);
@@ -1132,8 +1176,8 @@ window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').class
 
 window.toggleTheme=()=>{
   isDarkTheme=!isDarkTheme;
-  document.body.classList.toggle('dark',isDarkTheme);
   localStorage.setItem('darkTheme',isDarkTheme);
+  applyTheme();
   loadMyOrders();
 };
 
