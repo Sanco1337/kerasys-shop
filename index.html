@@ -982,32 +982,34 @@ function renderProductsPage(){
 }
 window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
-// Mahsulotlarni yuklash - avval serverdan olish, keyin real-time tinglash
-async function initProducts(){
-  try{
-    // Avval serverdan to'g'ridan yuklab ko'rsatamiz
-    const snap=await db.collection('products').get({source:'server'});
-    products=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(currentPage==='cats')renderCatsPage();
-    else if(currentPage==='products')renderProductsPage();
-    if(isAdmin)loadAdminProducts();
-  }catch(e){
-    console.log('Server fetch failed, trying cache:',e);
+// Offline cache ni o'chirish - har doim serverdan olsin
+try{ firebase.firestore().settings({cacheSizeBytes:firebase.firestore.CACHE_SIZE_UNLIMITED}); }catch(e){}
+
+function initProducts(){
+  // Har doim serverdan olish (cache emas)
+  function fetchFromServer(){
+    db.collection('products').get().then(snap=>{
+      products=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(currentPage==='cats')renderCatsPage();
+      else if(currentPage==='products')renderProductsPage();
+      if(isAdmin)loadAdminProducts();
+    }).catch(e=>console.error('Fetch error:',e));
   }
-  // Real-time listener
-  db.collection('products').onSnapshot({includeMetadataChanges:false},snap=>{
+
+  // Dastlab serverdan yukla
+  fetchFromServer();
+
+  // Real-time yangilanishlarni ham kuzat
+  db.collection('products').onSnapshot(snap=>{
+    // Faqat server dan kelgan ma'lumotlarni qabul qil (cache emas)
+    if(snap.metadata && snap.metadata.fromCache) return;
     products=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
     if(isAdmin)loadAdminProducts();
   },err=>{
-    console.error('Products listener error:',err);
-    // Fallback: serverdan olish
-    db.collection('products').get().then(snap=>{
-      products=snap.docs.map(d=>({id:d.id,...d.data()}));
-      if(currentPage==='cats')renderCatsPage();
-      if(isAdmin)loadAdminProducts();
-    });
+    console.error('Snapshot error:',err);
+    fetchFromServer();
   });
 }
 initProducts();
@@ -1885,9 +1887,10 @@ window.saveProduct=async()=>{
       toast('✅ Mahsulot qo\'shildi!');
     }
     // Serverdan qayta yuklash
-    const snap=await db.collection('products').get({source:'server'});
+    const snap=await db.collection('products').get();
     products=snap.docs.map(d=>({id:d.id,...d.data()}));
     loadAdminProducts();
+    if(currentPage==='cats')renderCatsPage();
     cancelEditFn();
   }catch(e){
     console.error('saveProduct error:',e);
