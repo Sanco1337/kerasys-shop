@@ -1854,22 +1854,33 @@ window.delP=async id=>{
   await rtdb.ref('products/'+id).remove();
   toast('🗑 O\'chirildi');
 };
+
 window.saveProduct=async()=>{
-  const name=g('pName'),price=parseInt($('pPrice').value);
+  const name=g('pName');
+  const desc=g('pDesc')||'';
+  const price=parseInt($('pPrice').value);
+  const imgBase64=($('pImgBase64')||{}).value||'';
+  const imgUrl=g('pImg')||'';
+  const badge=g('pBadge')||'';
+  const oldPrice=parseInt($('pOld').value)||0;
+  const category=$('pCat').value||'kukun';
+
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
-  const b64=($('pImgBase64')||{}).value||'';
-  const imgFinal=b64||g('pImg')||'';
+
   const data={
-    name, desc:g('pDesc')||'', price,
-    cat:$('pCat').value,
-    img:imgFinal,
-    badge:g('pBadge')||'',
-    oldPrice:parseInt($('pOld').value)||0,
+    name,
+    desc,
+    price,
+    cat:category,
+    img:imgBase64||imgUrl,
+    badge,
+    oldPrice,
     variants:editVars.length?editVars:[],
     variantPrices:editVarPrices||{},
     active:true,
     updatedAt:Date.now()
   };
+
   const editId=g('editId');
   toast('⏳ Saqlanmoqda...');
   try{
@@ -1886,32 +1897,8 @@ window.saveProduct=async()=>{
     toast('❌ Xatolik: '+(e.message||''));
   }
 };
-  const editId=g('editId');
-  toast('⏳ Saqlanmoqda...');
-  try{
-    if(editId){
-      await db.collection('products').doc(editId).update(data);
-      toast('✅ Yangilandi!');
-    } else {
-      await db.collection('products').add({...data,createdAt:new Date()});
-      toast('✅ Mahsulot qo\'shildi!');
-    }
-    // Serverdan qayta yuklash
-    const snap=await db.collection('products').get();
-    products=snap.docs.map(d=>({id:d.id,...d.data()}));
-    loadAdminProducts();
-    if(currentPage==='cats')renderCatsPage();
-    cancelEditFn();
-  }catch(e){
-    console.error('saveProduct error:',e);
-    if(e.code==='permission-denied'){
-      toast('❌ Firebase Rules ni tekshiring!');
-    } else {
-      toast('❌ Xatolik: '+(e.message||e.code||''));
-    }
-  }
-};
 updateCartUI();
+
 </script>
 <!-- CHAT SHEET -->
 <div class="sheet" id="chatSheet">
