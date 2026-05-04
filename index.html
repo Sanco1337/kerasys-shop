@@ -72,8 +72,9 @@ body.dark #app-root{
 .logo-tx{font-size:18px;font-weight:900;letter-spacing:-0.5px;color:var(--text);}
 .logo-tx span{color:var(--accent);}
 .hdr-right{display:flex;gap:8px;align-items:center;}
-.hbtn{background:var(--accent-lt);border:1.5px solid var(--border);border-radius:11px;padding:8px 12px;color:var(--accent);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;}
-.hbtn:active{opacity:0.7;}
+.hbtn{background:var(--accent-lt);border:1.5px solid var(--border);border-radius:11px;padding:8px 12px;color:var(--accent);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:transform 0.15s, background 0.2s;}
+.hbtn[data-icon-only]{font-size:18px;padding:8px 10px;line-height:1;}
+.hbtn:active{opacity:0.7;transform:scale(0.94);}
 
 .float-cart{
   position:fixed;bottom:24px;right:16px;z-index:150;
@@ -490,6 +491,154 @@ body.dark #app-root{
 }
 .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto 12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── SEARCH BAR ─── */
+.search-wrap{padding:12px 12px 4px;background:var(--bg);position:sticky;top:64px;z-index:90;}
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:14px;padding:10px 14px;
+  box-shadow:var(--shadow);
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-lt);}
+.search-bar svg,.search-bar .search-ic{font-size:16px;color:var(--text2);flex-shrink:0;}
+.search-inp{
+  flex:1;border:none;outline:none;background:transparent;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+  color:var(--text);
+}
+.search-inp::placeholder{color:var(--text2);font-weight:500;}
+.search-clear{
+  width:22px;height:22px;border:none;background:var(--bg3);
+  color:var(--text2);border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  flex-shrink:0;
+}
+.search-clear:hover{background:var(--accent-lt);color:var(--accent);}
+
+.sort-row{display:flex;gap:6px;margin:10px 0 4px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.sort-row::-webkit-scrollbar{display:none;}
+.sort-chip{
+  white-space:nowrap;padding:6px 12px;border-radius:18px;
+  border:1.5px solid var(--border);background:var(--card);
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;
+  color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px;
+  flex-shrink:0;
+}
+.sort-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* ─── FAVORITE BUTTON ─── */
+.fav-btn{
+  position:absolute;top:8px;right:8px;z-index:5;
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.9);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  transition:transform 0.15s,background 0.2s;
+}
+body.dark .fav-btn{background:rgba(40,40,40,0.9);}
+.fav-btn:active{transform:scale(0.85);}
+.fav-btn.on{color:#FF4961;}
+.fav-btn .fav-heart-on{display:none;}
+.fav-btn.on .fav-heart-on{display:block;}
+.fav-btn.on .fav-heart-off{display:none;}
+@keyframes fav-pop{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+.fav-btn.popped{animation:fav-pop 0.35s ease;}
+
+/* ─── SKELETON LOADERS ─── */
+.skel{
+  background:linear-gradient(90deg,var(--card2) 0%,var(--accent-lt) 50%,var(--card2) 100%);
+  background-size:200% 100%;
+  animation:skel-shimmer 1.4s ease infinite;
+  border-radius:8px;
+}
+@keyframes skel-shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.skel-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.skel-img{width:100%;aspect-ratio:1;}
+.skel-body{padding:10px;}
+.skel-line{height:12px;margin-bottom:6px;}
+.skel-line.short{width:60%;}
+.skel-line.tall{height:18px;}
+
+/* ─── STAGGER FADE-IN ─── */
+@keyframes card-in{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.p-card,.cat-card{animation:card-in 0.32s ease both;}
+
+/* ─── EMPTY / NO-RESULTS STATES ─── */
+.empty-pretty{
+  text-align:center;padding:50px 16px 30px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.empty-pretty-ic{font-size:64px;line-height:1;margin-bottom:6px;}
+.empty-pretty-title{font-size:17px;font-weight:900;color:var(--text);}
+.empty-pretty-sub{font-size:13px;font-weight:600;color:var(--text2);max-width:260px;line-height:1.5;}
+.empty-pretty .big-btn{max-width:240px;margin-top:10px;}
+
+/* ─── PRODUCT DETAIL SHEET ─── */
+.pd-img-wrap{
+  width:100%;aspect-ratio:1;max-height:340px;
+  background:var(--card2);border-radius:14px;
+  position:relative;overflow:hidden;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;font-size:96px;
+}
+.pd-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.pd-img-wrap .pd-share{
+  position:absolute;top:10px;right:10px;
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.95);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+body.dark .pd-img-wrap .pd-share{background:rgba(40,40,40,0.95);color:var(--text);}
+.pd-name{font-size:20px;font-weight:900;color:var(--text);margin-bottom:6px;}
+.pd-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.pd-price{font-size:24px;font-weight:900;color:var(--accent);}
+.pd-old{font-size:14px;color:var(--text2);text-decoration:line-through;font-weight:700;}
+.pd-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.pd-section-title{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+.pd-actions{display:flex;gap:10px;align-items:center;}
+.pd-qty{display:flex;align-items:center;gap:10px;background:var(--accent-lt);border-radius:14px;padding:6px 8px;}
+.pd-qty .q-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:18px;font-weight:900;cursor:pointer;}
+.pd-qty .q-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.pd-qty .q-n{font-size:16px;font-weight:900;color:var(--accent-dk);min-width:24px;text-align:center;}
+
+/* ─── BOTTOM TABS / FAVORITES ENTRY ─── */
+.fav-link{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;background:var(--card);border-radius:12px;
+  border:1.5px solid var(--border);
+  cursor:pointer;margin-bottom:14px;
+}
+.fav-link:active{opacity:0.85;}
+.fav-link-l{display:flex;align-items:center;gap:10px;}
+.fav-link-ic{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,73,97,0.14);color:#FF4961;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.fav-link-tx{font-size:14px;font-weight:800;color:var(--text);}
+.fav-link-cnt{font-size:12px;font-weight:700;color:var(--text2);}
+
+/* Header search button visibility tweak */
+.hdr-right .hbtn[data-icon-only]{padding:8px 10px;font-size:18px;}
+
+/* Improved dark mode contrasts */
+body.dark .hbtn{background:rgba(46,204,113,0.12);border-color:rgba(46,204,113,0.32);color:var(--accent);}
+body.dark .float-cart{box-shadow:0 8px 28px rgba(0,0,0,0.5);}
+body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
+
+/* Smoother sheet transitions */
+.sheet{transition:transform 0.32s cubic-bezier(0.22,0.61,0.36,1)!important;}
+.overlay{transition:opacity 0.28s ease!important;}
 </style>
 </head>
 <body>
@@ -500,16 +649,17 @@ body.dark #app-root{
     <div class="logo-tx">Kerasys<span>Shop</span></div>
   </div>
   <div class="hdr-right">
+    <button class="hbtn" onclick="openSearch()" data-icon-only title="Search">🔍</button>
     <div class="hbtn-wrap">
-      <button class="hbtn" onclick="openPreorder()" style="font-size:18px;padding:8px 10px;" title="Предзаказ">📋</button>
+      <button class="hbtn" onclick="openPreorder()" data-icon-only data-tr-title="hdr_preorder">📋</button>
     </div>
     <div class="hbtn-wrap">
-      <button class="hbtn" onclick="openChat()" style="font-size:18px;padding:8px 10px;" title="Онлайн чат">💬</button>
+      <button class="hbtn" onclick="openChat()" data-icon-only data-tr-title="hdr_chat">💬</button>
       <span class="chat-badge" id="chatBadge">0</span>
     </div>
-    <button class="hbtn" onclick="openContact()" style="font-size:18px;padding:8px 10px;">📞</button>
-    <button class="hbtn" onclick="openProfile()" style="font-size:18px;padding:8px 10px;">👤</button>
-    <button class="hbtn" id="adminBtn" style="display:none;font-size:18px;padding:8px 10px;" onclick="openAdmin()">⚙️</button>
+    <button class="hbtn" onclick="openContact()" data-icon-only data-tr-title="hdr_contact">📞</button>
+    <button class="hbtn" onclick="openProfile()" data-icon-only data-tr-title="hdr_profile">👤</button>
+    <button class="hbtn" id="adminBtn" style="display:none" data-icon-only onclick="openAdmin()">⚙️</button>
   </div>
 </div>
 
@@ -572,17 +722,17 @@ body.dark #app-root{
 <div class="sheet" id="cartSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">🛒 Корзина</div>
+    <div class="s-title" data-tr="cart_title">🛒 Korzina</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="promo-input-wrap" id="promoWrap">
-      <input type="text" class="promo-input" id="promoInput" placeholder="Промокод (необязательно)">
-      <button class="promo-apply" onclick="applyPromo()">Применить</button>
+      <input type="text" class="promo-input" id="promoInput" data-tr-ph="promo_ph" placeholder="Promokod (ixtiyoriy)">
+      <button class="promo-apply" onclick="applyPromo()" data-tr="apply">Qo'llash</button>
     </div>
     <div class="promo-applied" id="promoApplied" style="display:none">
       <div>
-        <div class="promo-applied-info">5% скидка</div>
+        <div class="promo-applied-info" data-tr="discount_5">5% chegirma</div>
         <div class="promo-applied-code" id="appliedCode"></div>
       </div>
       <button class="promo-remove" onclick="removePromo()">✕</button>
@@ -591,48 +741,33 @@ body.dark #app-root{
   </div>
   <div class="s-foot">
     <div class="discount-row" id="discountRow" style="display:none">
-      <span class="discount-lbl">Скидка (5%)</span>
+      <span class="discount-lbl" data-tr="discount_lbl">Chegirma (5%)</span>
       <span class="discount-val" id="discountVal">-0 so'm</span>
     </div>
     <div class="total-row">
-      <span class="total-lbl">Итого:</span>
+      <span class="total-lbl" data-tr="total_lbl">Jami:</span>
       <span class="total-val" id="totalVal">0 so'm</span>
     </div>
-    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled="">Оформить заказ →</button>
+    <button class="big-btn pri" id="orderBtn" onclick="toOrder()" disabled="" data-tr="checkout_btn">Buyurtma berish →</button>
   </div>
 </div>
 
 <div class="sheet" id="orderSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">📋 Buyurtma</div>
+    <div class="s-title" data-tr="order_title">📋 Buyurtma</div>
     <button class="s-close" onclick="backToCart()">←</button>
   </div>
   <div class="s-body">
-    <div class="f-info">
-      ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.
+    <div class="f-info" id="orderInfo"></div>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_name">Ism Familiya *</label><input class="f-inp" id="oName" data-tr-ph="o_name_ph" placeholder="Sarvar Karimov"></div>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_phone">Telefon *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_time">Olib ketish vaqti *</label>
+      <select class="f-sel" id="oTime"></select>
     </div>
-    <div class="f-grp"><label class="f-lbl">Имя Фамилия *</label><input class="f-inp" id="oName" placeholder="Иван Иванов"></div>
-    <div class="f-grp"><label class="f-lbl">Телефон *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
-    <div class="f-grp"><label class="f-lbl">Время получения *</label>
-      <select class="f-sel" id="oTime">
-        <option value="">— Выберите —</option>
-        <option>Сегодня 10:00–12:00</option>
-        <option>Сегодня 12:00–14:00</option>
-        <option>Сегодня 14:00–16:00</option>
-        <option>Сегодня 16:00–18:00</option>
-        <option>Сегодня 18:00–20:00</option>
-        <option>Завтра 10:00–12:00</option>
-        <option>Завтра 12:00–14:00</option>
-        <option>Завтра 14:00–16:00</option>
-        <option>Завтра 16:00–18:00</option>
-        <option>Завтра 18:00–20:00</option>
-        <option>Другое (напишите в комментарии)</option>
-      </select>
-    </div>
-    <div class="f-grp"><label class="f-lbl">Комментарий</label><textarea class="f-ta" id="oNote" placeholder="Другое время или информация..."></textarea></div>
-    <button class="big-btn pri" onclick="submitOrder()">✅ Подтвердить</button>
-    <button class="big-btn sec" onclick="backToCart()">← Назад</button>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_note">Izoh</label><textarea class="f-ta" id="oNote" data-tr-ph="o_note_ph" placeholder="Boshqa vaqt yoki ma'lumot..."></textarea></div>
+    <button class="big-btn pri" onclick="submitOrder()" data-tr="confirm_btn">✅ Tasdiqlash</button>
+    <button class="big-btn sec" onclick="backToCart()" data-tr="back_btn">← Orqaga</button>
   </div>
 </div>
 
@@ -641,14 +776,14 @@ body.dark #app-root{
   <div class="s-body">
     <div class="success-box">
       <div class="success-icon">🎉</div>
-      <div class="success-title">Заказ принят!</div>
-      <div class="success-sub">Вы можете забрать в указанное время.<br>Сохраните код:</div>
+      <div class="success-title" data-tr="success_title">Buyurtma qabul qilindi!</div>
+      <div class="success-sub" data-tr-html="success_sub">Belgilangan vaqtda olib ketishingiz mumkin.<br>Kodni saqlab qo'ying:</div>
       <div class="order-code-box">
-        <div class="order-code-lbl">Код заказа</div>
+        <div class="order-code-lbl" data-tr="success_code_lbl">Buyurtma kodi</div>
         <div class="order-code" id="successCode">------</div>
-        <div class="order-code-hint">Покажите этот код в магазине</div>
+        <div class="order-code-hint" data-tr="success_code_hint">Bu kodni do'konda ko'rsating</div>
       </div>
-      <button class="big-btn pri" onclick="closeAll()">Продолжить 🛍</button>
+      <button class="big-btn pri" onclick="closeAll()" data-tr="continue_btn">Davom etish 🛍</button>
     </div>
   </div>
 </div>
@@ -656,32 +791,32 @@ body.dark #app-root{
 <div class="sheet" id="contactSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">📞 Контакты</div>
+    <div class="s-title" data-tr="contact_title">📞 Kontaktlar</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
     <div class="contact-card">
       <div class="contact-row">
         <div class="contact-ic">📱</div>
-        <div><div class="contact-lbl">Телефон</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
+        <div><div class="contact-lbl" data-tr="contact_phone_lbl">Telefon</div><div class="contact-val"><a href="tel:+998990068860">+998 99 006 88 60</a></div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">⏰</div>
-        <div><div class="contact-lbl">Время работы</div><div class="contact-val">9:00 — 21:00</div></div>
+        <div><div class="contact-lbl" data-tr="contact_hours_lbl">Ish vaqti</div><div class="contact-val">9:00 — 21:00</div></div>
       </div>
       <div class="contact-row">
         <div class="contact-ic">🏪</div>
-        <div><div class="contact-lbl">Доставка</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;">Только самовывоз</div></div>
+        <div><div class="contact-lbl" data-tr="contact_delivery_lbl">Yetkazib berish</div><div class="contact-val" style="font-size:13px;color:var(--text2);font-weight:700;" data-tr="contact_delivery_val">Faqat o'zi olib ketish</div></div>
       </div>
     </div>
-    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')">📞 Позвонить</button>
+    <button class="big-btn pri" style="margin-top:14px" onclick="window.open('tel:+998990068860')" data-tr="contact_call_btn">📞 Qo'ng'iroq qilish</button>
   </div>
 </div>
 
 <div class="sheet" id="profileSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">👤 Профиль</div>
+    <div class="s-title" data-tr="profile_title">👤 Profil</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="profileBody"></div>
@@ -879,8 +1014,152 @@ const PROMO_DISCOUNT=0.05;
 let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={};
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
-let currentLang='ru';
+let currentLang=localStorage.getItem('lang')||'ru';
 let isDarkTheme=localStorage.getItem('darkTheme')==='true';
+let productsLoaded=false;
+let sortMode=localStorage.getItem('sortMode')||'def';
+let searchQuery='';
+let favIds=(()=>{ try { return JSON.parse(localStorage.getItem('favIds')||'[]'); } catch(_) { return []; } })();
+const isFav=id=>favIds.includes(id);
+function saveFavs(){localStorage.setItem('favIds',JSON.stringify(favIds));}
+
+/* ─── TRANSLATIONS ─── */
+const TR={
+  hdr_preorder:{uz:"Oldindan buyurtma",ru:"Предзаказ"},
+  hdr_chat:{uz:"Onlayn chat",ru:"Онлайн чат"},
+  hdr_contact:{uz:"Kontaktlar",ru:"Контакты"},
+  hdr_profile:{uz:"Profil",ru:"Профиль"},
+  cart_title:{uz:"🛒 Savat",ru:"🛒 Корзина"},
+  promo_ph:{uz:"Promokod (ixtiyoriy)",ru:"Промокод (необязательно)"},
+  apply:{uz:"Qo'llash",ru:"Применить"},
+  discount_5:{uz:"5% chegirma",ru:"5% скидка"},
+  discount_lbl:{uz:"Chegirma (5%)",ru:"Скидка (5%)"},
+  total_lbl:{uz:"Jami:",ru:"Итого:"},
+  checkout_btn:{uz:"Buyurtma berish →",ru:"Оформить заказ →"},
+  order_title:{uz:"📋 Buyurtma",ru:"📋 Заказ"},
+  o_name:{uz:"Ism Familiya *",ru:"Имя Фамилия *"},
+  o_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов"},
+  o_phone:{uz:"Telefon *",ru:"Телефон *"},
+  o_time:{uz:"Olib ketish vaqti *",ru:"Время получения *"},
+  o_note:{uz:"Izoh",ru:"Комментарий"},
+  o_note_ph:{uz:"Boshqa vaqt yoki ma'lumot...",ru:"Другое время или информация..."},
+  confirm_btn:{uz:"✅ Tasdiqlash",ru:"✅ Подтвердить"},
+  back_btn:{uz:"← Orqaga",ru:"← Назад"},
+  success_title:{uz:"Buyurtma qabul qilindi!",ru:"Заказ принят!"},
+  success_sub:{uz:"Belgilangan vaqtda olib ketishingiz mumkin.<br>Kodni saqlab qo'ying:",ru:"Вы можете забрать в указанное время.<br>Сохраните код:"},
+  success_code_lbl:{uz:"Buyurtma kodi",ru:"Код заказа"},
+  success_code_hint:{uz:"Bu kodni do'konda ko'rsating",ru:"Покажите этот код в магазине"},
+  continue_btn:{uz:"Davom etish 🛍",ru:"Продолжить 🛍"},
+  contact_title:{uz:"📞 Kontaktlar",ru:"📞 Контакты"},
+  contact_phone_lbl:{uz:"Telefon",ru:"Телефон"},
+  contact_hours_lbl:{uz:"Ish vaqti",ru:"Время работы"},
+  contact_delivery_lbl:{uz:"Yetkazib berish",ru:"Доставка"},
+  contact_delivery_val:{uz:"Faqat o'zi olib ketish",ru:"Только самовывоз"},
+  contact_call_btn:{uz:"📞 Qo'ng'iroq qilish",ru:"📞 Позвонить"},
+  profile_title:{uz:"👤 Profil",ru:"👤 Профиль"},
+  chat_title:{uz:"💬 Onlayn chat",ru:"💬 Онлайн чат"},
+  chat_input_ph:{uz:"Xabar yozing...",ru:"Написать сообщение..."},
+  preorder_title:{uz:"📋 Oldindan buyurtma",ru:"📋 Предзаказ"},
+  po_name_lbl:{uz:"Ismingiz *",ru:"Ваше имя *"},
+  po_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов"},
+  po_items_lbl:{uz:"Oldindan buyurtma uchun mahsulotlar *",ru:"Товары для предзаказа *"},
+  po_item_ph:{uz:"Mahsulot nomi",ru:"Название товара"},
+  po_note_ph:{uz:"Qo'shimcha ma'lumot...",ru:"Дополнительная информация..."},
+  po_submit_btn:{uz:"✅ Oldindan buyurtmani yuborish",ru:"✅ Отправить предзаказ"},
+  search_title:{uz:"🔍 Qidiruv",ru:"🔍 Поиск"},
+  search_ph:{uz:"Mahsulotni qidirish...",ru:"Найти товар..."},
+  fav_title:{uz:"❤️ Sevimlilar",ru:"❤️ Избранное"},
+  pd_title:{uz:"📦 Mahsulot",ru:"📦 Товар"},
+  add_to_cart:{uz:"Savatga qo'shish",ru:"Добавить в корзину"},
+  empty_cart_title:{uz:"Savat bo'sh",ru:"Корзина пуста"},
+  empty_cart_sub:{uz:"Mahsulotlarni tanlash uchun katalogga qayting.",ru:"Вернитесь в каталог, чтобы выбрать товары."},
+  empty_cart_btn:{uz:"🛍 Katalogga",ru:"🛍 К каталогу"},
+  empty_search_title:{uz:"Hech narsa topilmadi",ru:"Ничего не найдено"},
+  empty_search_sub:{uz:"Boshqa kalit so'z bilan urinib ko'ring.",ru:"Попробуйте другое ключевое слово."},
+  empty_fav_title:{uz:"Sevimlilar bo'sh",ru:"Избранное пусто"},
+  empty_fav_sub:{uz:"Yoqqan mahsulotlarni ❤️ tugmasi orqali qo'shing.",ru:"Добавляйте товары через кнопку ❤️."},
+  empty_products_cat:{uz:"Bu kategoriyada hozircha mahsulot yo'q",ru:"В этой категории пока нет товаров"},
+  cats_title:{uz:"Kategoriyalar",ru:"Категории"},
+  cats_sub:{uz:"Xohlagan kategoriyani tanlang",ru:"Выберите категорию"},
+  back:{uz:"Orqaga",ru:"Назад"},
+  products_count:{uz:"ta mahsulot",ru:"товаров"},
+  fav_link_tx:{uz:"Sevimlilar",ru:"Избранное"},
+  fav_link_cnt_tpl:{uz:"$N ta",ru:"$N шт"},
+  sort_def:{uz:"⚡ Standart",ru:"⚡ По умолчанию"},
+  sort_price_asc:{uz:"⬆️ Arzon",ru:"⬆️ Дешёвые"},
+  sort_price_desc:{uz:"⬇️ Qimmat",ru:"⬇️ Дорогие"},
+  sort_name:{uz:"🔤 Nom",ru:"🔤 Имя"},
+  pd_share:{uz:"Ulashish",ru:"Поделиться"},
+  pd_choose_var:{uz:"Xilini tanlang",ru:"Выберите вариант"},
+  added_toast:{uz:"qo'shildi",ru:"добавлен"},
+  fav_added:{uz:"❤️ Sevimlilarga qo'shildi",ru:"❤️ Добавлено в избранное"},
+  fav_removed:{uz:"💔 Sevimlilardan olindi",ru:"💔 Удалено из избранного"},
+  share_copied:{uz:"🔗 Havola nusxalandi",ru:"🔗 Ссылка скопирована"},
+  order_info_msg:{uz:"ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.",ru:"ℹ️ У нас <span>нет доставки</span>. Заказ будет готов, когда вы придёте."},
+  preorder_info_msg:{uz:"ℹ️ <span>Kerakli mahsulot yo'qmi?</span> Oldindan buyurtma qoldiring — mahsulot kelganda biz siz bilan bog'lanamiz.",ru:"ℹ️ <span>Нет нужного товара?</span> Оставьте предзаказ — мы свяжемся с вами, когда товар появится."},
+  time_select:{uz:"— Tanlang —",ru:"— Выберите —"},
+  time_today:{uz:"Bugun",ru:"Сегодня"},
+  time_tomorrow:{uz:"Ertaga",ru:"Завтра"},
+  time_other:{uz:"Boshqa (izohda yozing)",ru:"Другое (напишите в комментарии)"},
+  err_fill_required:{uz:"❗ Ism, telefon va vaqt kiritilsin",ru:"❗ Введите имя, телефон и время"},
+  err_generic:{uz:"❌ Xatolik",ru:"❌ Ошибка"},
+};
+function tr(key){return (TR[key]&&TR[key][currentLang])||key;}
+window.tr=tr;
+
+function fillOrderTimes(){
+  const sel=$('oTime');if(!sel)return;
+  const slots=['10:00–12:00','12:00–14:00','14:00–16:00','16:00–18:00','18:00–20:00'];
+  const today=tr('time_today'),tomorrow=tr('time_tomorrow');
+  const opts=[`<option value="">${tr('time_select')}</option>`];
+  slots.forEach(s=>opts.push(`<option>${today} ${s}</option>`));
+  slots.forEach(s=>opts.push(`<option>${tomorrow} ${s}</option>`));
+  opts.push(`<option>${tr('time_other')}</option>`);
+  sel.innerHTML=opts.join('');
+}
+
+function applyLang(){
+  document.querySelectorAll('[data-tr]').forEach(el=>{el.textContent=tr(el.dataset.tr);});
+  document.querySelectorAll('[data-tr-html]').forEach(el=>{el.innerHTML=tr(el.dataset.trHtml);});
+  document.querySelectorAll('[data-tr-ph]').forEach(el=>{el.placeholder=tr(el.dataset.trPh);});
+  document.querySelectorAll('[data-tr-title]').forEach(el=>{el.title=tr(el.dataset.trTitle);});
+  const oi=$('orderInfo');if(oi)oi.innerHTML=tr('order_info_msg');
+  const pi=$('preorderInfoTxt');if(pi)pi.innerHTML=tr('preorder_info_msg');
+  fillOrderTimes();
+  document.documentElement.setAttribute('lang',currentLang);
+}
+
+/* ─── HAPTIC FEEDBACK ─── */
+function haptic(type){
+  try{
+    const h=tg?.HapticFeedback;if(!h)return;
+    if(type==='light')h.impactOccurred('light');
+    else if(type==='medium')h.impactOccurred('medium');
+    else if(type==='heavy')h.impactOccurred('heavy');
+    else if(type==='success')h.notificationOccurred('success');
+    else if(type==='warning')h.notificationOccurred('warning');
+    else if(type==='error')h.notificationOccurred('error');
+    else if(type==='selection')h.selectionChanged();
+  }catch(_){}
+}
+
+/* ─── BACK BUTTON ─── */
+function isAnySheetOpen(){
+  return ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet'].some(id=>$(id)?.classList.contains('on'));
+}
+function updateBackBtn(){
+  if(!tg?.BackButton)return;
+  try{
+    if(isAnySheetOpen()||currentPage==='products'){tg.BackButton.show();}
+    else{tg.BackButton.hide();}
+  }catch(_){}
+}
+try{
+  tg?.BackButton?.onClick(()=>{
+    if(isAnySheetOpen()){closeAll();return;}
+    if(currentPage==='products'){window.goBack();return;}
+  });
+}catch(_){}
 
 function applyTheme(){
   const root=document.getElementById('app-root');
@@ -920,69 +1199,276 @@ function genPromoCode(){
   let r='PRM';for(let i=0;i<4;i++)r+=c[Math.floor(Math.random()*c.length)];return r;
 }
 
+/* Display name helpers */
+const catName=c=>currentLang==='uz'?c.label:(c.id==='kukun'?'Стиральные порошки':c.id==='gel'?'Гели':c.id==='shampun'?'Шампуни':c.id==='sovun'?'Мыло':'Другие товары');
+const escAttr=s=>String(s||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
+
+function renderSkeletonGrid(n){
+  let s='<div class="grid">';
+  for(let i=0;i<n;i++){
+    s+=`<div class="skel-card">
+      <div class="skel skel-img"></div>
+      <div class="skel-body">
+        <div class="skel skel-line tall"></div>
+        <div class="skel skel-line short"></div>
+        <div class="skel skel-line"></div>
+      </div>
+    </div>`;
+  }
+  s+='</div>';
+  return s;
+}
+function renderSkeletonCats(){
+  let s='<div class="cats-grid">';
+  for(let i=0;i<6;i++){s+='<div class="skel-card" style="padding:20px 16px;height:120px"><div class="skel skel-line tall" style="width:40%"></div><div class="skel skel-line" style="width:60%;margin-top:14px"></div></div>';}
+  s+='</div>';
+  return s;
+}
+
 function renderCatsPage(){
   currentPage='cats';
+  if(!productsLoaded){
+    $('mainArea').innerHTML=`
+      <div class="pg-title" style="margin-bottom:4px">${tr('cats_title')}</div>
+      <div class="pg-sub" style="margin-bottom:16px">${tr('cats_sub')}</div>
+      ${renderSkeletonCats()}`;
+    updateBackBtn();
+    return;
+  }
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
+  const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
   $('mainArea').innerHTML=`
-    <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">${currentLang==='uz'?'Kategoriyalar':'Категории'}</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${currentLang==='uz'?'Xohlagan kategoriyani tanlang':'Выберите категорию'}</div>
+    <div class="pg-title" style="margin-bottom:4px">${tr('cats_title')}</div>
+    <div class="pg-sub" style="margin-bottom:14px">${tr('cats_sub')}</div>
+    ${favCnt>0?`<div class="fav-link" onclick="openFav()">
+      <div class="fav-link-l">
+        <div class="fav-link-ic">❤️</div>
+        <div>
+          <div class="fav-link-tx">${tr('fav_link_tx')}</div>
+          <div class="fav-link-cnt">${tr('fav_link_cnt_tpl').replace('$N',favCnt)}</div>
+        </div>
+      </div>
+      <div style="font-size:18px;color:var(--accent);font-weight:900">→</div>
+    </div>`:''}
     <div class="cats-grid">
-      ${CATS.map(c=>`
-        <div class="cat-card" onclick="window.openCat('${c.id}')">
+      ${CATS.map((c,i)=>`
+        <div class="cat-card" style="animation-delay:${i*40}ms" onclick="window.openCat('${c.id}')">
           <div class="cat-ic">${c.icon}</div>
-          <div class="cat-nm">${currentLang==='uz'?c.label:(c.id==='kukun'?'Стиральные порошки':c.id==='gel'?'Гели':c.id==='shampun'?'Шампуни':c.id==='sovun'?'Мыло':'Другие товары')}</div>
-          <div class="cat-cnt">${counts[c.id]||0} ${currentLang==='uz'?'ta mahsulot':'товаров'}</div>
+          <div class="cat-nm">${catName(c)}</div>
+          <div class="cat-cnt">${counts[c.id]||0} ${tr('products_count')}</div>
           <div class="cat-arr">→</div>
         </div>`).join('')}
     </div>`;
+  updateBackBtn();
 }
-window.openCat=id=>{currentCat=id;currentPage='products';renderProductsPage();};
+window.openCat=id=>{currentCat=id;currentPage='products';searchQuery='';haptic('selection');renderProductsPage();};
+
+function sortList(list){
+  const arr=[...list];
+  if(sortMode==='price_asc')arr.sort((a,b)=>(a.price||0)-(b.price||0));
+  else if(sortMode==='price_desc')arr.sort((a,b)=>(b.price||0)-(a.price||0));
+  else if(sortMode==='name')arr.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  return arr;
+}
+function matchesQuery(p,q){
+  if(!q)return true;
+  q=q.toLowerCase();
+  return (p.name||'').toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q);
+}
+
+function productCardHTML(p,opts){
+  opts=opts||{};
+  const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
+  const icon=ICONS[p.cat]||'📦';
+  const hasVars=p.variants&&p.variants.length>0;
+  return `<div class="p-card" onclick="window.openProductDetail('${p.id}')" style="animation-delay:${(opts.idx||0)*30}ms">
+    <button class="fav-btn ${isFav(p.id)?'on':''}" onclick="event.stopPropagation();window.toggleFav('${p.id}',this)" aria-label="favorite">
+      <span class="fav-heart-off">🤍</span><span class="fav-heart-on">❤️</span>
+    </button>
+    <div class="p-img">
+      ${p.img
+        ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="p-fallback" style="display:none">${icon}</span>`
+        :`<span class="p-fallback">${icon}</span>`}
+      ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
+    </div>
+    <div class="p-body">
+      <div class="p-name">${p.name}</div>
+      <div class="p-desc">${p.desc||''}</div>
+      <div class="p-foot">
+        <div>
+          <div class="p-price">${fmt(p.price)}</div>
+          ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
+        </div>
+        ${hasVars
+          ?`<button class="add-btn" onclick="event.stopPropagation();window.openVarPicker('${p.id}')">+</button>`
+          :(qty===0
+            ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>`
+            :`<div class="qty-w on">
+                <button class="q-btn" onclick="event.stopPropagation();window.rmSimple('${p.id}')">−</button>
+                <span class="q-n">${qty}</span>
+                <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>
+              </div>`)}
+      </div>
+    </div>
+  </div>`;
+}
 
 function renderProductsPage(){
   const cat=CATS.find(c=>c.id===currentCat);
-  const list=products.filter(p=>p.cat===currentCat&&p.active!==false);
+  if(!cat){currentPage='cats';return renderCatsPage();}
+  const all=products.filter(p=>p.cat===currentCat&&p.active!==false);
+  const filtered=sortList(all.filter(p=>matchesQuery(p,searchQuery)));
+  const sortChips=[
+    {id:'def',k:'sort_def'},
+    {id:'price_asc',k:'sort_price_asc'},
+    {id:'price_desc',k:'sort_price_desc'},
+    {id:'name',k:'sort_name'},
+  ];
   $('mainArea').innerHTML=`
-    <div class="back-btn" onclick="window.goBack()">← ${currentLang==='uz'?'Orqaga':'Назад'}</div>
-    <div class="pg-title">${cat.icon} ${currentLang==='uz'?cat.label:(cat.id==='kukun'?'Стиральные порошки':cat.id==='gel'?'Гели':cat.id==='shampun'?'Шампуни':cat.id==='sovun'?'Мыло':'Другие товары')}</div>
-    <div class="pg-sub">${list.length} ${currentLang==='uz'?'ta mahsulот':'товаров'}</div>
-    ${!list.length
-      ?`<div style="text-align:center;padding:40px;color:var(--text2);font-weight:700">${currentLang==='uz'?'Mahsulot yo\'q':'Товаров нет'}</div>`
-      :`<div class="grid">${list.map(p=>{
-        const qty=Object.values(cart).filter(i=>i.pid===p.id).reduce((s,i)=>s+i.qty,0);
-        const icon=ICONS[p.cat]||'📦';
-        const hasVars=p.variants&&p.variants.length>0;
-        return `<div class="p-card">
-          <div class="p-img">
-            ${p.img
-              ?`<img src="${p.img}" alt="" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                <span class="p-fallback" style="display:none">${icon}</span>`
-              :`<span class="p-fallback">${icon}</span>`}
-            ${p.badge?`<div class="p-badge">${p.badge}</div>`:''}
-          </div>
-          <div class="p-body">
-            <div class="p-name">${p.name}</div>
-            <div class="p-desc">${p.desc||''}</div>
-            <div class="p-foot">
-              <div>
-                <div class="p-price">${fmt(p.price)}</div>
-                ${p.oldPrice?`<div class="p-oldprice">${fmt(p.oldPrice)}</div>`:''}
-              </div>
-              ${hasVars
-                ?`<button class="add-btn" onclick="event.stopPropagation();window.openVarPicker('${p.id}')">+</button>`
-                :(qty===0
-                  ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>`
-                  :`<div class="qty-w on">
-                      <button class="q-btn" onclick="event.stopPropagation();window.rmSimple('${p.id}')">−</button>
-                      <span class="q-n">${qty}</span>
-                      <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>
-                    </div>`)}
-            </div>
-          </div>
-        </div>`;
-      }).join('')}</div>`}`;
+    <div class="back-btn" onclick="window.goBack()">← ${tr('back')}</div>
+    <div class="pg-title">${cat.icon} ${catName(cat)}</div>
+    <div class="pg-sub">${all.length} ${tr('products_count')}</div>
+    <div class="search-bar" style="margin-bottom:6px">
+      <span class="search-ic">🔍</span>
+      <input class="search-inp" id="prodPageSearch" data-tr-ph="search_ph" placeholder="${tr('search_ph')}" oninput="onProdPageSearch(this.value)" value="${escAttr(searchQuery)}" autocomplete="off">
+      ${searchQuery?`<button class="search-clear" onclick="onProdPageSearch('')">✕</button>`:''}
+    </div>
+    <div class="sort-row">
+      ${sortChips.map(s=>`<button class="sort-chip ${sortMode===s.id?'on':''}" onclick="setSortMode('${s.id}')">${tr(s.k)}</button>`).join('')}
+    </div>
+    ${!productsLoaded
+      ?renderSkeletonGrid(4)
+      :(!filtered.length
+        ?`<div class="empty-pretty">
+            <div class="empty-pretty-ic">${searchQuery?'🔎':'📭'}</div>
+            <div class="empty-pretty-title">${searchQuery?tr('empty_search_title'):tr('empty_products_cat')}</div>
+            ${searchQuery?`<div class="empty-pretty-sub">${tr('empty_search_sub')}</div>`:''}
+          </div>`
+        :`<div class="grid">${filtered.map((p,i)=>productCardHTML(p,{idx:i})).join('')}</div>`)}`;
+  updateBackBtn();
 }
-window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
+window.onProdPageSearch=v=>{searchQuery=v;renderProductsPage();const inp=$('prodPageSearch');if(inp)inp.focus();};
+window.setSortMode=m=>{sortMode=m;localStorage.setItem('sortMode',m);haptic('selection');renderProductsPage();};
+window.goBack=()=>{currentCat=null;currentPage='cats';searchQuery='';haptic('selection');renderCatsPage();};
+
+window.toggleFav=(id,btn)=>{
+  if(favIds.includes(id))favIds=favIds.filter(x=>x!==id);
+  else favIds.push(id);
+  saveFavs();
+  if(btn){btn.classList.toggle('on',isFav(id));btn.classList.add('popped');setTimeout(()=>btn.classList.remove('popped'),360);}
+  haptic('light');
+  toast(isFav(id)?tr('fav_added'):tr('fav_removed'));
+  if(currentPage==='cats')renderCatsPage();
+};
+
+window.openSearch=()=>{
+  $('overlay').classList.add('on');
+  $('searchSheet').classList.add('on');
+  $('searchSheetInp').value='';
+  renderSearchSheet();
+  setTimeout(()=>$('searchSheetInp').focus(),250);
+  updateBackBtn();
+};
+window.clearSearchSheet=()=>{$('searchSheetInp').value='';renderSearchSheet();$('searchSheetInp').focus();};
+window.renderSearchSheet=()=>{
+  const q=($('searchSheetInp')?.value||'').trim();
+  $('searchSheetClear').style.display=q?'flex':'none';
+  const list=q?products.filter(p=>p.active!==false&&matchesQuery(p,q)):[];
+  const el=$('searchSheetResults');
+  if(!q){
+    el.innerHTML=`<div class="empty-pretty"><div class="empty-pretty-ic">🔎</div><div class="empty-pretty-sub">${tr('search_ph')}</div></div>`;
+    return;
+  }
+  if(!list.length){
+    el.innerHTML=`<div class="empty-pretty">
+      <div class="empty-pretty-ic">😕</div>
+      <div class="empty-pretty-title">${tr('empty_search_title')}</div>
+      <div class="empty-pretty-sub">${tr('empty_search_sub')}</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML=`<div class="grid">${list.map((p,i)=>productCardHTML(p,{idx:i})).join('')}</div>`;
+};
+
+window.openFav=()=>{
+  $('overlay').classList.add('on');
+  $('favSheet').classList.add('on');
+  renderFavSheet();
+  updateBackBtn();
+};
+function renderFavSheet(){
+  const list=products.filter(p=>p.active!==false&&favIds.includes(p.id));
+  const el=$('favBody');
+  if(!list.length){
+    el.innerHTML=`<div class="empty-pretty">
+      <div class="empty-pretty-ic">💔</div>
+      <div class="empty-pretty-title">${tr('empty_fav_title')}</div>
+      <div class="empty-pretty-sub">${tr('empty_fav_sub')}</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML=`<div class="grid">${list.map((p,i)=>productCardHTML(p,{idx:i})).join('')}</div>`;
+}
+
+window.openProductDetail=id=>{
+  const p=products.find(x=>x.id===id);if(!p)return;
+  $('overlay').classList.add('on');
+  $('pdSheet').classList.add('on');
+  renderProductDetail(p);
+  haptic('light');
+  updateBackBtn();
+};
+function renderProductDetail(p){
+  const icon=ICONS[p.cat]||'📦';
+  const qty=Object.values(cart).filter(i=>i.pid===p.id&&!i.variant).reduce((s,i)=>s+i.qty,0);
+  const hasVars=p.variants&&p.variants.length>0;
+  $('pdBody').innerHTML=`
+    <div class="pd-img-wrap">
+      ${p.img?`<img src="${p.img}" alt="" onerror="this.style.display='none'">`:`<span>${icon}</span>`}
+      <button class="pd-share" onclick="shareProduct('${p.id}')" title="${tr('pd_share')}">📤</button>
+      <button class="fav-btn ${isFav(p.id)?'on':''}" style="top:10px;left:10px;right:auto;width:36px;height:36px" onclick="window.toggleFav('${p.id}',this);renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});" aria-label="favorite">
+        <span class="fav-heart-off">🤍</span><span class="fav-heart-on">❤️</span>
+      </button>
+      ${p.badge?`<div class="p-badge" style="top:10px;left:54px">${p.badge}</div>`:''}
+    </div>
+    <div class="pd-name">${p.name}</div>
+    <div class="pd-price-row">
+      <span class="pd-price">${fmt(p.price)}</span>
+      ${p.oldPrice?`<span class="pd-old">${fmt(p.oldPrice)}</span>`:''}
+    </div>
+    ${p.desc?`<div class="pd-desc">${p.desc}</div>`:''}
+    ${hasVars
+      ?`<div class="pd-section-title">${tr('pd_choose_var')}</div>
+         <button class="big-btn pri" onclick="closeAll();setTimeout(()=>window.openVarPicker('${p.id}'),200)">${tr('add_to_cart')}</button>`
+      :`<div class="pd-actions">
+          ${qty===0
+            ?`<button class="big-btn pri" style="margin-top:0;flex:1" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">${tr('add_to_cart')} +</button>`
+            :`<div class="pd-qty">
+                <button class="q-btn" onclick="window.rmSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">−</button>
+                <span class="q-n">${qty}</span>
+                <button class="q-btn" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
+              </div>`}
+        </div>`}
+  `;
+}
+
+window.shareProduct=async pid=>{
+  const p=products.find(x=>x.id===pid);if(!p)return;
+  const url=location.origin+location.pathname+'?p='+encodeURIComponent(pid);
+  const text=`${p.name} — ${fmt(p.price)}\n${url}`;
+  try{
+    if(tg?.openTelegramLink){
+      const u='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(p.name+' — '+fmt(p.price));
+      tg.openTelegramLink(u);
+      return;
+    }
+    if(navigator.share){await navigator.share({title:p.name,text,url});return;}
+    if(navigator.clipboard){await navigator.clipboard.writeText(text);toast(tr('share_copied'));return;}
+  }catch(_){}
+  toast(tr('share_copied'));
+};
 
 // ─── Realtime Database (mahsulotlar uchun) ───
 const rtdb=firebase.database();
@@ -995,14 +1481,27 @@ function initProducts(){
     else {
       products=Object.entries(val).map(([id,data])=>({id,...data}));
     }
+    productsLoaded=true;
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
+    if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
+    if($('favSheet')?.classList.contains('on'))renderFavSheet();
     if(isAdmin)loadAdminProducts();
   }, err=>{
     console.error('RTDB error:',err);
+    productsLoaded=true;
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
   });
 }
 initProducts();
+
+function refreshOpenViews(){
+  if(currentPage==='cats')renderCatsPage();
+  else if(currentPage==='products')renderProductsPage();
+  if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
+  if($('favSheet')?.classList.contains('on'))renderFavSheet();
+}
 
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
 window.addSimple=id=>{
@@ -1010,15 +1509,17 @@ window.addSimple=id=>{
   const key=cartKey(id,null);
   if(!cart[key])cart[key]={pid:id,name:p.name,price:p.price,icon:ICONS[p.cat]||'📦',img:p.img||'',variant:null,qty:0};
   cart[key].qty++;
-  updateCartUI();renderProductsPage();
-  toast(`✓ ${p.name} ${currentLang==='uz'?'qo\'shildi':'добавлен'}`);
+  updateCartUI();refreshOpenViews();
+  haptic('light');
+  toast(`✓ ${p.name} ${tr('added_toast')}`);
 };
 window.rmSimple=id=>{
   const key=cartKey(id,null);
   if(!cart[key])return;
   cart[key].qty--;
   if(cart[key].qty<=0)delete cart[key];
-  updateCartUI();renderProductsPage();
+  updateCartUI();refreshOpenViews();
+  haptic('light');
 };
 
 let varSelected=null,varSelectedPrice=null;
@@ -1026,14 +1527,14 @@ window.openVarPicker=pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
   varSelected=null;varSelectedPrice=null;
   const icon=ICONS[p.cat]||'📦';
-  $('varSheetTitle').textContent=currentLang==='uz'?'Xilini tanlang':'Выберите вариант';
+  $('varSheetTitle').textContent=tr('pd_choose_var');
   function render(){
     $('varBody').innerHTML=`
       <div class="var-product-info">
         <div class="var-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${icon}</div>
         <div><div class="var-name">${p.name}</div><div class="var-price">${fmt(varSelectedPrice||p.price)}</div></div>
       </div>
-      <div class="var-label">${currentLang==='uz'?'Xilini tanlang':'Выберите вариант'}:</div>
+      <div class="var-label">${tr('pd_choose_var')}:</div>
       <div class="var-list">
         ${(p.variants||[]).map(v=>{
           const vp=p.variantPrices&&p.variantPrices[v];
@@ -1044,20 +1545,22 @@ window.openVarPicker=pid=>{
           </div>`;
         }).join('')}
       </div>
-      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>${currentLang==='uz'?'Savatga qo\'shish':'Добавить в корзину'}</button>`;
+      <button class="big-btn pri" onclick="window.confirmVar('${pid}')" ${!varSelected?'disabled':''}>${tr('add_to_cart')}</button>`;
   }
-  window.varSelect=(v,price)=>{varSelected=v;varSelectedPrice=price;render();};
+  window.varSelect=(v,price)=>{varSelected=v;varSelectedPrice=price;haptic('selection');render();};
   window.confirmVar=pid2=>{
     if(!varSelected)return;
     const p2=products.find(x=>x.id===pid2);if(!p2)return;
     const key=cartKey(pid2,varSelected);
     if(!cart[key])cart[key]={pid:pid2,name:p2.name,price:varSelectedPrice||p2.price,icon,img:p2.img||'',variant:varSelected,qty:0};
     cart[key].qty++;
-    updateCartUI();renderProductsPage();closeAll();
+    updateCartUI();refreshOpenViews();closeAll();
+    haptic('success');
     toast(`✓ ${p2.name} (${varSelected})`);
   };
   render();
   $('overlay').classList.add('on');$('varSheet').classList.add('on');
+  updateBackBtn();
 };
 
 function updateCartUI(){
@@ -1068,7 +1571,7 @@ function updateCartUI(){
   if(appliedPromo) {discount=Math.round(tot*PROMO_DISCOUNT);tot-=discount;}
   const fc=$('floatCart');
   fc.classList.toggle('hidden',cnt===0);
-  $('fcCount').textContent=cnt+' '+(currentLang==='uz'?'mahsulot':'товаров');
+  $('fcCount').textContent=cnt+' '+tr('products_count');
   $('fcPrice').textContent=fmt(tot);
   $('totalVal').textContent=fmt(tot);
   $('discountVal').textContent='-'+fmt(discount);
@@ -1083,11 +1586,21 @@ window.openCart=()=>{
   $('promoInput').value=promoCode||'';
   $('promoApplied').style.display=appliedPromo?'flex':'none';
   if(appliedPromo)$('appliedCode').textContent=appliedPromo;
+  haptic('light');
+  updateBackBtn();
 };
 function renderCartBody(){
   const items=Object.entries(cart);
   const b=$('cartBody');
-  if(!items.length){b.innerHTML=`<div class="empty"><div class="empty-ic">🛒</div><div class="empty-tx">${currentLang==='uz'?'Savat bo\'sh':'Корзина пуста'}</div></div>`;return;}
+  if(!items.length){
+    b.innerHTML=`<div class="empty-pretty">
+      <div class="empty-pretty-ic">🛒</div>
+      <div class="empty-pretty-title">${tr('empty_cart_title')}</div>
+      <div class="empty-pretty-sub">${tr('empty_cart_sub')}</div>
+      <button class="big-btn pri" onclick="closeAll()">${tr('empty_cart_btn')}</button>
+    </div>`;
+    return;
+  }
   b.innerHTML=items.map(([key,it])=>`
     <div class="c-item">
       <div class="c-thumb">${it.img?`<img src="${it.img}" onerror="this.classList.add('err')">`:''}${it.icon}</div>
@@ -1103,25 +1616,26 @@ function renderCartBody(){
       </div>
     </div>`).join('');
 }
-window.cAdd=key=>{if(!cart[key])return;cart[key].qty++;updateCartUI();renderCartBody();};
-window.cRm=key=>{if(!cart[key])return;cart[key].qty--;if(cart[key].qty<=0)delete cart[key];updateCartUI();renderCartBody();};
+window.cAdd=key=>{if(!cart[key])return;cart[key].qty++;updateCartUI();renderCartBody();haptic('light');};
+window.cRm=key=>{if(!cart[key])return;cart[key].qty--;if(cart[key].qty<=0)delete cart[key];updateCartUI();renderCartBody();haptic('light');};
 
 window.applyPromo=async()=>{
   const code=$('promoInput').value.trim().toUpperCase();
-  if(!code){toast(currentLang==='uz'?'Kod kiriting':'Введите код');return;}
-  if(appliedPromo){toast(currentLang==='uz'?'Sizda allaqachon promo kod bor':'У вас уже есть промокод');return;}
+  if(!code){toast(currentLang==='uz'?'Kod kiriting':'Введите код');haptic('warning');return;}
+  if(appliedPromo){toast(currentLang==='uz'?'Sizda allaqachon promo kod bor':'У вас уже есть промокод');haptic('warning');return;}
   try{
     const snap=await db.collection('promocodes').get();
     const found=snap.docs.find(d=>d.data().code===code&&!d.data().used);
-    if(!found){toast(currentLang==='uz'?'❌ Promo kod noto\'g\'ri yoki ishlatilgan':'❌ Неверный или использованный код');return;}
+    if(!found){toast(currentLang==='uz'?'❌ Promo kod noto\'g\'ri yoki ishlatilgan':'❌ Неверный или использованный код');haptic('error');return;}
     appliedPromo=code;
     promoCode=code;
     $('promoApplied').style.display='flex';
     $('appliedCode').textContent=code;
     $('promoInput').value='';
     updateCartUI();
+    haptic('success');
     toast(currentLang==='uz'?'✅ 5% chegirma qo\'llandi!':'✅ 5% скидка применена!');
-  }catch(e){toast(currentLang==='uz'?'Xatolik':'Ошибка');}
+  }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 window.removePromo=()=>{
   appliedPromo=null;
@@ -1134,14 +1648,15 @@ window.removePromo=()=>{
 
 window.closeAll=()=>{
   $('overlay').classList.remove('on');
-  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  updateBackBtn();
 };
-window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');};
-window.backToCart=()=>{$('orderSheet').classList.remove('on');$('cartSheet').classList.add('on');renderCartBody();};
+window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');haptic('light');updateBackBtn();};
+window.backToCart=()=>{$('orderSheet').classList.remove('on');$('cartSheet').classList.add('on');renderCartBody();haptic('light');updateBackBtn();};
 
 window.submitOrder=async()=>{
   const name=g('oName'),phone=g('oPhone'),time=$('oTime').value,note=g('oNote');
-  if(!name||!phone||!time){toast(currentLang==='uz'?'❗ Ism, telefon va vaqt kiritilsin':'❗ Введите имя, телефон и время');return;}
+  if(!name||!phone||!time){toast(tr('err_fill_required'));haptic('warning');return;}
   const items=Object.values(cart);
   let total=items.reduce((s,i)=>s+i.price*i.qty,0);
   let discount=0;
@@ -1181,27 +1696,31 @@ window.submitOrder=async()=>{
     $('orderSheet').classList.remove('on');
     $('successCode').textContent=code;
     $('successSheet').classList.add('on');
+    haptic('success');
     ['oName','oPhone','oNote'].forEach(id=>$(id).value='');
     $('oTime').value='';
     loadMyOrders();
-  }catch(e){toast(currentLang==='uz'?'❌ Xatolik':'❌ Ошибка');}
+    updateBackBtn();
+  }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 
-window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').classList.add('on');};
+window.openContact=()=>{$('overlay').classList.add('on');$('contactSheet').classList.add('on');haptic('light');updateBackBtn();};
 
 window.toggleTheme=()=>{
   isDarkTheme=!isDarkTheme;
   localStorage.setItem('darkTheme',isDarkTheme);
   applyTheme();
+  haptic('selection');
   loadMyOrders();
 };
 
 window.toggleLang=()=>{
   currentLang=currentLang==='uz'?'ru':'uz';
   localStorage.setItem('lang',currentLang);
-  if(currentPage==='cats')renderCatsPage();
-  else if(currentPage==='products')renderProductsPage();
-  loadMyOrders();
+  applyLang();
+  haptic('selection');
+  refreshOpenViews();
+  if($('profileSheet')?.classList.contains('on'))loadMyOrders();
 };
 
 /* PROFILE */
@@ -1209,6 +1728,8 @@ window.openProfile=async()=>{
   $('overlay').classList.add('on');
   $('profileSheet').classList.add('on');
   loadMyOrders();
+  haptic('light');
+  updateBackBtn();
 };
 
 async function loadMyOrders(){
@@ -1287,7 +1808,7 @@ async function loadMyOrders(){
 }
 
 /* ADMIN */
-window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();};
+window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();haptic('light');updateBackBtn();};
 let adminTab='stats';
 window.aTab=(name,btn)=>{
   adminTab=name;
@@ -1650,6 +2171,8 @@ window.openChat=()=>{
   const uid=tgUser?.id?.toString()||'guest';
   $('chatBadge').classList.remove('show');
   loadChatMsgs(uid);
+  haptic('light');
+  updateBackBtn();
 };
 function loadChatMsgs(uid){
   const el=$('chatMsgs');
@@ -1661,9 +2184,10 @@ function loadChatMsgs(uid){
           const tb=b.createdAt?.toDate?b.createdAt.toDate():new Date(b.createdAt||0);
           return ta-tb;
         });
+      const adminLbl=currentLang==='uz'?"Do'kon":'Магазин';
       el.innerHTML=msgs.map(m=>
         m.from==='admin'
-          ?`<div class="chat-msg admin"><div class="chat-from">Магазин</div>${m.text}</div>`
+          ?`<div class="chat-msg admin"><div class="chat-from">${adminLbl}</div>${m.text}</div>`
           :`<div class="chat-msg user">${m.text}</div>`
       ).join('');
       const sb=$('chatScrollBody');if(sb)sb.scrollTop=sb.scrollHeight;
@@ -1746,20 +2270,26 @@ let preorderItems=[];
 window.openPreorder=()=>{
   preorderItems=[];renderPreorderItems();
   $('overlay').classList.add('on');$('preorderSheet').classList.add('on');
+  haptic('light');
+  updateBackBtn();
 };
 window.addPreorderItem=()=>{
   const inp=$('poItem');const val=inp.value.trim();if(!val)return;
-  preorderItems.push(val);inp.value='';renderPreorderItems();
+  preorderItems.push(val);inp.value='';renderPreorderItems();haptic('light');
 };
-window.removePreorderItem=i=>{preorderItems.splice(i,1);renderPreorderItems();};
+window.removePreorderItem=i=>{preorderItems.splice(i,1);renderPreorderItems();haptic('light');};
 function renderPreorderItems(){
   $('preorderItemsList').innerHTML=preorderItems.length
     ?preorderItems.map((it,i)=>`<div class="preorder-item-row"><span class="preorder-item-name">📌 ${it}</span><button class="preorder-item-del" onclick="removePreorderItem(${i})">✕</button></div>`).join('')
-    :'<div style="color:var(--text2);font-size:12px;padding:8px 0">Tovarlarni qo\'shing ↓</div>';
+    :`<div style="color:var(--text2);font-size:12px;padding:8px 0">${currentLang==='uz'?'Tovarlarni qo\'shing ↓':'Добавьте товары ↓'}</div>`;
 }
 window.submitPreorder=async()=>{
   const name=g('poName'),phone=g('poPhone'),note=g('poNote');
-  if(!name||!phone||!preorderItems.length){toast('❗ Ism, telefon va kamida 1 tovar kiriting');return;}
+  if(!name||!phone||!preorderItems.length){
+    toast(currentLang==='uz'?'❗ Ism, telefon va kamida 1 tovar kiriting':'❗ Введите имя, телефон и минимум 1 товар');
+    haptic('warning');
+    return;
+  }
   try{
     await db.collection('preorders').add({
       name,phone,note,items:preorderItems,
@@ -1770,8 +2300,9 @@ window.submitPreorder=async()=>{
     preorderItems=[];renderPreorderItems();
     ['poName','poPhone','poNote'].forEach(id=>$(id).value='');
     closeAll();
-    toast('✅ Предзаказ принят! Мы свяжемся с вами.');
-  }catch(e){toast('❌ Ошибка');}
+    haptic('success');
+    toast(currentLang==='uz'?'✅ Oldindan buyurtma qabul qilindi! Sizga bog\'lanamiz.':'✅ Предзаказ принят! Мы свяжемся с вами.');
+  }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 
 /* ADMIN PREORDERS */
@@ -1898,13 +2429,36 @@ window.saveProduct=async()=>{
   }
 };
 updateCartUI();
+function bootUI(){applyLang();renderCatsPage();updateBackBtn();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootUI);
+else bootUI();
+
+// Optional: deep-link to product detail via ?p=<id>
+(function(){
+  try{
+    const params=new URLSearchParams(location.search);
+    const pid=params.get('p');
+    if(pid){
+      const tryOpen=()=>{
+        if(productsLoaded&&products.find(x=>x.id===pid)){
+          window.openProductDetail(pid);
+        } else if(productsLoaded){
+          // ID not found, give up
+        } else {
+          setTimeout(tryOpen,300);
+        }
+      };
+      setTimeout(tryOpen,400);
+    }
+  }catch(_){}
+})();
 
 </script>
 <!-- CHAT SHEET -->
 <div class="sheet" id="chatSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">💬 Онлайн чат</div>
+    <div class="s-title" data-tr="chat_title">💬 Onlayn chat</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="chatScrollBody" style="display:flex;flex-direction:column;">
@@ -1912,7 +2466,7 @@ updateCartUI();
   </div>
   <div class="s-foot">
     <div class="chat-input-row">
-      <input class="chat-inp" id="chatInput" placeholder="Написать сообщение..." onkeydown="if(event.key==='Enter')sendChatMsg()">
+      <input class="chat-inp" id="chatInput" data-tr-ph="chat_input_ph" placeholder="Xabar yozing..." onkeydown="if(event.key==='Enter')sendChatMsg()">
       <button class="chat-send" onclick="sendChatMsg()">➤</button>
     </div>
   </div>
@@ -1922,24 +2476,61 @@ updateCartUI();
 <div class="sheet" id="preorderSheet">
   <div class="s-handle"></div>
   <div class="s-head">
-    <div class="s-title">📋 Предзаказ</div>
+    <div class="s-title" data-tr="preorder_title">📋 Oldindan buyurtma</div>
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body">
-    <div class="preorder-info">ℹ️ <span>Нет нужного товара?</span> Оставьте предзаказ — мы свяжемся с вами, когда товар появится.</div>
-    <div class="f-grp"><label class="f-lbl">Ваше имя *</label><input class="f-inp" id="poName" placeholder="Иван Иванов"></div>
-    <div class="f-grp"><label class="f-lbl">Телефон *</label><input class="f-inp" id="poPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+    <div class="preorder-info" id="preorderInfoTxt"></div>
+    <div class="f-grp"><label class="f-lbl" data-tr="po_name_lbl">Ismingiz *</label><input class="f-inp" id="poName" data-tr-ph="po_name_ph" placeholder="Sarvar Karimov"></div>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_phone">Telefon *</label><input class="f-inp" id="poPhone" placeholder="+998 90 123 45 67" type="tel"></div>
     <div class="f-grp">
-      <label class="f-lbl">Товары для предзаказа *</label>
+      <label class="f-lbl" data-tr="po_items_lbl">Oldindan buyurtma uchun mahsulotlar *</label>
       <div id="preorderItemsList"></div>
       <div class="preorder-add-row">
-        <input class="preorder-add-inp" id="poItem" placeholder="Название товара" onkeydown="if(event.key==='Enter')addPreorderItem()">
+        <input class="preorder-add-inp" id="poItem" data-tr-ph="po_item_ph" placeholder="Mahsulot nomi" onkeydown="if(event.key==='Enter')addPreorderItem()">
         <button class="preorder-add-btn" onclick="addPreorderItem()">+</button>
       </div>
     </div>
-    <div class="f-grp"><label class="f-lbl">Комментарий</label><textarea class="f-ta" id="poNote" placeholder="Дополнительная информация..."></textarea></div>
-    <button class="big-btn pri" onclick="submitPreorder()">✅ Отправить предзаказ</button>
+    <div class="f-grp"><label class="f-lbl" data-tr="o_note">Izoh</label><textarea class="f-ta" id="poNote" data-tr-ph="po_note_ph" placeholder="Qo'shimcha ma'lumot..."></textarea></div>
+    <button class="big-btn pri" onclick="submitPreorder()" data-tr="po_submit_btn">✅ Oldindan buyurtmani yuborish</button>
   </div>
+</div>
+
+<!-- SEARCH SHEET -->
+<div class="sheet" id="searchSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title" data-tr="search_title">🔍 Qidiruv</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body">
+    <div class="search-bar" style="margin-bottom:14px">
+      <span class="search-ic">🔍</span>
+      <input class="search-inp" id="searchSheetInp" data-tr-ph="search_ph" placeholder="Mahsulotni qidirish..." oninput="renderSearchSheet()" autocomplete="off">
+      <button class="search-clear" id="searchSheetClear" style="display:none" onclick="clearSearchSheet()">✕</button>
+    </div>
+    <div id="searchSheetResults"></div>
+  </div>
+</div>
+
+<!-- FAVORITES SHEET -->
+<div class="sheet" id="favSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title" data-tr="fav_title">❤️ Sevimlilar</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body" id="favBody"></div>
+</div>
+
+<!-- PRODUCT DETAIL SHEET -->
+<div class="sheet" id="pdSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title" data-tr="pd_title">📦 Mahsulot</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body" id="pdBody"></div>
 </div>
 
 </div><!-- /app-root -->
