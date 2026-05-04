@@ -824,7 +824,6 @@ body.dark #app-root{
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 const FB={
   apiKey:"AIzaSyCaS_-p9gxwN2O64WoYLlRERisq2s7CEPs",
@@ -832,8 +831,7 @@ const FB={
   projectId:"kerasys-dokon",
   storageBucket:"kerasys-dokon.firebasestorage.app",
   messagingSenderId:"890867885170",
-  appId:"1:890867885170:web:2d989c60f4d4dbb5348eeb",
-  databaseURL:"https://kerasys-dokon-default-rtdb.firebaseio.com"
+  appId:"1:890867885170:web:2d989c60f4d4dbb5348eeb"
 };
 firebase.initializeApp(FB);
 const db=firebase.firestore();
@@ -984,22 +982,32 @@ function renderProductsPage(){
 }
 window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
-// ─── Realtime Database (mahsulotlar uchun) ───
-const rtdb=firebase.database();
-
-function initProducts(){
-  // .on('value') - har doim serverdan real-time
-  rtdb.ref('products').on('value', snap=>{
-    const val=snap.val();
-    if(!val){ products=[]; }
-    else {
-      products=Object.entries(val).map(([id,data])=>({id,...data}));
-    }
+// Mahsulotlarni yuklash - avval serverdan olish, keyin real-time tinglash
+async function initProducts(){
+  try{
+    // Avval serverdan to'g'ridan yuklab ko'rsatamiz
+    const snap=await db.collection('products').get({source:'server'});
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
     if(isAdmin)loadAdminProducts();
-  }, err=>{
-    console.error('RTDB error:',err);
+  }catch(e){
+    console.log('Server fetch failed, trying cache:',e);
+  }
+  // Real-time listener
+  db.collection('products').onSnapshot({includeMetadataChanges:false},snap=>{
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
+    if(isAdmin)loadAdminProducts();
+  },err=>{
+    console.error('Products listener error:',err);
+    // Fallback: serverdan olish
+    db.collection('products').get().then(snap=>{
+      products=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(currentPage==='cats')renderCatsPage();
+      if(isAdmin)loadAdminProducts();
+    });
   });
 }
 initProducts();
@@ -1845,60 +1853,52 @@ window.cancelEditFn=()=>{
   $('cancelEdit').style.display='none';
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
-window.togP=async(id,active)=>{
-  await rtdb.ref('products/'+id).update({active:!active});
-  toast(active?'❌ Nofaol':'✅ Faol');
-};
-window.delP=async id=>{
-  if(!confirm('O\'chirish?'))return;
-  await rtdb.ref('products/'+id).remove();
-  toast('🗑 O\'chirildi');
-};
-
+window.togP=async(id,active)=>{await db.collection('products').doc(id).update({active:!active});toast(active?'❌ Nofaol':'✅ Faol');};
+window.delP=async id=>{if(!confirm('O\'chirish?'))return;await db.collection('products').doc(id).delete();toast('🗑 O\'chirildi');};
 window.saveProduct=async()=>{
-  const name=g('pName');
-  const desc=g('pDesc')||'';
-  const price=parseInt($('pPrice').value);
-  const imgBase64=($('pImgBase64')||{}).value||'';
-  const imgUrl=g('pImg')||'';
-  const badge=g('pBadge')||'';
-  const oldPrice=parseInt($('pOld').value)||0;
-  const category=$('pCat').value||'kukun';
-
+  const name=g('pName'),price=parseInt($('pPrice').value);
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
-
+  const b64=($('pImgBase64')||{}).value||'';
+  const urlImg=g('pImg');
+  const imgFinal=b64||urlImg||'';
   const data={
     name,
-    desc,
+    desc:g('pDesc'),
     price,
-    cat:category,
-    img:imgBase64||imgUrl,
-    badge,
-    oldPrice,
-    variants:editVars.length?editVars:[],
-    variantPrices:editVarPrices||{},
+    cat:$('pCat').value,
+    img:imgFinal,
+    badge:g('pBadge'),
+    oldPrice:parseInt($('pOld').value)||0,
+    variants:editVars,
+    variantPrices:editVarPrices,
     active:true,
-    updatedAt:Date.now()
+    updatedAt:new Date()
   };
-
   const editId=g('editId');
   toast('⏳ Saqlanmoqda...');
   try{
     if(editId){
-      await rtdb.ref('products/'+editId).update(data);
+      await db.collection('products').doc(editId).update(data);
       toast('✅ Yangilandi!');
     } else {
-      await rtdb.ref('products').push({...data,createdAt:Date.now()});
+      await db.collection('products').add({...data,createdAt:new Date()});
       toast('✅ Mahsulot qo\'shildi!');
     }
+    // Serverdan qayta yuklash
+    const snap=await db.collection('products').get({source:'server'});
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    loadAdminProducts();
     cancelEditFn();
   }catch(e){
-    console.error('saveProduct:',e);
-    toast('❌ Xatolik: '+(e.message||''));
+    console.error('saveProduct error:',e);
+    if(e.code==='permission-denied'){
+      toast('❌ Firebase Rules ni tekshiring!');
+    } else {
+      toast('❌ Xatolik: '+(e.message||e.code||''));
+    }
   }
 };
 updateCartUI();
-
 </script>
 <!-- CHAT SHEET -->
 <div class="sheet" id="chatSheet">
