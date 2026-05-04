@@ -835,6 +835,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       <button class="a-tab" onclick="aTab('chats',this)">💬</button>
       <button class="a-tab" onclick="aTab('debts',this)">💳</button>
       <button class="a-tab" onclick="aTab('promo',this)">🎫</button>
+      <button class="a-tab" onclick="aTab('cats',this)">📂</button>
       <button class="a-tab" onclick="aTab('add',this)">➕</button>
     </div>
     <div id="aStats"></div>
@@ -895,6 +896,21 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       <div id="debtList"></div>
     </div>
     <div id="aPromo" style="display:none"></div>
+    <div id="aCats" style="display:none">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;">➕ Yangi kategoriya</div>
+        <div class="f-row">
+          <div class="f-grp"><label class="f-lbl">ID *</label><input class="f-inp" id="catNewId" placeholder="parfumeriya"></div>
+          <div class="f-grp"><label class="f-lbl">Icon</label><input class="f-inp" id="catNewIcon" placeholder="💐" maxlength="4"></div>
+        </div>
+        <div class="f-row">
+          <div class="f-grp"><label class="f-lbl">Nomi (uz) *</label><input class="f-inp" id="catNewLabelUz" placeholder="Parfumeriya"></div>
+          <div class="f-grp"><label class="f-lbl">Nomi (ru) *</label><input class="f-inp" id="catNewLabelRu" placeholder="Парфюмерия"></div>
+        </div>
+        <button class="big-btn" onclick="addCategory()">➕ Qo'shish</button>
+      </div>
+      <div id="catList"></div>
+    </div>
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
       <input type="hidden" id="pImgBase64">
@@ -994,14 +1010,18 @@ const isAdmin=tgUser?.username===ADMIN||window.location.search.includes('admin=1
 const adminBtnEl=document.getElementById('adminBtn');
 if(adminBtnEl&&isAdmin) adminBtnEl.style.display='flex';
 
-const CATS=[
-  {id:'kukun',label:'Kir yuvish kukunlari',icon:'🧺'},
-  {id:'gel',label:'Gellar',icon:'🧴'},
-  {id:'shampun',label:'Shampunlar',icon:'🚿'},
-  {id:'sovun',label:'Sovunlar',icon:'🧼'},
-  {id:'boshqa',label:'Boshqa mahsulotlar',icon:'📦'},
+const DEFAULT_CATS=[
+  {id:'kukun',label_uz:'Kir yuvish kukunlari',label_ru:'Стиральные порошки',icon:'🧺',order:0},
+  {id:'gel',label_uz:'Gellar',label_ru:'Гели',icon:'🧴',order:1},
+  {id:'shampun',label_uz:'Shampunlar',label_ru:'Шампуни',icon:'🚿',order:2},
+  {id:'sovun',label_uz:'Sovunlar',label_ru:'Мыло',icon:'🧼',order:3},
+  {id:'boshqa',label_uz:'Boshqa mahsulotlar',label_ru:'Другие товары',icon:'📦',order:4},
 ];
-const ICONS={kukun:'🧺',gel:'🧴',shampun:'🚿',sovun:'🧼',boshqa:'📦'};
+let CATS=DEFAULT_CATS.map(c=>({...c,label:c.label_uz}));
+let categoriesLoaded=false;
+const ICONS={};
+function rebuildIcons(){CATS.forEach(c=>ICONS[c.id]=c.icon);}
+rebuildIcons();
 const STATUSES=['yangi','jarayonda','tayyor','bekor'];
 const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
 
@@ -1197,7 +1217,11 @@ function genPromoCode(){
 }
 
 /* Display name helpers */
-const catName=c=>currentLang==='uz'?c.label:(c.id==='kukun'?'Стиральные порошки':c.id==='gel'?'Гели':c.id==='shampun'?'Шампуни':c.id==='sovun'?'Мыло':'Другие товары');
+const catName=c=>{
+  if(!c)return '';
+  if(currentLang==='uz')return c.label_uz||c.label||c.id;
+  return c.label_ru||c.label_uz||c.label||c.id;
+};
 const escAttr=s=>String(s||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
 
 function renderSkeletonGrid(n){
@@ -1498,6 +1522,49 @@ function refreshOpenViews(){
   else if(currentPage==='products')renderProductsPage();
   if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
   if($('favSheet')?.classList.contains('on'))renderFavSheet();
+}
+
+function initCategories(){
+  rtdb.ref('categories').on('value', snap=>{
+    const val=snap.val();
+    if(!val||Object.keys(val).length===0){
+      // First-time seed of defaults (only admin can write)
+      if(isAdmin){
+        const upd={};
+        DEFAULT_CATS.forEach(c=>{upd[c.id]={label_uz:c.label_uz,label_ru:c.label_ru,icon:c.icon,order:c.order};});
+        rtdb.ref('categories').update(upd).catch(e=>console.warn('seed cats:',e));
+      }
+      CATS=DEFAULT_CATS.map(c=>({...c,label:c.label_uz}));
+    } else {
+      CATS=Object.entries(val).map(([id,d])=>({
+        id,
+        icon:d.icon||'📦',
+        label_uz:d.label_uz||d.label||id,
+        label_ru:d.label_ru||d.label_uz||d.label||id,
+        label:d.label_uz||d.label||id,
+        order:typeof d.order==='number'?d.order:9999,
+      })).sort((a,b)=>a.order-b.order||a.label_uz.localeCompare(b.label_uz));
+    }
+    categoriesLoaded=true;
+    rebuildIcons();
+    rebuildCatSelect();
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products'){
+      // If current cat was deleted, go back to cats
+      if(currentCat&&!CATS.some(c=>c.id===currentCat)){currentPage='cats';currentCat=null;}
+      renderProductsPage();
+    }
+    if(adminTab==='cats'&&typeof loadAdminCats==='function')loadAdminCats();
+  }, err=>{console.error('Categories RTDB error:',err);categoriesLoaded=true;});
+}
+initCategories();
+
+function rebuildCatSelect(){
+  const sel=document.getElementById('pCat');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML=CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.label_uz||c.label||c.id}</option>`).join('');
+  if(cur&&CATS.some(c=>c.id===cur))sel.value=cur;
 }
 
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
@@ -1811,8 +1878,8 @@ window.aTab=(name,btn)=>{
   adminTab=name;
   document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
-  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',add:'aAdd'};
+  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aCats','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
+  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',cats:'aCats',add:'aAdd'};
   if($(map[name]))$(map[name]).style.display='block';
   if(name==='orders')loadAdminOrders();
   if(name==='products'){filterAdminProducts();}
@@ -1821,6 +1888,83 @@ window.aTab=(name,btn)=>{
   if(name==='preorders')loadAdminPreorders();
   if(name==='chats')loadAdminChats();
   if(name==='debts')loadDebts();
+  if(name==='cats')loadAdminCats();
+  if(name==='add')rebuildCatSelect();
+};
+
+function loadAdminCats(){
+  const el=$('catList');if(!el)return;
+  if(!CATS.length){el.innerHTML='<div style="text-align:center;color:var(--text2);padding:20px;">Kategoriya yo\'q</div>';return;}
+  el.innerHTML=`<div style="font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Mavjud kategoriyalar (${CATS.length})</div>`+
+    CATS.map((c,i)=>{
+      const cnt=products.filter(p=>p.cat===c.id).length;
+      return `<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+        <div style="font-size:24px;width:40px;text-align:center;">${c.icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:800;color:var(--text);">${c.label_uz||c.label||c.id}</div>
+          <div style="font-size:11px;color:var(--text2);">${c.label_ru||''} · ${cnt} mahsulot</div>
+        </div>
+        <button class="hbtn" style="padding:6px 9px;" onclick="editCategory('${c.id}')" title="Tahrirlash">✏️</button>
+        <button class="hbtn" style="padding:6px 9px;color:#e23b3b;border-color:rgba(226,59,59,0.32);background:rgba(226,59,59,0.08);" onclick="deleteCategory('${c.id}')" title="O'chirish">🗑️</button>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <button class="hbtn" style="padding:2px 6px;font-size:11px;" onclick="moveCategory('${c.id}',-1)" title="Yuqoriga"${i===0?' disabled':''}>▲</button>
+          <button class="hbtn" style="padding:2px 6px;font-size:11px;" onclick="moveCategory('${c.id}',1)" title="Pastga"${i===CATS.length-1?' disabled':''}>▼</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+window.addCategory=async()=>{
+  const id=($('catNewId').value||'').trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const icon=($('catNewIcon').value||'').trim()||'📦';
+  const label_uz=($('catNewLabelUz').value||'').trim();
+  const label_ru=($('catNewLabelRu').value||'').trim();
+  if(!id){toast('❌ ID kiriting (lotin harflari)');return;}
+  if(!label_uz||!label_ru){toast('❌ Nomlarni to\'liq kiriting');return;}
+  if(CATS.some(c=>c.id===id)){toast('❌ Bu ID allaqachon mavjud');return;}
+  const order=CATS.length?Math.max(...CATS.map(c=>c.order||0))+1:0;
+  try{
+    await rtdb.ref('categories/'+id).set({label_uz,label_ru,icon,order});
+    $('catNewId').value='';$('catNewIcon').value='';$('catNewLabelUz').value='';$('catNewLabelRu').value='';
+    haptic('success');toast('✅ Kategoriya qo\'shildi');
+  }catch(e){console.error(e);toast('❌ Xatolik: '+e.message);}
+};
+
+window.editCategory=id=>{
+  const c=CATS.find(x=>x.id===id);if(!c)return;
+  const newIcon=prompt('Icon:',c.icon);if(newIcon===null)return;
+  const newUz=prompt('Nomi (uz):',c.label_uz);if(newUz===null)return;
+  const newRu=prompt('Nomi (ru):',c.label_ru);if(newRu===null)return;
+  rtdb.ref('categories/'+id).update({icon:newIcon||c.icon,label_uz:newUz||c.label_uz,label_ru:newRu||c.label_ru})
+    .then(()=>{toast('✅ Yangilandi');haptic('success');})
+    .catch(e=>toast('❌ '+e.message));
+};
+
+window.deleteCategory=async id=>{
+  const c=CATS.find(x=>x.id===id);if(!c)return;
+  const cnt=products.filter(p=>p.cat===id).length;
+  if(cnt>0){
+    if(!confirm(`Bu kategoriyada ${cnt} ta mahsulot bor. O'chirilsa ular "Boshqa"ga o'tkaziladi. Davom etamizmi?`))return;
+    try{
+      const updates={};
+      products.filter(p=>p.cat===id).forEach(p=>{updates[p.id+'/cat']='boshqa';});
+      await rtdb.ref('products').update(updates);
+    }catch(e){console.warn('reassign products:',e);}
+  } else if(!confirm(`"${c.label_uz}" kategoriyasini o'chirilsinmi?`))return;
+  try{
+    await rtdb.ref('categories/'+id).remove();
+    haptic('success');toast('✅ O\'chirildi');
+  }catch(e){toast('❌ '+e.message);}
+};
+
+window.moveCategory=async(id,dir)=>{
+  const idx=CATS.findIndex(c=>c.id===id);if(idx<0)return;
+  const target=idx+dir;if(target<0||target>=CATS.length)return;
+  const a=CATS[idx],b=CATS[target];
+  try{
+    await rtdb.ref('categories').update({[a.id+'/order']:b.order,[b.id+'/order']:a.order});
+    haptic('selection');
+  }catch(e){toast('❌ '+e.message);}
 };
 
 async function loadStats(){
@@ -2361,12 +2505,12 @@ window.editP=id=>{
   }
   editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
   $('cancelEdit').style.display='block';
-  aTab('add',document.querySelectorAll('.a-tab')[7]);
+  aTab('add',document.querySelectorAll('.a-tab')[8]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';$('pImgBase64').value='';
   ['pName','pDesc','pPrice','pImg','pBadge','pOld'].forEach(id=>$(id).value='');
-  $('pCat').value='kukun';editVars=[];editVarPrices={};renderVarTags();
+  $('pCat').value=(CATS[0]&&CATS[0].id)||'kukun';editVars=[];editVarPrices={};renderVarTags();
   $('varInput').value='';$('varPriceInput').value='';
   const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
   $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
@@ -2391,7 +2535,7 @@ window.saveProduct=async()=>{
   const imgUrl=g('pImg')||'';
   const badge=g('pBadge')||'';
   const oldPrice=parseInt($('pOld').value)||0;
-  const category=$('pCat').value||'kukun';
+  const category=$('pCat').value||(CATS[0]&&CATS[0].id)||'kukun';
 
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
 
