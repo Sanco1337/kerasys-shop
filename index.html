@@ -327,9 +327,12 @@ body.dark #app-root{
 .no-code-progress-text{font-size:14px;font-weight:800;color:var(--accent);}
 
 /* ADMIN */
-.adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
-.a-tab{flex:1;min-width:0;padding:9px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;font-weight:800;cursor:pointer;color:var(--text2);white-space:nowrap;}
-.a-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.adm-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
+.a-tab{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);text-align:left;transition:transform 0.15s,background 0.2s;min-width:0;}
+.a-tab:active{transform:scale(0.97);}
+.a-tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(31,161,80,0.25);}
+.a-tab-em{font-size:17px;line-height:1;flex-shrink:0;}
+.a-tab-tx{font-size:12.5px;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 .stat-c{background:var(--card);border-radius:14px;border:1.5px solid var(--border);padding:14px;box-shadow:var(--shadow);}
 .stat-ic{font-size:22px;margin-bottom:4px;}
@@ -827,16 +830,17 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
   </div>
   <div class="s-body">
     <div class="adm-tabs">
-      <button class="a-tab on" onclick="aTab('stats',this)">📊</button>
-      <button class="a-tab" onclick="aTab('search',this)">🔍</button>
-      <button class="a-tab" onclick="aTab('products',this)">📦</button>
-      <button class="a-tab" onclick="aTab('orders',this)">📋</button>
-      <button class="a-tab" onclick="aTab('preorders',this)">⏳</button>
-      <button class="a-tab" onclick="aTab('chats',this)">💬</button>
-      <button class="a-tab" onclick="aTab('debts',this)">💳</button>
-      <button class="a-tab" onclick="aTab('promo',this)">🎫</button>
-      <button class="a-tab" onclick="aTab('cats',this)">📂</button>
-      <button class="a-tab" onclick="aTab('add',this)">➕</button>
+      <button class="a-tab on" onclick="aTab('stats',this)"><span class="a-tab-em">📊</span><span class="a-tab-tx">Statistika</span></button>
+      <button class="a-tab" onclick="aTab('search',this)"><span class="a-tab-em">🔍</span><span class="a-tab-tx">Buyurtma qidirish</span></button>
+      <button class="a-tab" onclick="aTab('products',this)"><span class="a-tab-em">📦</span><span class="a-tab-tx">Mahsulotlar</span></button>
+      <button class="a-tab" onclick="aTab('orders',this)"><span class="a-tab-em">📋</span><span class="a-tab-tx">Buyurtmalar</span></button>
+      <button class="a-tab" onclick="aTab('preorders',this)"><span class="a-tab-em">⏳</span><span class="a-tab-tx">Pre-order</span></button>
+      <button class="a-tab" onclick="aTab('chats',this)"><span class="a-tab-em">💬</span><span class="a-tab-tx">Chatlar</span></button>
+      <button class="a-tab" onclick="aTab('debts',this)"><span class="a-tab-em">💳</span><span class="a-tab-tx">Qarzlar</span></button>
+      <button class="a-tab" onclick="aTab('promo',this)"><span class="a-tab-em">🎫</span><span class="a-tab-tx">Promo kodlar</span></button>
+      <button class="a-tab" onclick="aTab('cats',this)"><span class="a-tab-em">📂</span><span class="a-tab-tx">Kategoriyalar</span></button>
+      <button class="a-tab" onclick="aTab('settings',this)"><span class="a-tab-em">⚙️</span><span class="a-tab-tx">Sozlamalar</span></button>
+      <button class="a-tab" onclick="aTab('add',this)"><span class="a-tab-em">➕</span><span class="a-tab-tx">Mahsulot qo'shish</span></button>
     </div>
     <div id="aStats"></div>
     <div id="aSearch" style="display:none">
@@ -910,6 +914,20 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         <button class="big-btn" onclick="addCategory()">➕ Qo'shish</button>
       </div>
       <div id="catList"></div>
+    </div>
+    <div id="aSettings" style="display:none">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🤖 Telegram bot integratsiyasi</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Yangi buyurtma va pre-order kelganida bot avtomatik ushbu chatga xabar yuboradi.</div>
+        <div class="f-grp"><label class="f-lbl">Bot token</label><input class="f-inp" id="botTokenInp" placeholder="123456:ABC-DEF..."></div>
+        <div class="f-grp"><label class="f-lbl">Admin chat ID</label><input class="f-inp" id="botChatInp" placeholder="-100123... yoki 12345678"></div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;">💡 Chat ID olish: <b>@userinfobot</b> ga "/start" yuboring (shaxsiy chat) yoki guruhga botni qo'shib, <b>@RawDataBot</b> orqali aniqlang.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="big-btn" style="flex:1;" onclick="saveBotConfig()">💾 Saqlash</button>
+          <button class="big-btn" style="flex:1;background:var(--card);color:var(--accent);border:1.5px solid var(--accent);" onclick="testBotMessage()">📤 Test xabar</button>
+        </div>
+        <div id="botStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
+      </div>
     </div>
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
@@ -1567,6 +1585,51 @@ function rebuildCatSelect(){
   if(cur&&CATS.some(c=>c.id===cur))sel.value=cur;
 }
 
+/* ─── Telegram bot integration ─── */
+let botConfig={token:'',chatId:''};
+rtdb.ref('config/bot').on('value', s=>{
+  botConfig=s.val()||{token:'',chatId:''};
+  const t=document.getElementById('botTokenInp');if(t&&!t.matches(':focus'))t.value=botConfig.token||'';
+  const c=document.getElementById('botChatInp');if(c&&!c.matches(':focus'))c.value=botConfig.chatId||'';
+  const st=document.getElementById('botStatus');
+  if(st)st.textContent=botConfig.token&&botConfig.chatId?'🟢 Bot ulangan':'🔴 Bot ulanmagan';
+}, e=>console.warn('bot config:',e));
+
+async function notifyBot(text){
+  if(!botConfig.token||!botConfig.chatId)return false;
+  try{
+    const r=await fetch(`https://api.telegram.org/bot${botConfig.token}/sendMessage`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:botConfig.chatId,text,parse_mode:'HTML',disable_web_page_preview:true})
+    });
+    const d=await r.json();
+    if(!d.ok)console.warn('Telegram API error:',d);
+    return d.ok===true;
+  }catch(e){console.warn('notifyBot:',e);return false;}
+}
+
+window.saveBotConfig=async()=>{
+  const token=(g('botTokenInp')||'').trim();
+  const chatId=(g('botChatInp')||'').trim();
+  try{
+    await rtdb.ref('config/bot').set({token,chatId});
+    haptic('success');toast('✅ Saqlandi');
+  }catch(e){toast('❌ '+e.message);haptic('error');}
+};
+
+window.testBotMessage=async()=>{
+  const token=(g('botTokenInp')||'').trim();
+  const chatId=(g('botChatInp')||'').trim();
+  if(!token||!chatId){toast('❗ Avval token va chat ID kiriting');haptic('warning');return;}
+  // Use the form values directly so user can test before saving
+  const tmp={token,chatId};
+  const prev=botConfig;botConfig=tmp;
+  const ok=await notifyBot('🧪 <b>Test xabar</b>\nKerasysShop bot ulanishi muvaffaqiyatli!');
+  botConfig=prev;
+  toast(ok?'✅ Yuborildi':'❌ Xatolik (token/chat ID tekshiring)');
+  haptic(ok?'success':'error');
+};
+
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
 window.addSimple=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
@@ -1765,6 +1828,10 @@ window.submitOrder=async()=>{
     $('oTime').value='';
     loadMyOrders();
     updateBackBtn();
+    // Notify admin via bot
+    const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const itemsTxt=items.map(i=>`• ${escHtml(i.name)}${i.variant?' ('+escHtml(i.variant)+')':''} × ${i.qty} = ${fmt(i.price*i.qty)}`).join('\n');
+    notifyBot(`🛒 <b>Yangi buyurtma</b> #${code}\n👤 ${escHtml(name)}\n📞 ${escHtml(phone)}\n⏰ ${escHtml(time)}${note?`\n📝 ${escHtml(note)}`:''}\n${tgUser?`\n💬 @${tgUser.username||tgUser.first_name}`:''}\n\n${itemsTxt}\n\n💰 <b>${fmt(total)}</b>${discount?` (chegirma: −${fmt(discount)})`:''}`);
   }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 
@@ -1878,8 +1945,8 @@ window.aTab=(name,btn)=>{
   adminTab=name;
   document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aCats','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
-  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',cats:'aCats',add:'aAdd'};
+  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aCats','aSettings','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
+  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',cats:'aCats',settings:'aSettings',add:'aAdd'};
   if($(map[name]))$(map[name]).style.display='block';
   if(name==='orders')loadAdminOrders();
   if(name==='products'){filterAdminProducts();}
@@ -2438,11 +2505,17 @@ window.submitPreorder=async()=>{
       userId:tgUser?.id?.toString()||phone,
       status:'yangi',notified:false,createdAt:new Date()
     });
+    // Snapshot before clearing for bot notification
+    const poItemsSnap=[...preorderItems];
     preorderItems=[];renderPreorderItems();
     ['poName','poPhone','poNote'].forEach(id=>$(id).value='');
     closeAll();
     haptic('success');
     toast(currentLang==='uz'?'✅ Oldindan buyurtma qabul qilindi! Sizga bog\'lanamiz.':'✅ Предзаказ принят! Мы свяжемся с вами.');
+    // Notify admin via bot
+    const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const itemsTxt=poItemsSnap.map(i=>`• ${escHtml(i.name)}${i.qty?' × '+i.qty:''}${i.note?' — '+escHtml(i.note):''}`).join('\n');
+    notifyBot(`⏳ <b>Yangi pre-order</b>\n👤 ${escHtml(name)}\n📞 ${escHtml(phone)}${note?`\n📝 ${escHtml(note)}`:''}${tgUser?`\n💬 @${tgUser.username||tgUser.first_name}`:''}\n\n${itemsTxt}`);
   }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 
@@ -2505,7 +2578,7 @@ window.editP=id=>{
   }
   editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
   $('cancelEdit').style.display='block';
-  aTab('add',document.querySelectorAll('.a-tab')[8]);
+  aTab('add',document.querySelectorAll('.a-tab')[10]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';$('pImgBase64').value='';
