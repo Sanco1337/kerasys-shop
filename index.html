@@ -982,12 +982,35 @@ function renderProductsPage(){
 }
 window.goBack=()=>{currentCat=null;currentPage='cats';renderCatsPage();};
 
-db.collection('products').onSnapshot(snap=>{
-  products=snap.docs.map(d=>({id:d.id,...d.data()}));
-  if(currentPage==='cats')renderCatsPage();
-  else if(currentPage==='products')renderProductsPage();
-  if(isAdmin)loadAdminProducts();
-});
+// Mahsulotlarni yuklash - avval serverdan olish, keyin real-time tinglash
+async function initProducts(){
+  try{
+    // Avval serverdan to'g'ridan yuklab ko'rsatamiz
+    const snap=await db.collection('products').get({source:'server'});
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
+    if(isAdmin)loadAdminProducts();
+  }catch(e){
+    console.log('Server fetch failed, trying cache:',e);
+  }
+  // Real-time listener
+  db.collection('products').onSnapshot({includeMetadataChanges:false},snap=>{
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
+    if(isAdmin)loadAdminProducts();
+  },err=>{
+    console.error('Products listener error:',err);
+    // Fallback: serverdan olish
+    db.collection('products').get().then(snap=>{
+      products=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(currentPage==='cats')renderCatsPage();
+      if(isAdmin)loadAdminProducts();
+    });
+  });
+}
+initProducts();
 
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
 window.addSimple=id=>{
@@ -1839,7 +1862,9 @@ window.saveProduct=async()=>{
   const urlImg=g('pImg');
   const imgFinal=b64||urlImg||'';
   const data={
-    name,desc:g('pDesc'),price,
+    name,
+    desc:g('pDesc'),
+    price,
     cat:$('pCat').value,
     img:imgFinal,
     badge:g('pBadge'),
@@ -1856,15 +1881,18 @@ window.saveProduct=async()=>{
       await db.collection('products').doc(editId).update(data);
       toast('✅ Yangilandi!');
     } else {
-      const ref=await db.collection('products').add({...data,createdAt:new Date()});
-      console.log('Product added:',ref.id);
+      await db.collection('products').add({...data,createdAt:new Date()});
       toast('✅ Mahsulot qo\'shildi!');
     }
+    // Serverdan qayta yuklash
+    const snap=await db.collection('products').get({source:'server'});
+    products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    loadAdminProducts();
     cancelEditFn();
   }catch(e){
     console.error('saveProduct error:',e);
     if(e.code==='permission-denied'){
-      toast('❌ Ruxsat yo\'q! Firebase Rules ni yangilang');
+      toast('❌ Firebase Rules ni tekshiring!');
     } else {
       toast('❌ Xatolik: '+(e.message||e.code||''));
     }
