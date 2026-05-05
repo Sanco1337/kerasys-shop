@@ -1996,7 +1996,6 @@ function renderProductDetail(p){
       ${p.oldPrice?`<span class="pd-old">${fmt(p.oldPrice)}</span>`:''}
     </div>
     <div class="pd-rating-row" id="pdRatingRow"><span class="stars"><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span></span></div>
-    ${p.desc?`<div class="pd-desc">${p.desc}</div>`:''}
     ${hasVars
       ?`<div class="pd-section-title">${tr('pd_choose_var')}</div>
          <button class="big-btn pri" onclick="closeAll();setTimeout(()=>window.openVarPicker('${p.id}'),200)">${tr('add_to_cart')}</button>`
@@ -2009,6 +2008,7 @@ function renderProductDetail(p){
                 <button class="q-btn" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
               </div>`}
         </div>`}
+    ${p.desc?`<div class="pd-desc" style="margin-top:16px">${p.desc}</div>`:''}
 
     <div id="reviewsAnchor" style="margin-top:22px;padding-top:14px;border-top:1.5px solid var(--border);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
