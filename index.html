@@ -565,7 +565,14 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .ord-total{font-size:15px;font-weight:900;color:var(--accent);margin-bottom:6px;}
 .ord-info{font-size:12px;color:var(--text2);line-height:1.8;}
 .sp-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
-.sp-btn{padding:6px 12px;border-radius:20px;border:none;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+.sp-btn{padding:6px 12px;border-radius:20px;border:none;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;}
+.ord-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.ord-actions .sp-btn{padding:10px 14px;font-size:13px;border-radius:12px;flex:1;min-width:140px;}
+.yango-btn{background:linear-gradient(135deg,#FFCC00,#FF9500);color:#1a1a1a !important;box-shadow:0 4px 12px rgba(255,153,0,0.25);}
+.yango-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(255,153,0,0.35);}
+.yango-btn:active{transform:scale(0.97);}
+.call-btn{background:var(--accent-lt);color:var(--accent) !important;border:1.5px solid var(--accent);}
+.call-btn:hover{background:var(--accent);color:#fff !important;}
 .vars-admin{margin-top:14px;padding:14px;background:var(--bg);border-radius:12px;border:1.5px solid var(--border);}
 .vars-admin-lbl{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
 .var-tag-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
@@ -1297,6 +1304,18 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <button class="big-btn" style="flex:1;background:var(--card);color:var(--accent);border:1.5px solid var(--accent);" onclick="testBotMessage()">📤 Test xabar</button>
         </div>
         <div id="botStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
+      </div>
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🚕 Yandex Go yetkazib berish</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Do'kon manzili Yandex Go orqali yetkazib berish uchun ishlatiladi. Yandex buyurtmalarga "Yandex Go chaqirish" tugmasi paydo bo'ladi.</div>
+        <div class="f-grp"><label class="f-lbl">📍 Do'kon manzili</label><textarea class="f-ta" id="storeAddrInp" rows="2" placeholder="Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy"></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="f-grp" style="margin-bottom:0"><label class="f-lbl">Latitude (ixtiyoriy)</label><input class="f-inp" id="storeLatInp" placeholder="41.3111" inputmode="decimal"></div>
+          <div class="f-grp" style="margin-bottom:0"><label class="f-lbl">Longitude (ixtiyoriy)</label><input class="f-inp" id="storeLonInp" placeholder="69.2797" inputmode="decimal"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin:10px 0;line-height:1.5;">💡 Koordinata kiritish ixtiyoriy. Agar kiritsangiz, Yandex Go aniq joydan boshlaydi (yo'l haqi to'g'ri hisoblanadi). Koordinatani <a href="https://yandex.uz/maps" target="_blank" style="color:var(--accent)">yandex.uz/maps</a> dan olishingiz mumkin (do'kon ustiga bossangiz pastda chiqadi).</div>
+        <button class="big-btn" style="width:100%" onclick="saveStoreConfig()">💾 Saqlash</button>
+        <div id="storeStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
       </div>
     </div>
     <div id="aAdd" style="display:none">
@@ -2646,6 +2665,54 @@ window.testBotMessage=async()=>{
   haptic(ok?'success':'error');
 };
 
+/* ─── Yandex Go store config ─── */
+let storeConfig={address:'',lat:null,lon:null};
+rtdb.ref('config/store').on('value', s=>{
+  const v=s.val()||{};
+  storeConfig={address:v.address||'',lat:Number(v.lat)||null,lon:Number(v.lon)||null};
+  const a=document.getElementById('storeAddrInp');if(a&&!a.matches(':focus'))a.value=storeConfig.address||'';
+  const la=document.getElementById('storeLatInp');if(la&&!la.matches(':focus'))la.value=storeConfig.lat||'';
+  const lo=document.getElementById('storeLonInp');if(lo&&!lo.matches(':focus'))lo.value=storeConfig.lon||'';
+  const st=document.getElementById('storeStatus');
+  if(st)st.textContent=storeConfig.address?(storeConfig.lat&&storeConfig.lon?'🟢 Manzil va koordinata saqlangan':'🟡 Manzil saqlangan (koordinatasiz)'):'🔴 Do\'kon manzili kiritilmagan';
+}, e=>console.warn('store config:',e));
+
+window.saveStoreConfig=async()=>{
+  const address=(g('storeAddrInp')||'').trim();
+  const lat=parseFloat(g('storeLatInp'))||null;
+  const lon=parseFloat(g('storeLonInp'))||null;
+  if(!address){toast('❗ Manzilni kiriting');haptic('warning');return;}
+  try{
+    await rtdb.ref('config/store').set({address,lat,lon});
+    haptic('success');toast('✅ Saqlandi');
+  }catch(e){toast('❌ '+e.message);haptic('error');}
+};
+
+// Build Yandex Go deeplink to call a courier from the store to the customer
+window.buildYandexGoUrl=function(o){
+  const sLat=storeConfig.lat,sLon=storeConfig.lon;
+  const custAddr=o&&o.address||'';
+  // If store has coords → use Yandex Go redirect deeplink (opens app on mobile, web fallback)
+  if(sLat&&sLon){
+    const params=new URLSearchParams();
+    params.set('start-lat',String(sLat));
+    params.set('start-lon',String(sLon));
+    if(custAddr)params.set('end-text',custAddr);
+    params.set('vertical','cargo');
+    params.set('ref','KerasysShop');
+    return 'https://3.redirect.appmetrica.yandex.com/route?'+params.toString();
+  }
+  // No store coords → open Yandex Maps with text-based route between addresses
+  const sAddr=storeConfig.address||'';
+  if(sAddr&&custAddr){
+    return 'https://yandex.uz/maps/?text='+encodeURIComponent(sAddr+' → '+custAddr)+'&rtt=auto';
+  }
+  if(custAddr){
+    return 'https://yandex.uz/maps/?text='+encodeURIComponent(custAddr);
+  }
+  return 'https://yandex.uz/maps/';
+};
+
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
 window.addSimple=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
@@ -2909,9 +2976,13 @@ window.submitOrder=async()=>{
     // Notify admin via bot
     const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const itemsTxt=items.map(i=>`• ${escHtml(i.name)}${i.variant?' ('+escHtml(i.variant)+')':''} × ${i.qty} = ${fmt(i.price*i.qty)}`).join('\n');
-    const dlvLine=deliveryType==='yandex'
-      ?`\n🚕 <b>Yandex yetkazib berish</b>\n📍 ${escHtml(addr)}`
-      :`\n🏪 <b>Olib ketish</b>`;
+    let dlvLine;
+    if(deliveryType==='yandex'){
+      const yangoUrl=buildYandexGoUrl({deliveryType,address:addr});
+      dlvLine=`\n🚕 <b>Yandex yetkazib berish</b>\n📍 ${escHtml(addr)}\n<a href="${yangoUrl}">🚕 Yandex Go chaqirish</a>`;
+    } else {
+      dlvLine=`\n🏪 <b>Olib ketish</b>`;
+    }
     notifyBot(`🛒 <b>Yangi buyurtma</b> #${code}\n👤 ${escHtml(name)}\n📞 ${escHtml(phone)}\n⏰ ${escHtml(time)}${dlvLine}${note?`\n📝 ${escHtml(note)}`:''}\n${tgUser?`\n💬 @${tgUser.username||tgUser.first_name}`:''}\n\n${itemsTxt}\n\n💰 <b>${fmt(total)}</b>${discount?` (chegirma: −${fmt(discount)})`:''}`);
   }catch(e){toast(tr('err_generic'));haptic('error');}
 };
@@ -3217,11 +3288,18 @@ function renderOrdCard(oid,o){
   const dlvLine=o.deliveryType==='yandex'
     ?`<br>🚕 <b>Yandex yetkazib berish</b><br>📍 ${escText(o.address||'—')}`
     :(o.deliveryType==='pickup'?'<br>🏪 Olib ketish':'');
+  const phoneClean=String(o.phone||'').replace(/[^\d+]/g,'');
+  const yangoBtn=o.deliveryType==='yandex'
+    ?`<a class="sp-btn yango-btn" href="${buildYandexGoUrl(o)}" target="_blank" rel="noopener" onclick="event.stopPropagation();haptic&&haptic('selection');">🚕 Yandex Go chaqirish</a>`
+    :'';
+  const callBtn=phoneClean?`<a class="sp-btn call-btn" href="tel:${phoneClean}" onclick="event.stopPropagation();">📞 Qo'ng'iroq</a>`:'';
+  const actionRow=(yangoBtn||callBtn)?`<div class="ord-actions">${yangoBtn}${callBtn}</div>`:'';
   return `<div class="ord-card">
     <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${S_LABEL[st]||st}</span></div>
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
     <div class="ord-total">Jami: ${fmt(o.total)}${o.discount?` (chegirma: -${fmt(o.discount)})`:''}</div>
     <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}${dlvLine}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
+    ${actionRow}
     <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'var(--card)':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
   </div>`;
 }
