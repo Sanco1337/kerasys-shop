@@ -2,6 +2,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Kerasys Shop</title>
+<meta name="description" content="Kerasys Shop — gigiyena va kir yuvish vositalari">
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1FA150" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F0F" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kerasys">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
@@ -112,6 +123,21 @@ body.dark #app-root{
 .cat-nm{font-size:15px;font-weight:900;color:var(--text);}
 .cat-cnt{font-size:11px;color:var(--text2);font-weight:700;}
 .cat-arr{position:absolute;bottom:14px;right:14px;font-size:16px;color:var(--accent);font-weight:900;}
+
+/* Recently viewed strip */
+.recent-sec{margin:18px 0 6px;}
+.recent-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.recent-tt{font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;}
+.recent-clear{font-size:11px;font-weight:800;color:var(--text2);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:8px;}
+.recent-clear:active{background:var(--border);}
+.recent-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.recent-row::-webkit-scrollbar{display:none;}
+.recent-card{flex:0 0 120px;scroll-snap-align:start;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:transform 0.15s;box-shadow:var(--shadow);}
+.recent-card:active{transform:scale(0.96);}
+.recent-img{aspect-ratio:1;background:var(--accent-lt);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;}
+.recent-img img{width:100%;height:100%;object-fit:cover;}
+.recent-nm{font-size:11px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.recent-pr{font-size:12px;font-weight:900;color:var(--accent);}
 
 .back-btn{
   display:flex;align-items:center;gap:8px;
@@ -601,6 +627,41 @@ body.dark .fav-btn{background:rgba(40,40,40,0.9);}
   box-shadow:0 2px 8px rgba(0,0,0,0.15);
 }
 body.dark .pd-img-wrap .pd-share{background:rgba(40,40,40,0.95);color:var(--text);}
+/* Gallery */
+.pd-gal-track{display:flex;width:100%;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.pd-gal-track::-webkit-scrollbar{display:none;}
+.pd-gal-slide{flex:0 0 100%;scroll-snap-align:start;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--card2);}
+.pd-gal-slide img{width:100%;height:100%;object-fit:cover;}
+.pd-gal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5;background:rgba(0,0,0,0.4);padding:5px 10px;border-radius:20px;}
+.pd-gal-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.5);transition:all 0.2s;}
+.pd-gal-dot.on{background:#fff;width:18px;border-radius:8px;}
+.pd-gal-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,0.92);font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:5;color:var(--text);}
+.pd-gal-arrow.left{left:10px;}
+.pd-gal-arrow.right{right:10px;}
+body.dark .pd-gal-arrow{background:rgba(40,40,40,0.92);color:var(--text);}
+
+/* Admin extra image thumbs */
+.extra-imgs-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.extra-imgs-row .ei{position:relative;width:54px;height:54px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);background:var(--card2);}
+.extra-imgs-row .ei img{width:100%;height:100%;object-fit:cover;}
+.extra-imgs-row .ei .x{position:absolute;top:1px;right:1px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.7);color:#fff;border:none;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+/* Stars + reviews */
+.stars{display:inline-flex;align-items:center;gap:1px;font-size:14px;line-height:1;}
+.stars .st{color:#FFB400;font-weight:900;}
+.stars .st.off{color:var(--border);}
+.pd-rating-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:var(--text2);font-weight:800;}
+.pd-rating-row a{color:var(--accent);text-decoration:underline;cursor:pointer;}
+.review-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:8px;}
+.review-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.review-name{font-size:13px;font-weight:900;color:var(--text);}
+.review-time{font-size:10px;color:var(--text2);font-weight:700;}
+.review-body{font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+.review-pending{display:inline-block;font-size:10px;font-weight:900;color:#a86b00;background:#FFF3CD;border-radius:10px;padding:2px 8px;margin-left:6px;}
+.review-verified{display:inline-block;font-size:10px;font-weight:900;color:#fff;background:#1FA150;border-radius:10px;padding:2px 8px;margin-left:6px;}
+.star-pick{display:flex;justify-content:center;gap:6px;font-size:30px;margin:10px 0;}
+.star-pick .sp{cursor:pointer;color:var(--border);transition:transform 0.1s;}
+.star-pick .sp.on{color:#FFB400;}
+.star-pick .sp:active{transform:scale(0.85);}
 .pd-name{font-size:20px;font-weight:900;color:var(--text);margin-bottom:6px;}
 .pd-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
 .pd-price{font-size:24px;font-weight:900;color:var(--accent);}
@@ -659,6 +720,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
     </div>
     <button class="hbtn" onclick="openContact()" data-icon-only data-tr-title="hdr_contact">📞</button>
     <button class="hbtn" onclick="openProfile()" data-icon-only data-tr-title="hdr_profile">👤</button>
+    <button class="hbtn" id="pwaInstallBtn" style="display:none" data-icon-only title="O'rnatish" onclick="installPWA()">📲</button>
     <button class="hbtn" id="adminBtn" style="display:none" data-icon-only onclick="openAdmin()">⚙️</button>
   </div>
 </div>
@@ -839,6 +901,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       <button class="a-tab" onclick="aTab('debts',this)"><span class="a-tab-em">💳</span><span class="a-tab-tx">Qarzlar</span></button>
       <button class="a-tab" onclick="aTab('promo',this)"><span class="a-tab-em">🎫</span><span class="a-tab-tx">Promo kodlar</span></button>
       <button class="a-tab" onclick="aTab('cats',this)"><span class="a-tab-em">📂</span><span class="a-tab-tx">Kategoriyalar</span></button>
+      <button class="a-tab" onclick="aTab('reviews',this)"><span class="a-tab-em">⭐</span><span class="a-tab-tx">Sharhlar</span></button>
       <button class="a-tab" onclick="aTab('settings',this)"><span class="a-tab-em">⚙️</span><span class="a-tab-tx">Sozlamalar</span></button>
       <button class="a-tab" onclick="aTab('add',this)"><span class="a-tab-em">➕</span><span class="a-tab-tx">Mahsulot qo'shish</span></button>
     </div>
@@ -915,6 +978,14 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       </div>
       <div id="catList"></div>
     </div>
+    <div id="aReviews" style="display:none">
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="a-tab on" id="revTabAll" onclick="loadAdminReviews('all')" style="flex:1;min-width:80px"><span class="a-tab-tx">Hammasi</span></button>
+        <button class="a-tab" id="revTabPend" onclick="loadAdminReviews('pending')" style="flex:1;min-width:80px"><span class="a-tab-tx">Tasdiqlanmagan</span></button>
+        <button class="a-tab" id="revTabApp" onclick="loadAdminReviews('approved')" style="flex:1;min-width:80px"><span class="a-tab-tx">Tasdiqlangan</span></button>
+      </div>
+      <div id="reviewList"></div>
+    </div>
     <div id="aSettings" style="display:none">
       <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
         <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🤖 Telegram bot integratsiyasi</div>
@@ -947,7 +1018,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
       </div>
       <div class="f-grp">
-        <label class="f-lbl">Rasm</label>
+        <label class="f-lbl">Asosiy rasm</label>
         <div class="img-tabs">
           <button class="img-tab on" id="imgTabGal" onclick="switchImgTab('gal')">📷 Galereya</button>
           <button class="img-tab" id="imgTabUrl" onclick="switchImgTab('url')">🔗 URL</button>
@@ -966,6 +1037,17 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         <div id="imgUrlArea" style="display:none">
           <input class="f-inp" id="pImg" placeholder="https://...rasm.jpg">
         </div>
+      </div>
+      <div class="f-grp">
+        <label class="f-lbl">Qo'shimcha rasmlar (galereya)</label>
+        <div id="extraImgsRow" class="extra-imgs-row"></div>
+        <div style="display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;">
+          <input class="f-inp" id="pExtraImgUrl" placeholder="https://...rasm.jpg" style="flex:2;min-width:140px">
+          <button class="var-add-btn" type="button" onclick="addExtraImgUrl()">+ Qo'sh URL</button>
+          <button class="var-add-btn" type="button" onclick="document.getElementById('extraImgFileInput').click()">📷 Fayl</button>
+          <input type="file" id="extraImgFileInput" accept="image/*" multiple style="display:none" onchange="handleExtraImgFiles(this)">
+        </div>
+        <div style="font-size:10px;color:var(--text2);margin-top:4px;">Asosiy rasm + 4 tagacha qo'shimcha</div>
       </div>
       <div class="f-row">
         <div class="f-grp"><label class="f-lbl">Badge</label><input class="f-inp" id="pBadge" placeholder="Yangi"></div>
@@ -1046,7 +1128,7 @@ const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor'
 const PROMO_GOAL=1000000;
 const PROMO_DISCOUNT=0.05;
 
-let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={};
+let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={},editExtraImgs=[];
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
 let currentLang=localStorage.getItem('lang')||'ru';
@@ -1055,6 +1137,11 @@ let productsLoaded=false;
 let sortMode=localStorage.getItem('sortMode')||'def';
 let searchQuery='';
 let favIds=(()=>{ try { return JSON.parse(localStorage.getItem('favIds')||'[]'); } catch(_) { return []; } })();
+let recentIds=(()=>{ try { return JSON.parse(localStorage.getItem('recentIds')||'[]'); } catch(_) { return []; } })();
+function pushRecent(id){
+  recentIds=[id,...recentIds.filter(x=>x!==id)].slice(0,10);
+  try{localStorage.setItem('recentIds',JSON.stringify(recentIds));}catch(_){}
+}
 const isFav=id=>favIds.includes(id);
 function saveFavs(){localStorage.setItem('favIds',JSON.stringify(favIds));}
 
@@ -1180,7 +1267,7 @@ function haptic(type){
 
 /* ─── BACK BUTTON ─── */
 function isAnySheetOpen(){
-  return ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet'].some(id=>$(id)?.classList.contains('on'));
+  return ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet','revSheet'].some(id=>$(id)?.classList.contains('on'));
 }
 function updateBackBtn(){
   if(!tg?.BackButton)return;
@@ -1188,6 +1275,14 @@ function updateBackBtn(){
     if(isAnySheetOpen()||currentPage==='products'){tg.BackButton.show();}
     else{tg.BackButton.hide();}
   }catch(_){}
+  // Re-evaluate MainButton based on sheet visibility
+  if(typeof updateMainButton==='function'){
+    const items=Object.values(cart);
+    const cnt=items.reduce((s,i)=>s+i.qty,0);
+    let tot=items.reduce((s,i)=>s+i.price*i.qty,0);
+    if(appliedPromo)tot-=Math.round(tot*PROMO_DISCOUNT);
+    updateMainButton(cnt,tot);
+  }
 }
 try{
   tg?.BackButton?.onClick(()=>{
@@ -1241,6 +1336,7 @@ const catName=c=>{
   return c.label_ru||c.label_uz||c.label||c.id;
 };
 const escAttr=s=>String(s||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
+const escText=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 function renderSkeletonGrid(n){
   let s='<div class="grid">';
@@ -1277,6 +1373,10 @@ function renderCatsPage(){
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
+  // Recently viewed: only existing & active products, max 10
+  const recentList=recentIds.map(rid=>products.find(p=>p.id===rid&&p.active!==false)).filter(Boolean).slice(0,10);
+  const recentTitle=currentLang==='uz'?"Siz ko'rgan":'Вы смотрели';
+  const recentClear=currentLang==='uz'?'Tozalash':'Очистить';
   $('mainArea').innerHTML=`
     <div class="pg-title" style="margin-bottom:4px">${tr('cats_title')}</div>
     <div class="pg-sub" style="margin-bottom:14px">${tr('cats_sub')}</div>
@@ -1298,9 +1398,31 @@ function renderCatsPage(){
           <div class="cat-cnt">${counts[c.id]||0} ${tr('products_count')}</div>
           <div class="cat-arr">→</div>
         </div>`).join('')}
-    </div>`;
+    </div>
+    ${recentList.length?`<div class="recent-sec">
+      <div class="recent-hd">
+        <div class="recent-tt">👁 ${recentTitle}</div>
+        <button class="recent-clear" onclick="window.clearRecent()">✕ ${recentClear}</button>
+      </div>
+      <div class="recent-row">
+        ${recentList.map(p=>{
+          const ic=ICONS[p.cat]||'📦';
+          return `<div class="recent-card" onclick="window.openProductDetail('${p.id}')">
+            <div class="recent-img">${p.img?`<img src="${p.img}" onerror="this.style.display='none';this.parentNode.textContent='${ic}'">`:ic}</div>
+            <div class="recent-nm">${escText(p.name||'')}</div>
+            <div class="recent-pr">${fmt(p.price)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:''}`;
   updateBackBtn();
 }
+window.clearRecent=()=>{
+  recentIds=[];
+  try{localStorage.removeItem('recentIds');}catch(_){}
+  haptic('selection');
+  renderCatsPage();
+};
 window.openCat=id=>{currentCat=id;currentPage='products';searchQuery='';haptic('selection');renderProductsPage();};
 
 function sortList(list){
@@ -1453,6 +1575,7 @@ function renderFavSheet(){
 
 window.openProductDetail=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
+  pushRecent(id);
   $('overlay').classList.add('on');
   $('pdSheet').classList.add('on');
   renderProductDetail(p);
@@ -1463,20 +1586,31 @@ function renderProductDetail(p){
   const icon=ICONS[p.cat]||'📦';
   const qty=Object.values(cart).filter(i=>i.pid===p.id&&!i.variant).reduce((s,i)=>s+i.qty,0);
   const hasVars=p.variants&&p.variants.length>0;
+  // Gallery: main image first, then extras
+  const allImgs=[p.img,...(Array.isArray(p.images)?p.images:[])].filter(Boolean);
+  const galHTML=allImgs.length>1
+    ?`<div class="pd-gal-track" id="pdGalTrack">${allImgs.map(src=>`<div class="pd-gal-slide"><img src="${src}" alt="" onerror="this.style.display='none'"></div>`).join('')}</div>
+       <button class="pd-gal-arrow left" onclick="pdGalScroll(-1)" aria-label="prev">‹</button>
+       <button class="pd-gal-arrow right" onclick="pdGalScroll(1)" aria-label="next">›</button>
+       <div class="pd-gal-dots" id="pdGalDots">${allImgs.map((_,i)=>`<div class="pd-gal-dot${i===0?' on':''}"></div>`).join('')}</div>`
+    :(allImgs.length===1
+      ?`<img src="${allImgs[0]}" alt="" onerror="this.style.display='none'">`
+      :`<span>${icon}</span>`);
   $('pdBody').innerHTML=`
     <div class="pd-img-wrap">
-      ${p.img?`<img src="${p.img}" alt="" onerror="this.style.display='none'">`:`<span>${icon}</span>`}
+      ${galHTML}
       <button class="pd-share" onclick="shareProduct('${p.id}')" title="${tr('pd_share')}">📤</button>
-      <button class="fav-btn ${isFav(p.id)?'on':''}" style="top:10px;left:10px;right:auto;width:36px;height:36px" onclick="window.toggleFav('${p.id}',this);renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});" aria-label="favorite">
+      <button class="fav-btn ${isFav(p.id)?'on':''}" style="top:10px;left:10px;right:auto;width:36px;height:36px;z-index:6" onclick="window.toggleFav('${p.id}',this);renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});" aria-label="favorite">
         <span class="fav-heart-off">🤍</span><span class="fav-heart-on">❤️</span>
       </button>
-      ${p.badge?`<div class="p-badge" style="top:10px;left:54px">${p.badge}</div>`:''}
+      ${p.badge?`<div class="p-badge" style="top:10px;left:54px;z-index:6">${p.badge}</div>`:''}
     </div>
     <div class="pd-name">${p.name}</div>
     <div class="pd-price-row">
       <span class="pd-price">${fmt(p.price)}</span>
       ${p.oldPrice?`<span class="pd-old">${fmt(p.oldPrice)}</span>`:''}
     </div>
+    <div class="pd-rating-row" id="pdRatingRow"><span class="stars"><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span></span></div>
     ${p.desc?`<div class="pd-desc">${p.desc}</div>`:''}
     ${hasVars
       ?`<div class="pd-section-title">${tr('pd_choose_var')}</div>
@@ -1490,8 +1624,211 @@ function renderProductDetail(p){
                 <button class="q-btn" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
               </div>`}
         </div>`}
+
+    <div id="reviewsAnchor" style="margin-top:22px;padding-top:14px;border-top:1.5px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:14px;font-weight:900;color:var(--text);">⭐ ${currentLang==='uz'?'Sharhlar':'Отзывы'}</div>
+        <button class="var-add-btn" onclick="openReviewModal('${p.id}')">+ ${currentLang==='uz'?'Sharh yozish':'Написать'}</button>
+      </div>
+      <div id="pdReviewList"><div class="spin"></div></div>
+    </div>
   `;
+  loadReviewsForProduct(p.id);
 }
+
+/* ─── REVIEWS / RATINGS ─── */
+let pdReviewsUnsub=null;
+function starsHTML(rating,total){
+  total=total||5;
+  let s='<span class="stars">';
+  for(let i=1;i<=total;i++)s+=`<span class="st${i>rating?' off':''}">★</span>`;
+  s+='</span>';
+  return s;
+}
+function reviewerName(){
+  if(tgUser?.first_name)return tgUser.first_name+(tgUser.last_name?(' '+tgUser.last_name):'');
+  return currentLang==='uz'?'Mijoz':'Клиент';
+}
+function reviewerId(){
+  if(tgUser?.id)return tgUser.id.toString();
+  let g=localStorage.getItem('guestChatId');
+  if(!g){g='guest_'+Math.random().toString(36).slice(2,10);localStorage.setItem('guestChatId',g);}
+  return g;
+}
+function loadReviewsForProduct(pid){
+  if(pdReviewsUnsub){pdReviewsUnsub();pdReviewsUnsub=null;}
+  pdReviewsUnsub=db.collection('reviews').where('productId','==',pid).onSnapshot(snap=>{
+    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const approved=all.filter(r=>r.approved!==false).sort((a,b)=>{
+      const ta=a.createdAt?.toDate?a.createdAt.toDate():new Date(a.createdAt||0);
+      const tb=b.createdAt?.toDate?b.createdAt.toDate():new Date(b.createdAt||0);
+      return tb-ta;
+    });
+    const avg=approved.length?(approved.reduce((s,r)=>s+(r.rating||0),0)/approved.length):0;
+    // Update header stars + count
+    const top=$('pdRatingRow');
+    if(top){
+      if(approved.length){
+        top.innerHTML=`${starsHTML(Math.round(avg))} <span style="color:var(--text)">${avg.toFixed(1)}</span> · <a onclick="document.getElementById('reviewsAnchor')?.scrollIntoView({behavior:'smooth'})">${approved.length} ${currentLang==='uz'?'sharh':'отзывов'}</a>`;
+      } else {
+        top.innerHTML=`<span style="color:var(--text2)">${currentLang==='uz'?"Hali sharhlar yo'q":'Пока нет отзывов'}</span>`;
+      }
+    }
+    // Reviews list
+    const list=$('pdReviewList');
+    if(!list)return;
+    list.innerHTML=approved.length
+      ?approved.map(r=>{
+        const t=r.createdAt?.toDate?r.createdAt.toDate():new Date(r.createdAt||0);
+        const dateStr=t&&!isNaN(t)?t.toLocaleDateString():'';
+        return `<div class="review-card">
+          <div class="review-hdr">
+            <div>
+              <span class="review-name">${escText(r.userName||'Mijoz')}</span>
+              ${r.verified?'<span class="review-verified">✓ Sotib olgan</span>':''}
+            </div>
+            <span class="review-time">${dateStr}</span>
+          </div>
+          <div style="margin-bottom:6px">${starsHTML(r.rating||0)}</div>
+          ${r.text?`<div class="review-body">${escText(r.text)}</div>`:''}
+        </div>`;
+      }).join('')
+      :`<div style="color:var(--text2);text-align:center;padding:20px;font-size:13px">${currentLang==='uz'?'Birinchi sharhni siz yozing!':'Будьте первым отзывом!'}</div>`;
+  },err=>console.warn('reviews load:',err));
+}
+
+window.openReviewModal=async pid=>{
+  const p=products.find(x=>x.id===pid);if(!p)return;
+  $('overlay').classList.add('on');
+  $('revSheet').classList.add('on');
+  $('revSheetTitle').textContent=`⭐ ${currentLang==='uz'?'Sharh yozish':'Написать отзыв'} — ${p.name}`;
+  // Detect verified buyer (best-effort: any past order with item name match)
+  let verified=false;
+  try{
+    const myUid=tgUser?.id?.toString();
+    if(myUid){
+      const snap=await db.collection('orders').where('userId','==',myUid).get();
+      verified=snap.docs.some(d=>(d.data().items||[]).some(it=>it.name===p.name));
+    }
+  }catch(_){}
+  $('revBody').innerHTML=`
+    <div style="text-align:center;color:var(--text2);font-size:13px;margin-bottom:6px">${currentLang==='uz'?'Bahoyingizni tanlang':'Выберите оценку'}</div>
+    <div class="star-pick" id="revStarPick">
+      ${[1,2,3,4,5].map(n=>`<span class="sp" data-r="${n}" onclick="setReviewRating(${n})">★</span>`).join('')}
+    </div>
+    <textarea class="f-inp" id="revText" placeholder="${currentLang==='uz'?'Mahsulot haqida fikringizni yozing...':'Напишите ваше мнение о товаре...'}" style="min-height:90px;resize:vertical;width:100%;padding:12px;font-family:inherit;"></textarea>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">${verified?'✓ '+(currentLang==='uz'?'Siz bu mahsulotni sotib olgansiz':'Вы покупали этот товар'):(currentLang==='uz'?"Sharhingiz admin tasdiqlagandan so'ng ko'rinadi":'Отзыв появится после одобрения админом')}</div>
+    <button class="big-btn pri" style="margin-top:10px" onclick="submitReview('${pid}',${verified?'true':'false'})">${currentLang==='uz'?'📤 Yuborish':'📤 Отправить'}</button>
+  `;
+  selectedRating=0;
+  haptic('light');
+  updateBackBtn();
+};
+let selectedRating=0;
+window.setReviewRating=n=>{
+  selectedRating=n;
+  document.querySelectorAll('#revStarPick .sp').forEach(el=>{
+    el.classList.toggle('on', parseInt(el.dataset.r)<=n);
+  });
+  haptic('selection');
+};
+window.submitReview=async(pid,verified)=>{
+  if(!selectedRating){toast(currentLang==='uz'?'Yulduzlarni tanlang':'Выберите звёзды');haptic('warning');return;}
+  const text=($('revText')?.value||'').trim();
+  if(text.length>1000){toast('Juda uzun');return;}
+  const p=products.find(x=>x.id===pid);
+  try{
+    await db.collection('reviews').add({
+      productId:pid,
+      productName:p?.name||'',
+      userId:reviewerId(),
+      userName:reviewerName(),
+      telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'',
+      rating:selectedRating,
+      text,
+      verified:!!verified,
+      approved:false,
+      createdAt:new Date()
+    });
+    notifyBot(`⭐ <b>Yangi sharh</b>\n👤 ${escText(reviewerName())}${tgUser?` @${escText(tgUser.username||tgUser.first_name||'')}`:''}\n📦 ${escText(p?.name||'')}\n${'★'.repeat(selectedRating)}${'☆'.repeat(5-selectedRating)}${text?`\n\n${escText(text)}`:''}\n\n<i>Tasdiqlash uchun admin paneldan koring.</i>`);
+    closeAll();
+    toast(currentLang==='uz'?'✅ Sharhingiz qabul qilindi! Tasdiqlash kutilmoqda':'✅ Отзыв принят! Ожидает одобрения');
+    haptic('success');
+  }catch(e){
+    console.error('review submit:',e);
+    toast('❌ '+(e.message||'Xatolik'));
+    haptic('error');
+  }
+};
+
+/* Admin: review moderation */
+let adminRevUnsub=null;
+window.loadAdminReviews=mode=>{
+  const el=$('reviewList');if(!el)return;
+  ['revTabAll','revTabPend','revTabApp'].forEach(id=>$(id)?.classList.remove('on'));
+  $({all:'revTabAll',pending:'revTabPend',approved:'revTabApp'}[mode])?.classList.add('on');
+  if(adminRevUnsub){adminRevUnsub();adminRevUnsub=null;}
+  el.innerHTML='<div class="spin"></div>';
+  adminRevUnsub=db.collection('reviews').onSnapshot(snap=>{
+    let list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(mode==='pending')list=list.filter(r=>r.approved!==true);
+    else if(mode==='approved')list=list.filter(r=>r.approved===true);
+    list.sort((a,b)=>{
+      const ta=a.createdAt?.toDate?a.createdAt.toDate():new Date(a.createdAt||0);
+      const tb=b.createdAt?.toDate?b.createdAt.toDate():new Date(b.createdAt||0);
+      return tb-ta;
+    });
+    if(!list.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Sharhlar yo\'q</div>';return;}
+    el.innerHTML=list.map(r=>{
+      const t=r.createdAt?.toDate?r.createdAt.toDate():new Date(r.createdAt||0);
+      const dateStr=t&&!isNaN(t)?t.toLocaleString():'';
+      return `<div class="review-card">
+        <div class="review-hdr">
+          <div>
+            <span class="review-name">${escText(r.userName||'Mijoz')}</span>
+            ${r.verified?'<span class="review-verified">✓</span>':''}
+            ${r.approved?'':'<span class="review-pending">Tasdiqlanmagan</span>'}
+          </div>
+          <span class="review-time">${dateStr}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:4px">📦 ${escText(r.productName||'')} ${r.telegram?` · ${escText(r.telegram)}`:''}</div>
+        <div style="margin-bottom:6px">${starsHTML(r.rating||0)}</div>
+        ${r.text?`<div class="review-body">${escText(r.text)}</div>`:''}
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          ${r.approved
+            ?`<button class="var-add-btn" style="background:#888" onclick="setReviewApproval('${r.id}',false)">↩️ Bekor qil</button>`
+            :`<button class="var-add-btn" onclick="setReviewApproval('${r.id}',true)">✅ Tasdiqlash</button>`}
+          <button class="var-add-btn" style="background:#e23b3b" onclick="deleteReview('${r.id}')">🗑 O'chirish</button>
+        </div>
+      </div>`;
+    }).join('');
+  },err=>{el.innerHTML='<div style="color:#e23b3b;text-align:center;padding:20px">Xatolik: '+(err.message||err)+'</div>';});
+};
+window.setReviewApproval=async(id,approved)=>{
+  await db.collection('reviews').doc(id).update({approved}).catch(e=>toast('❌ '+e.message));
+  toast(approved?'✅ Tasdiqlandi':'↩️ Bekor qilindi');
+};
+window.deleteReview=async id=>{
+  if(!confirm("O'chirish?"))return;
+  await db.collection('reviews').doc(id).delete().catch(e=>toast('❌ '+e.message));
+  toast('🗑 O\'chirildi');
+};
+
+/* Product detail gallery scroll + dots sync */
+window.pdGalScroll=dir=>{
+  const t=$('pdGalTrack');if(!t)return;
+  const w=t.clientWidth||t.offsetWidth;
+  t.scrollBy({left:dir*w,behavior:'smooth'});
+  haptic('selection');
+};
+document.addEventListener('scroll',e=>{
+  const t=e.target;
+  if(!t||t.id!=='pdGalTrack')return;
+  const w=t.clientWidth||1;
+  const idx=Math.round(t.scrollLeft/w);
+  const dots=$('pdGalDots');if(!dots)return;
+  Array.from(dots.children).forEach((d,i)=>d.classList.toggle('on',i===idx));
+},true);
 
 window.shareProduct=async pid=>{
   const p=products.find(x=>x.id===pid);if(!p)return;
@@ -1704,6 +2041,27 @@ function updateCartUI(){
   $('discountVal').textContent='-'+fmt(discount);
   $('discountRow').style.display=discount>0?'flex':'none';
   $('orderBtn').disabled=cnt===0;
+  updateMainButton(cnt,tot);
+}
+
+/* ─── Telegram MainButton — bottom native button reflecting cart ─── */
+function updateMainButton(cnt,tot){
+  if(!tg||!tg.MainButton)return;
+  try{
+    if(cnt>0&&!isAnySheetOpen()){
+      const lbl=(currentLang==='uz'?"🛒 Buyurtma berish · ":'🛒 Оформить · ')+fmt(tot);
+      tg.MainButton.setText(lbl);
+      tg.MainButton.color='#1FA150';
+      tg.MainButton.textColor='#FFFFFF';
+      tg.MainButton.show();
+      tg.MainButton.enable();
+    } else {
+      tg.MainButton.hide();
+    }
+  }catch(_){}
+}
+if(tg&&tg.MainButton){
+  try{tg.MainButton.onClick(()=>{ if(Object.keys(cart).length){window.openCart();haptic('light');} });}catch(_){}
 }
 
 window.openCart=()=>{
@@ -1775,7 +2133,8 @@ window.removePromo=()=>{
 
 window.closeAll=()=>{
   $('overlay').classList.remove('on');
-  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet','revSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  try{if(pdReviewsUnsub){pdReviewsUnsub();pdReviewsUnsub=null;}}catch(_){}
   updateBackBtn();
 };
 window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');haptic('light');updateBackBtn();};
@@ -1945,8 +2304,8 @@ window.aTab=(name,btn)=>{
   adminTab=name;
   document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aCats','aSettings','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
-  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',cats:'aCats',settings:'aSettings',add:'aAdd'};
+  ['aStats','aSearch','aProducts','aOrders','aPreorders','aChats','aDebts','aPromo','aCats','aReviews','aSettings','aAdd'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
+  const map={stats:'aStats',search:'aSearch',products:'aProducts',orders:'aOrders',preorders:'aPreorders',chats:'aChats',debts:'aDebts',promo:'aPromo',cats:'aCats',reviews:'aReviews',settings:'aSettings',add:'aAdd'};
   if($(map[name]))$(map[name]).style.display='block';
   if(name==='orders')loadAdminOrders();
   if(name==='products'){filterAdminProducts();}
@@ -1956,6 +2315,7 @@ window.aTab=(name,btn)=>{
   if(name==='chats')loadAdminChats();
   if(name==='debts')loadDebts();
   if(name==='cats')loadAdminCats();
+  if(name==='reviews')loadAdminReviews('all');
   if(name==='add')rebuildCatSelect();
 };
 
@@ -2154,6 +2514,31 @@ window.handleImgFile=input=>{
     $('imgUploadArea').classList.add('has-img');
   };
   reader.readAsDataURL(file);
+};
+
+/* EXTRA IMAGES (gallery) */
+function renderExtraImgs(){
+  const el=$('extraImgsRow');if(!el)return;
+  el.innerHTML=editExtraImgs.map((src,i)=>
+    `<div class="ei"><img src="${src}" onerror="this.style.display='none'"><button type="button" class="x" onclick="removeExtraImg(${i})">✕</button></div>`
+  ).join('');
+}
+window.addExtraImgUrl=()=>{
+  const inp=$('pExtraImgUrl');const url=(inp.value||'').trim();
+  if(!url)return;
+  if(editExtraImgs.length>=4){toast('Maksimum 4 ta qo\'shimcha rasm');return;}
+  editExtraImgs.push(url);inp.value='';renderExtraImgs();
+};
+window.removeExtraImg=i=>{editExtraImgs.splice(i,1);renderExtraImgs();};
+window.handleExtraImgFiles=input=>{
+  const files=Array.from(input.files||[]);
+  files.forEach(file=>{
+    if(editExtraImgs.length>=4){toast('Maksimum 4 ta qo\'shimcha rasm');return;}
+    const reader=new FileReader();
+    reader.onload=e=>{editExtraImgs.push(e.target.result);renderExtraImgs();};
+    reader.readAsDataURL(file);
+  });
+  input.value='';
 };
 
 /* PRODUCT SEARCH */
@@ -2661,13 +3046,15 @@ window.editP=id=>{
     prev.classList.remove('show');$('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
   }
   editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
+  editExtraImgs=Array.isArray(p.images)?[...p.images]:[];renderExtraImgs();
   $('cancelEdit').style.display='block';
-  aTab('add',document.querySelectorAll('.a-tab')[10]);
+  aTab('add',document.querySelectorAll('.a-tab')[11]);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';$('pImgBase64').value='';
-  ['pName','pDesc','pPrice','pImg','pBadge','pOld'].forEach(id=>$(id).value='');
+  ['pName','pDesc','pPrice','pImg','pBadge','pOld','pExtraImgUrl'].forEach(id=>{const e=$(id);if(e)e.value='';});
   $('pCat').value=(CATS[0]&&CATS[0].id)||'kukun';editVars=[];editVarPrices={};renderVarTags();
+  editExtraImgs=[];renderExtraImgs();
   $('varInput').value='';$('varPriceInput').value='';
   const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
   $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
@@ -2702,6 +3089,7 @@ window.saveProduct=async()=>{
     price,
     cat:category,
     img:imgBase64||imgUrl,
+    images:Array.isArray(editExtraImgs)?[...editExtraImgs]:[],
     badge,
     oldPrice,
     variants:editVars.length?editVars:[],
@@ -2730,6 +3118,36 @@ updateCartUI();
 function bootUI(){applyLang();renderCatsPage();updateBackBtn();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootUI);
 else bootUI();
+
+/* ─── PWA: register service worker + install prompt ─── */
+let pwaInstallPrompt=null;
+if('serviceWorker' in navigator&&!tg){
+  // SW registration only outside Telegram (TG WebView already has its own host)
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  pwaInstallPrompt=e;
+  const btn=$('pwaInstallBtn');
+  if(btn)btn.style.display='flex';
+});
+window.addEventListener('appinstalled',()=>{
+  pwaInstallPrompt=null;
+  const btn=$('pwaInstallBtn');
+  if(btn)btn.style.display='none';
+  toast(currentLang==='uz'?'✅ Ilova o\'rnatildi!':'✅ Приложение установлено!');
+});
+window.installPWA=async()=>{
+  if(!pwaInstallPrompt){toast(currentLang==='uz'?'O\'rnatish ushbu brauzerda mavjud emas':'Установка недоступна в этом браузере');return;}
+  pwaInstallPrompt.prompt();
+  const r=await pwaInstallPrompt.userChoice;
+  if(r.outcome==='accepted')haptic('success');
+  pwaInstallPrompt=null;
+  const btn=$('pwaInstallBtn');
+  if(btn)btn.style.display='none';
+};
 
 // Optional: deep-link to product detail via ?p=<id>
 (function(){
@@ -2829,6 +3247,15 @@ else bootUI();
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="pdBody"></div>
+</div>
+
+<div class="sheet" id="revSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title" id="revSheetTitle">⭐ Sharh yozish</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body" id="revBody"></div>
 </div>
 
 </div><!-- /app-root -->
