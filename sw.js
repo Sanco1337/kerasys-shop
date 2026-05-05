@@ -1,5 +1,5 @@
 /* Kerasys Shop service worker — minimal install + offline shell */
-const CACHE='kerasys-v1';
+const CACHE='kerasys-v2';
 const ASSETS=[
   './',
   './index.html',
