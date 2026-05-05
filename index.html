@@ -364,6 +364,13 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .skel{background:linear-gradient(90deg,var(--card2) 0%,var(--bg3) 40%,var(--card2) 80%);background-size:200% 100%;animation:shimmer 1.4s linear infinite;border-radius:10px;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
+/* Loading hint */
+.loading-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--accent-lt);border:1px solid var(--border);color:var(--accent-dk);font-size:13px;font-weight:800;padding:10px 14px;border-radius:12px;margin-bottom:12px;}
+.loading-hint>span{animation:loadPulse 1.6s ease-in-out infinite;flex:1;}
+@keyframes loadPulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.retry-btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;box-shadow:0 4px 12px var(--accent-glow);}
+.retry-btn:active{transform:scale(0.94);}
+
 /* Confetti */
 .confetti{position:fixed;inset:0;z-index:1900;pointer-events:none;overflow:hidden;}
 .confetti i{position:absolute;top:-12px;width:8px;height:14px;border-radius:2px;animation:confetti-fall 1.4s ease-out forwards;}
@@ -1705,14 +1712,6 @@ function renderHeroBanner({saleCnt,newCnt,lab}){
 
 function renderCatsPage(){
   currentPage='cats';
-  if(!productsLoaded){
-    $('mainArea').innerHTML=`
-      <div class="pg-title" style="margin-bottom:4px">${tr('cats_title')}</div>
-      <div class="pg-sub" style="margin-bottom:16px">${tr('cats_sub')}</div>
-      ${renderSkeletonCats()}`;
-    updateBackBtn();
-    return;
-  }
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
@@ -1728,13 +1727,15 @@ function renderCatsPage(){
     new:currentLang==='uz'?'Yangi':'Новые',
     top:currentLang==='uz'?'Top sotuvda':'Хиты продаж'
   };
+  const loadingHint=!productsLoaded?`<div class="loading-hint"><span>⏳ ${currentLang==='uz'?'Mahsulotlar yuklanmoqda...':'Загружаются товары...'}</span><button class="retry-btn" onclick="event.stopPropagation();retryProducts();">🔄 ${currentLang==='uz'?'Yangilash':'Обновить'}</button></div>`:'';
   $('mainArea').innerHTML=`
-    ${renderHeroBanner({saleCnt,newCnt,lab})}
-    <div class="qchips">
+    ${productsLoaded?renderHeroBanner({saleCnt,newCnt,lab}):''}
+    ${loadingHint}
+    ${productsLoaded?`<div class="qchips">
       ${saleCnt?`<button class="qchip sale" onclick="openVirtualCat('__sale')"><span class="qe">🔥</span>${lab.sale}<span class="qc">${saleCnt}</span></button>`:''}
       ${newCnt?`<button class="qchip new" onclick="openVirtualCat('__new')"><span class="qe">🆕</span>${lab.new}<span class="qc">${newCnt}</span></button>`:''}
       <button class="qchip top" onclick="openVirtualCat('__top')"><span class="qe">⭐</span>${lab.top}</button>
-    </div>
+    </div>`:''}
     <div class="sec-h"><div class="sec-tt"><span class="sec-em">📂</span>${tr('cats_title')}</div></div>
     ${favCnt>0?`<div class="fav-link" onclick="openFav()">
       <div class="fav-link-l">
@@ -2389,9 +2390,25 @@ window.shareProduct=async pid=>{
 // ─── Realtime Database (mahsulotlar uchun) ───
 const rtdb=firebase.database();
 
+let productsListenerRef=null;
+let productsTimeoutHandle=null;
+
 function initProducts(){
-  // .on('value') - har doim serverdan real-time
-  rtdb.ref('products').on('value', snap=>{
+  if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
+  if(productsListenerRef){try{productsListenerRef.off();}catch(_){}}
+  productsListenerRef=rtdb.ref('products');
+  // Fallback: if Firebase doesn't respond in 12s, show retry hint and let UI continue
+  productsTimeoutHandle=setTimeout(()=>{
+    if(!productsLoaded){
+      console.warn('Products load timeout — showing retry');
+      productsLoaded=true; // allow UI to render with empty state
+      if(currentPage==='cats')renderCatsPage();
+      else if(currentPage==='products')renderProductsPage();
+      toast(currentLang==='uz'?'Internetni tekshiring va qayta urining':'Проверьте интернет и повторите');
+    }
+  },12000);
+  productsListenerRef.on('value', snap=>{
+    if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     const val=snap.val();
     if(!val){ products=[]; }
     else {
@@ -2404,13 +2421,24 @@ function initProducts(){
     if($('favSheet')?.classList.contains('on'))renderFavSheet();
     if(isAdmin)loadAdminProducts();
   }, err=>{
+    if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     console.error('RTDB error:',err);
     productsLoaded=true;
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
   });
 }
+window.retryProducts=()=>{
+  productsLoaded=false;
+  if(currentPage==='cats')renderCatsPage();
+  initProducts();
+  haptic('selection');
+};
 initProducts();
+// Re-trigger load when network comes back online
+window.addEventListener('online',()=>{
+  if(!products.length){retryProducts();}
+});
 
 function refreshOpenViews(){
   if(currentPage==='cats')renderCatsPage();
