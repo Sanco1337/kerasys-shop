@@ -434,6 +434,41 @@ body.dark .qchip.top .qc{background:#3d2e00;color:#ffd24a;}
 .img-upload-txt{font-size:13px;color:var(--text2);font-weight:700;}
 .img-upload-sub{font-size:11px;color:var(--text2);margin-top:3px;}
 
+/* Add-mode toggle (Quick / Full) */
+.add-mode{display:flex;gap:4px;background:var(--card2);border-radius:14px;padding:4px;margin-bottom:14px;}
+.add-mode-btn{flex:1;padding:10px 12px;border:none;background:transparent;border-radius:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+.add-mode-btn.on{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(31,161,80,0.25);}
+.add-mode-btn:active{transform:scale(0.96);}
+body.add-quick .full-only{display:none;}
+body.add-quick #imgGalArea .img-upload-area{padding:32px 18px;}
+body.add-quick #imgGalArea .img-upload-icon{font-size:42px;}
+body.add-quick #saveBtnFull{display:none;}
+body:not(.add-quick) #saveBtnQuick{display:none;}
+body:not(.add-quick) .quick-recent-strip{display:none;}
+.quick-recent-strip{margin-top:14px;border-top:1.5px solid var(--border);padding-top:12px;}
+.quick-recent-strip h4{font-size:12px;color:var(--text2);font-weight:900;margin-bottom:8px;}
+.quick-recent-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
+.quick-recent-row::-webkit-scrollbar{display:none;}
+.qr-card{flex:0 0 auto;width:88px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:6px;text-align:center;}
+.qr-card-img{width:76px;height:60px;border-radius:7px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;}
+.qr-card-img img{width:100%;height:100%;object-fit:cover;}
+.qr-card-nm{font-size:10px;font-weight:800;color:var(--text);margin-top:4px;line-height:1.2;max-height:24px;overflow:hidden;}
+.qr-card-pr{font-size:10px;color:var(--accent);font-weight:900;margin-top:2px;}
+
+/* CSV import */
+.csv-section{margin-top:18px;border-top:1.5px solid var(--border);padding-top:14px;}
+.csv-section summary{cursor:pointer;font-weight:900;color:var(--text);font-size:14px;padding:6px 0;list-style:none;display:flex;align-items:center;gap:8px;}
+.csv-section summary::-webkit-details-marker{display:none;}
+.csv-section summary::before{content:'▶';font-size:10px;transition:transform 0.2s;color:var(--accent);}
+.csv-section[open] summary::before{transform:rotate(90deg);}
+.csv-row-result{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:var(--card2);margin-bottom:4px;font-size:12px;}
+.csv-row-result.ok{border-left:3px solid #1FA150;}
+.csv-row-result.err{border-left:3px solid #e23b3b;background:#fff0f0;}
+body.dark .csv-row-result.err{background:#3a1010;}
+.csv-row-num{font-weight:900;color:var(--text2);min-width:24px;}
+.csv-row-msg{flex:1;color:var(--text);font-weight:700;}
+.csv-row-err{color:#e23b3b;font-size:11px;}
+
 /* PRODUCT SEARCH IN ADMIN */
 .adm-search-wrap{margin-bottom:12px;}
 .adm-search-inp{width:100%;padding:10px 14px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;}
@@ -1033,23 +1068,13 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
       <input type="hidden" id="pImgBase64">
-      <div class="f-grp"><label class="f-lbl">Nomi *</label><input class="f-inp" id="pName" placeholder="Yumos konditsioner"></div>
-      <div class="f-grp"><label class="f-lbl">Tavsif</label><input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun"></div>
-      <div class="f-row">
-        <div class="f-grp"><label class="f-lbl">Narx *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
-        <div class="f-grp"><label class="f-lbl">Kategoriya</label>
-          <select class="f-sel" id="pCat">
-            <option value="kukun">🧺 Kukunlar</option>
-            <option value="gel">🧴 Gellar</option>
-            <option value="shampun">🚿 Shampunlar</option>
-            <option value="sovun">🧼 Sovunlar</option>
-            <option value="boshqa">📦 Boshqa</option>
-          </select>
-        </div>
+      <div class="add-mode" id="addModeToggle">
+        <button class="add-mode-btn on" id="addModeQuickBtn" type="button" onclick="setAddMode('quick')">⚡ Tezkor</button>
+        <button class="add-mode-btn" id="addModeFullBtn" type="button" onclick="setAddMode('full')">🔧 To'liq</button>
       </div>
       <div class="f-grp">
         <label class="f-lbl">Asosiy rasm</label>
-        <div class="img-tabs">
+        <div class="img-tabs full-only">
           <button class="img-tab on" id="imgTabGal" onclick="switchImgTab('gal')">📷 Galereya</button>
           <button class="img-tab" id="imgTabUrl" onclick="switchImgTab('url')">🔗 URL</button>
         </div>
@@ -1064,11 +1089,25 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           </div>
           <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImgFile(this)">
         </div>
-        <div id="imgUrlArea" style="display:none">
+        <div id="imgUrlArea" class="full-only" style="display:none">
           <input class="f-inp" id="pImg" placeholder="https://...rasm.jpg">
         </div>
       </div>
-      <div class="f-grp">
+      <div class="f-grp"><label class="f-lbl">Nomi *</label><input class="f-inp" id="pName" placeholder="Ariel kir kukuni 3kg"></div>
+      <div class="f-row">
+        <div class="f-grp"><label class="f-lbl">Narx *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
+        <div class="f-grp"><label class="f-lbl">Kategoriya</label>
+          <select class="f-sel" id="pCat">
+            <option value="kukun">🧺 Kukunlar</option>
+            <option value="gel">🧴 Gellar</option>
+            <option value="shampun">🚿 Shampunlar</option>
+            <option value="sovun">🧼 Sovunlar</option>
+            <option value="boshqa">📦 Boshqa</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-grp"><label class="f-lbl">Tavsif</label><input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun"></div>
+      <div class="f-grp full-only">
         <label class="f-lbl">Qo'shimcha rasmlar (galereya)</label>
         <div id="extraImgsRow" class="extra-imgs-row"></div>
         <div style="display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;">
@@ -1079,11 +1118,11 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
         <div style="font-size:10px;color:var(--text2);margin-top:4px;">Asosiy rasm + 4 tagacha qo'shimcha</div>
       </div>
-      <div class="f-row">
+      <div class="f-row full-only">
         <div class="f-grp"><label class="f-lbl">Badge</label><input class="f-inp" id="pBadge" placeholder="Yangi"></div>
         <div class="f-grp"><label class="f-lbl">Eski narx</label><input class="f-inp" id="pOld" type="number" placeholder="30000"></div>
       </div>
-      <div class="vars-admin">
+      <div class="vars-admin full-only">
         <div class="vars-admin-lbl">Xillar — har birining narxi bilan</div>
         <div class="var-tag-list" id="varTagList"></div>
         <div class="var-add-row" style="flex-wrap:wrap;gap:6px;">
@@ -1092,8 +1131,30 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
         </div>
       </div>
-      <button class="big-btn pri" style="margin-top:14px" onclick="saveProduct()">💾 Saqlash</button>
+      <button class="big-btn pri" id="saveBtnFull" style="margin-top:14px" onclick="saveProduct()">💾 Saqlash</button>
+      <button class="big-btn pri" id="saveBtnQuick" style="margin-top:14px" onclick="saveProductQuick()">💾 Saqlash va davom etish ⚡</button>
       <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor</button>
+      <div class="quick-recent-strip" id="quickRecentStrip" style="display:none;">
+        <h4>📚 Bu sessiyada qo'shilganlar (<span id="quickRecentCount">0</span>)</h4>
+        <div class="quick-recent-row" id="quickRecentRow"></div>
+      </div>
+      <details class="csv-section">
+        <summary>📥 Excel/CSV orqali toplab import</summary>
+        <div style="padding-top:10px;font-size:12px;color:var(--text2);font-weight:700;line-height:1.5;">
+          Excel'da yoki Google Sheets'da template'ni to'ldiring va shu yerga yuklang. Har bir qator — bir mahsulot.
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+          <button class="big-btn sec" type="button" style="flex:1;min-width:140px;margin:0;padding:10px;font-size:12px;" onclick="downloadCsvTemplate()">⬇️ Template yuklash (.csv)</button>
+          <button class="big-btn sec" type="button" style="flex:1;min-width:140px;margin:0;padding:10px;font-size:12px;" onclick="document.getElementById('csvFileInput').click()">📂 Fayl tanlash (.csv)</button>
+          <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none" onchange="handleCsvFile(this)">
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.5;">
+          <b>Ustunlar:</b> <code>name, name_ru, cat, price, desc, desc_ru, img, badge, oldPrice</code><br>
+          <b>Kategoriya ID'lari:</b> <span id="catIdsList" style="color:var(--accent);font-weight:900"></span><br>
+          <b>Majburiy:</b> name, cat, price · <b>Ixtiyoriy:</b> qolganlari
+        </div>
+        <div id="csvPreview" style="margin-top:12px;"></div>
+      </details>
     </div>
   </div>
 </div>
@@ -2585,7 +2646,7 @@ window.aTab=(name,btn)=>{
   if(name==='cats')loadAdminCats();
   if(name==='customers')loadAdminCustomers();
   if(name==='reviews')loadAdminReviews('all');
-  if(name==='add')rebuildCatSelect();
+  if(name==='add'){rebuildCatSelect();refreshCatIdsList();renderQuickRecent();applyAddMode();}
 };
 
 function loadAdminCats(){
@@ -3317,6 +3378,8 @@ window.editP=id=>{
   editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
   editExtraImgs=Array.isArray(p.images)?[...p.images]:[];renderExtraImgs();
   $('cancelEdit').style.display='block';
+  // While editing, force FULL mode so all fields visible
+  setAddMode('full');
   aTab('add',document.querySelectorAll('.a-tab')[12]);
 };
 window.cancelEditFn=()=>{
@@ -3383,6 +3446,265 @@ window.saveProduct=async()=>{
     toast('❌ Xatolik: '+(e.message||''));
   }
 };
+
+/* ─── QUICK ADD MODE ─── */
+let addMode=localStorage.getItem('addMode')||'quick';
+let quickRecent=[]; // session-only
+window.setAddMode=mode=>{
+  addMode=mode==='full'?'full':'quick';
+  localStorage.setItem('addMode',addMode);
+  document.body.classList.toggle('add-quick',addMode==='quick');
+  $('addModeQuickBtn')?.classList.toggle('on',addMode==='quick');
+  $('addModeFullBtn')?.classList.toggle('on',addMode==='full');
+  haptic('selection');
+};
+function applyAddMode(){document.body.classList.toggle('add-quick',addMode==='quick');}
+applyAddMode();
+
+function renderQuickRecent(){
+  const strip=$('quickRecentStrip'),row=$('quickRecentRow'),cnt=$('quickRecentCount');
+  if(!strip||!row||!cnt)return;
+  if(!quickRecent.length){strip.style.display='none';return;}
+  strip.style.display='block';
+  cnt.textContent=quickRecent.length;
+  row.innerHTML=quickRecent.slice(-10).reverse().map(p=>`<div class="qr-card">
+    <div class="qr-card-img">${p.img?`<img src="${p.img}" onerror="this.parentNode.textContent='📦'">`:'📦'}</div>
+    <div class="qr-card-nm">${escText(p.name||'')}</div>
+    <div class="qr-card-pr">${fmt(p.price||0)}</div>
+  </div>`).join('');
+}
+
+window.saveProductQuick=async()=>{
+  const name=g('pName');
+  const desc=g('pDesc')||'';
+  const price=parseInt($('pPrice').value);
+  const imgBase64=($('pImgBase64')||{}).value||'';
+  const imgUrl=g('pImg')||'';
+  const category=$('pCat').value||(CATS[0]&&CATS[0].id)||'kukun';
+
+  if(!name||!price){toast('❗ Nom va narx kiritilsin');haptic('error');return;}
+
+  const editId=g('editId');
+  if(editId){return saveProduct();} // editing → fallback to full save+exit
+
+  const img=imgBase64||imgUrl;
+  const data={
+    name,desc,price,cat:category,img,
+    images:[],badge:'',oldPrice:0,
+    variants:[],variantPrices:{},
+    active:true,
+    updatedAt:Date.now(),
+    createdAt:Date.now()
+  };
+
+  const btn=$('saveBtnQuick');if(btn)btn.disabled=true;
+  toast('⏳ Saqlanmoqda...');
+  try{
+    await rtdb.ref('products').push(data);
+    toast('✅ Saqlandi! Keyingisini kiriting');
+    haptic('confirm');
+    quickRecent.push({name,price,img});
+    renderQuickRecent();
+    // Reset only product fields, KEEP category
+    ['pName','pDesc','pPrice','pImg'].forEach(id=>{const e=$(id);if(e)e.value='';});
+    $('pImgBase64').value='';
+    const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
+    $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
+    setTimeout(()=>$('pName')?.focus(),50);
+  }catch(e){
+    console.error('saveProductQuick:',e);
+    toast('❌ Xatolik: '+(e.message||''));
+    haptic('error');
+  } finally {
+    if(btn)btn.disabled=false;
+  }
+};
+
+/* ─── CSV IMPORT ─── */
+function csvEscape(s){
+  if(s==null)return '';
+  s=String(s);
+  if(s.includes(',')||s.includes('"')||s.includes('\n'))return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+function parseCsv(text){
+  // RFC 4180-ish parser: handles quoted fields with embedded commas/newlines/escaped quotes
+  const rows=[];let cur=[];let val='';let inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i],n=text[i+1];
+    if(inQ){
+      if(c==='"'&&n==='"'){val+='"';i++;}
+      else if(c==='"'){inQ=false;}
+      else val+=c;
+    } else {
+      if(c==='"'&&val===''){inQ=true;}
+      else if(c===','){cur.push(val);val='';}
+      else if(c==='\r'){/*skip*/}
+      else if(c==='\n'){cur.push(val);rows.push(cur);cur=[];val='';}
+      else val+=c;
+    }
+  }
+  if(val!==''||cur.length){cur.push(val);rows.push(cur);}
+  return rows.filter(r=>r.length&&!(r.length===1&&r[0]===''));
+}
+window.downloadCsvTemplate=()=>{
+  const cols=['name','name_ru','cat','price','desc','desc_ru','img','badge','oldPrice'];
+  const sampleCat=(CATS[0]&&CATS[0].id)||'boshqa';
+  const examples=[
+    ['Ariel kir kukuni 3kg','Ariel стиральный порошок 3кг',sampleCat,'90000','Avtomat mashina uchun','Для автомат машины','https://example.com/ariel.jpg','Top','110000'],
+    ['Lenor 2L','Lenor 2L',sampleCat,'45000','','','','',''],
+  ];
+  const lines=[cols.join(','),...examples.map(r=>r.map(csvEscape).join(','))];
+  const csv='\uFEFF'+lines.join('\n'); // BOM for Excel UTF-8
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='kerasys-mahsulotlar-template.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},100);
+  toast('⬇️ Template yuklandi');
+};
+let csvParsedRows=null; // {ok, errors, valid:[{data}]}
+function validateCsvRow(rowObj,idx){
+  const errs=[];
+  const name=(rowObj.name||'').trim();
+  const cat=(rowObj.cat||'').trim();
+  const price=parseInt(rowObj.price);
+  if(!name)errs.push('name bo\'sh');
+  if(!cat)errs.push('cat bo\'sh');
+  else if(!CATS.some(c=>c.id===cat))errs.push('cat noto\'g\'ri ('+cat+')');
+  if(!price||price<=0)errs.push('price noto\'g\'ri');
+  return errs;
+}
+function renderCsvPreview(){
+  const el=$('csvPreview');if(!el)return;
+  if(!csvParsedRows){el.innerHTML='';return;}
+  const {valid,errors,total}=csvParsedRows;
+  const okN=valid.length,errN=errors.length;
+  el.innerHTML=`
+    <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:8px;">
+      ${total} qator: ✅ ${okN} OK · ${errN?`<span style="color:#e23b3b">❌ ${errN} xato</span>`:'❌ 0 xato'}
+    </div>
+    ${errors.map(e=>`<div class="csv-row-result err"><span class="csv-row-num">#${e.idx}</span><span class="csv-row-msg">${escText(e.name||"(bo'sh)")}</span><span class="csv-row-err">${escText(e.errs.join(', '))}</span></div>`).join('')}
+    ${valid.slice(0,30).map((v,i)=>`<div class="csv-row-result ok"><span class="csv-row-num">#${v.idx}</span><span class="csv-row-msg">${escText(v.data.name)} · ${fmt(v.data.price)} · ${escText(v.data.cat)}</span></div>`).join('')}
+    ${valid.length>30?`<div style="font-size:11px;color:var(--text2);text-align:center;padding:6px;">... va yana ${valid.length-30} qator</div>`:''}
+    <div style="display:flex;gap:6px;margin-top:10px;">
+      <button class="big-btn pri" type="button" style="flex:1;margin:0;padding:11px;font-size:13px;${okN?'':'opacity:0.4;pointer-events:none'}" onclick="runCsvImport()">✅ ${okN} ta mahsulotni import qilish</button>
+      <button class="big-btn sec" type="button" style="margin:0;padding:11px;font-size:13px;" onclick="cancelCsvImport()">Bekor</button>
+    </div>
+  `;
+}
+window.cancelCsvImport=()=>{
+  csvParsedRows=null;
+  const el=$('csvPreview');if(el)el.innerHTML='';
+  const inp=$('csvFileInput');if(inp)inp.value='';
+};
+window.handleCsvFile=async input=>{
+  const file=input.files&&input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('❌ Fayl 5MB dan katta');input.value='';return;}
+  try{
+    const txt=await file.text();
+    // Strip BOM
+    const clean=txt.replace(/^\uFEFF/,'');
+    const rows=parseCsv(clean);
+    if(rows.length<2){toast('❌ Fayl bo\'sh yoki bitta sarlavha qatori bor');return;}
+    const headers=rows[0].map(h=>(h||'').trim().toLowerCase());
+    // Find required columns
+    const idx={
+      name:headers.indexOf('name'),
+      name_ru:headers.indexOf('name_ru'),
+      cat:headers.indexOf('cat'),
+      price:headers.indexOf('price'),
+      desc:headers.indexOf('desc'),
+      desc_ru:headers.indexOf('desc_ru'),
+      img:headers.indexOf('img'),
+      badge:headers.indexOf('badge'),
+      oldPrice:headers.indexOf('oldprice'),
+    };
+    if(idx.name<0||idx.cat<0||idx.price<0){
+      toast('❌ Sarlavhada name, cat, price bo\'lishi kerak');
+      return;
+    }
+    const valid=[],errors=[];
+    for(let i=1;i<rows.length;i++){
+      const r=rows[i];if(!r||!r.length||r.every(x=>!x))continue;
+      const obj={
+        name:idx.name>=0?(r[idx.name]||'').trim():'',
+        name_ru:idx.name_ru>=0?(r[idx.name_ru]||'').trim():'',
+        cat:idx.cat>=0?(r[idx.cat]||'').trim():'',
+        price:idx.price>=0?(r[idx.price]||'').trim():'',
+        desc:idx.desc>=0?(r[idx.desc]||'').trim():'',
+        desc_ru:idx.desc_ru>=0?(r[idx.desc_ru]||'').trim():'',
+        img:idx.img>=0?(r[idx.img]||'').trim():'',
+        badge:idx.badge>=0?(r[idx.badge]||'').trim():'',
+        oldPrice:idx.oldPrice>=0?(r[idx.oldPrice]||'').trim():''
+      };
+      const errs=validateCsvRow(obj,i);
+      if(errs.length){errors.push({idx:i,name:obj.name,errs});}
+      else {
+        valid.push({idx:i,data:{
+          name:obj.name,
+          name_ru:obj.name_ru||'',
+          cat:obj.cat,
+          price:parseInt(obj.price),
+          desc:obj.desc||'',
+          desc_ru:obj.desc_ru||'',
+          img:obj.img||'',
+          badge:obj.badge||'',
+          oldPrice:parseInt(obj.oldPrice)||0
+        }});
+      }
+    }
+    csvParsedRows={valid,errors,total:rows.length-1};
+    renderCsvPreview();
+  }catch(e){
+    console.error('csv:',e);
+    toast('❌ CSV o\'qib bo\'lmadi: '+(e.message||''));
+  }
+  input.value='';
+};
+window.runCsvImport=async()=>{
+  if(!csvParsedRows||!csvParsedRows.valid.length)return;
+  const list=csvParsedRows.valid;
+  const el=$('csvPreview');
+  el.innerHTML=`<div style="text-align:center;padding:20px;font-weight:900;color:var(--text);">⏳ Import qilinmoqda... 0/${list.length}</div>`;
+  let ok=0,fail=0;
+  for(let i=0;i<list.length;i++){
+    const v=list[i];
+    try{
+      await rtdb.ref('products').push({
+        name:v.data.name,
+        name_ru:v.data.name_ru,
+        desc:v.data.desc,
+        desc_ru:v.data.desc_ru,
+        cat:v.data.cat,
+        price:v.data.price,
+        img:v.data.img,
+        images:[],
+        badge:v.data.badge,
+        oldPrice:v.data.oldPrice,
+        variants:[],
+        variantPrices:{},
+        active:true,
+        createdAt:Date.now(),
+        updatedAt:Date.now()
+      });
+      ok++;
+      el.innerHTML=`<div style="text-align:center;padding:20px;font-weight:900;color:var(--text);">⏳ Import qilinmoqda... ${i+1}/${list.length}</div>`;
+    }catch(e){console.warn('csv import row',v.idx,e);fail++;}
+  }
+  el.innerHTML=`<div style="text-align:center;padding:20px;font-weight:900;color:var(--text);">
+    ✅ ${ok} ta mahsulot qo'shildi${fail?` · ❌ ${fail} ta xato`:''}
+  </div>`;
+  toast(`✅ ${ok} ta import qilindi${fail?` (${fail} xato)`:''}`);
+  haptic('confirm');
+  csvParsedRows=null;
+  setTimeout(()=>{const el2=$('csvPreview');if(el2)el2.innerHTML='';},4000);
+};
+function refreshCatIdsList(){
+  const el=$('catIdsList');if(!el)return;
+  el.textContent=CATS.map(c=>c.id).join(', ');
+}
 updateCartUI();
 function bootUI(){applyLang();renderCatsPage();updateBackBtn();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootUI);
