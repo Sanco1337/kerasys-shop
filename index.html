@@ -188,8 +188,7 @@ body.dark .qchip.top .qc{background:#3d2e00;color:#ffd24a;}
   border-radius:20px;z-index:3;text-transform:uppercase;
 }
 .p-body{padding:10px 12px 12px;}
-.p-name{font-size:13px;font-weight:800;line-height:1.3;margin-bottom:2px;color:var(--text);}
-.p-desc{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.4;min-height:14px;}
+.p-name{font-size:13px;font-weight:800;line-height:1.3;margin-bottom:8px;color:var(--text);min-height:34px;}
 .p-foot{display:flex;align-items:center;justify-content:space-between;}
 .p-price{font-size:14px;font-weight:900;color:var(--accent);}
 .p-oldprice{font-size:10px;color:var(--text2);text-decoration:line-through;}
@@ -454,6 +453,20 @@ body:not(.add-quick) .quick-recent-strip{display:none;}
 .qr-card-img img{width:100%;height:100%;object-fit:cover;}
 .qr-card-nm{font-size:10px;font-weight:800;color:var(--text);margin-top:4px;line-height:1.2;max-height:24px;overflow:hidden;}
 .qr-card-pr{font-size:10px;color:var(--accent);font-weight:900;margin-top:2px;}
+
+/* Admin FAB on category page */
+.fab-add{
+  position:fixed;right:18px;bottom:84px;z-index:90;
+  width:58px;height:58px;border-radius:50%;
+  background:var(--accent);color:#fff;border:none;
+  font-size:34px;font-weight:900;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(31,161,80,0.45);
+  transition:transform 0.15s,box-shadow 0.2s;
+}
+.fab-add:active{transform:scale(0.92);}
+.fab-add:hover{box-shadow:0 12px 28px rgba(31,161,80,0.55);}
+.fab-add-ic{display:block;line-height:1;margin-top:-3px;}
 
 /* CSV import */
 .csv-section{margin-top:18px;border-top:1.5px solid var(--border);padding-top:14px;}
@@ -1178,7 +1191,9 @@ firebase.initializeApp(FB);
 const db=firebase.firestore();
 
 
-const ADMIN="snchwww";
+const ADMINS=["snchwww","Suhrob8860"];
+const ADMIN=ADMINS[0]; // backward-compat
+function isAdminUser(name){return !!name&&ADMINS.some(a=>a.toLowerCase()===String(name).toLowerCase());}
 // Eng birinchi — fon rangini o'rnatish (Telegram transparent bug fix)
 (function(){
   const isDark=localStorage.getItem('darkTheme')==='true';
@@ -1197,7 +1212,7 @@ if(tg){
 }
 const tgUser=tg?.initDataUnsafe?.user;
 // isAdmin: Telegram username to'g'ri kelsa YOKI URL da ?admin=1 bo'lsa (test uchun)
-const isAdmin=tgUser?.username===ADMIN||window.location.search.includes('admin=1');
+const isAdmin=isAdminUser(tgUser?.username)||window.location.search.includes('admin=1');
 const adminBtnEl=document.getElementById('adminBtn');
 if(adminBtnEl&&isAdmin) adminBtnEl.style.display='flex';
 
@@ -1611,7 +1626,6 @@ function productCardHTML(p,opts){
     </div>
     <div class="p-body">
       <div class="p-name">${p.name}</div>
-      <div class="p-desc">${p.desc||''}</div>
       <div class="p-foot">
         <div>
           <div class="p-price">${fmt(p.price)}</div>
@@ -1681,7 +1695,8 @@ function renderProductsPage(){
             <div class="empty-pretty-title">${searchQuery?tr('empty_search_title'):tr('empty_products_cat')}</div>
             ${searchQuery?`<div class="empty-pretty-sub">${tr('empty_search_sub')}</div>`:''}
           </div>`
-        :`<div class="grid">${filtered.map((p,i)=>productCardHTML(p,{idx:i})).join('')}</div>`)}`;
+        :`<div class="grid">${filtered.map((p,i)=>productCardHTML(p,{idx:i})).join('')}</div>`)}
+    ${isAdmin&&!isVirtual?`<button class="fab-add" onclick="window.openAdminAddForCat('${cat.id}')" title="Mahsulot qo'shish"><span class="fab-add-ic">+</span></button>`:''}`;
   updateBackBtn();
 }
 window.onProdPageSearch=v=>{searchQuery=v;renderProductsPage();const inp=$('prodPageSearch');if(inp)inp.focus();};
@@ -2628,6 +2643,27 @@ async function loadMyOrders(){
 
 /* ADMIN */
 window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();haptic('light');updateBackBtn();};
+window.openAdminAddForCat=(catId)=>{
+  if(!isAdmin)return;
+  haptic('light');
+  $('overlay').classList.add('on');$('adminSheet').classList.add('on');
+  // Find the "add" tab button (last one — index 12)
+  const tabs=document.querySelectorAll('.a-tab');
+  const addBtn=tabs[tabs.length-1];
+  aTab('add',addBtn);
+  // Force quick mode for fast adding
+  setAddMode('quick');
+  // Pre-select the category
+  if(catId){
+    const sel=$('pCat');
+    if(sel){
+      const opt=Array.from(sel.options).find(o=>o.value===catId);
+      if(opt)sel.value=catId;
+    }
+  }
+  setTimeout(()=>$('pName')?.focus(),200);
+  updateBackBtn();
+};
 let adminTab='stats';
 window.aTab=(name,btn)=>{
   adminTab=name;
