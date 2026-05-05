@@ -2374,13 +2374,20 @@ window.deleteDebt=async id=>{
 
 /* ONLINE CHAT */
 let chatUnsub=null;
+function getMyChatId(){
+  if(tgUser?.id)return tgUser.id.toString();
+  let g=localStorage.getItem('guestChatId');
+  if(!g){g='guest_'+Math.random().toString(36).slice(2,10);localStorage.setItem('guestChatId',g);}
+  return g;
+}
 window.openChat=()=>{
   $('overlay').classList.add('on');$('chatSheet').classList.add('on');
-  const uid=tgUser?.id?.toString()||'guest';
+  const uid=getMyChatId();
   $('chatBadge').classList.remove('show');
   loadChatMsgs(uid);
   haptic('light');
   updateBackBtn();
+  setTimeout(()=>$('chatInput')?.focus(),250);
 };
 function loadChatMsgs(uid){
   const el=$('chatMsgs');
@@ -2393,84 +2400,161 @@ function loadChatMsgs(uid){
           return ta-tb;
         });
       const adminLbl=currentLang==='uz'?"Do'kon":'Магазин';
-      el.innerHTML=msgs.map(m=>
+      el.innerHTML=msgs.length?msgs.map(m=>
         m.from==='admin'
-          ?`<div class="chat-msg admin"><div class="chat-from">${adminLbl}</div>${m.text}</div>`
-          :`<div class="chat-msg user">${m.text}</div>`
-      ).join('');
+          ?`<div class="chat-msg admin"><div class="chat-from">${adminLbl}</div>${escHtmlMsg(m.text)}</div>`
+          :`<div class="chat-msg user">${escHtmlMsg(m.text)}</div>`
+      ).join(''):'<div style="text-align:center;color:var(--text2);padding:30px 16px;font-size:13px;">'+(currentLang==='uz'?'Hech qanday xabar yo\'q. Birinchi bo\'lib yozing!':'Сообщений пока нет. Напишите первым!')+'</div>';
       const sb=$('chatScrollBody');if(sb)sb.scrollTop=sb.scrollHeight;
-      msgs.forEach(m=>{if(m.from==='admin'&&!m.read)db.collection('chats').doc(m.id).update({read:true});});
+      msgs.forEach(m=>{if(m.from==='admin'&&!m.read)db.collection('chats').doc(m.id).update({read:true}).catch(()=>{});});
+    },err=>{
+      console.error('chat load:',err);
+      el.innerHTML='<div style="color:#e23b3b;text-align:center;padding:20px">Xatolik: '+(err.message||err)+'</div>';
     }
   );
 }
+function escHtmlMsg(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
 window.sendChatMsg=async()=>{
   const inp=$('chatInput');const text=inp.value.trim();if(!text)return;
   inp.value='';
-  const uid=tgUser?.id?.toString()||'guest_'+(tgUser?.username||Math.random().toString(36).slice(2,8));
-  await db.collection('chats').add({
-    chatId:uid,text,from:'user',
-    userName:tgUser?.first_name||'Клиент',
-    telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'—',
-    createdAt:new Date(),read:false
-  });
+  const uid=getMyChatId();
+  try{
+    await db.collection('chats').add({
+      chatId:uid,text,from:'user',
+      userName:tgUser?.first_name||'Mijoz',
+      telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'—',
+      createdAt:new Date(),read:false
+    });
+    haptic('light');
+    // Notify admin via bot about new chat message
+    notifyBot(`💬 <b>Yangi xabar (chat)</b>\n👤 ${tgUser?.first_name||'Mijoz'}${tgUser?` @${tgUser.username||tgUser.first_name}`:''}\n\n${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`);
+    inp.focus();
+  }catch(e){toast('❌ '+(e.message||'Xatolik'));haptic('error');}
 };
-// Unread badge
-if(tgUser?.id){
-  db.collection('chats').where('chatId','==',tgUser.id.toString()).where('from','==','admin').where('read','==',false).onSnapshot(snap=>{
+// Unread badge — works for both TG users and persistent guests
+(function(){
+  const myUid=getMyChatId();
+  db.collection('chats').where('chatId','==',myUid).where('from','==','admin').where('read','==',false).onSnapshot(snap=>{
     const cnt=snap.size;
-    const badge=$('chatBadge');
+    const badge=$('chatBadge');if(!badge)return;
     badge.textContent=cnt;badge.classList.toggle('show',cnt>0);
-  });
-}
+  },err=>console.warn('chat badge:',err));
+})();
 
 /* ADMIN CHATS */
-async function loadAdminChats(){
-  const el=$('aChats');el.innerHTML='<div class="spin"></div>';
-  try{
-    const snap=await db.collection('chats').get();
+let adminChatsListUnsub=null;
+let adminChatConvUnsub=null;
+let adminCurrentChatId=null;
+function loadAdminChats(){
+  const el=$('aChats');
+  if(!el)return;
+  // Initial UI scaffold
+  el.innerHTML=`<div id="adminChatList"><div class="spin"></div></div><div id="adminChatConv" style="display:none"></div>`;
+  if(adminChatsListUnsub){adminChatsListUnsub();adminChatsListUnsub=null;}
+  // Live-listen to all chats so the list updates as new messages come in
+  adminChatsListUnsub=db.collection('chats').onSnapshot(snap=>{
     const map={};
     snap.docs.forEach(d=>{
       const m=d.data();
-      if(!map[m.chatId])map[m.chatId]={chatId:m.chatId,name:m.userName||'Клиент',tg:m.telegram||'—',last:m.text,unread:0};
+      const t=m.createdAt?.toDate?m.createdAt.toDate():new Date(m.createdAt||0);
+      if(!map[m.chatId])map[m.chatId]={chatId:m.chatId,name:m.userName||'Mijoz',tg:m.telegram||'—',last:m.text,lastTime:t,unread:0};
+      if(t>map[m.chatId].lastTime){map[m.chatId].last=m.text;map[m.chatId].lastTime=t;}
+      if(m.userName&&!map[m.chatId].name)map[m.chatId].name=m.userName;
+      if(m.telegram&&map[m.chatId].tg==='—')map[m.chatId].tg=m.telegram;
       if(!m.read&&m.from!=='admin')map[m.chatId].unread++;
     });
-    const list=Object.values(map);
-    if(!list.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Сообщений нет</div>';return;}
-    el.innerHTML=`<div id="adminChatList">${list.map(c=>`
-      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer" onclick="openAdminChat('${c.chatId}')">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="font-size:14px;font-weight:800">${c.name} <span style="font-size:11px;color:var(--text2)">${c.tg}</span></div>
-          ${c.unread?`<span style="background:var(--a2);color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:800">${c.unread} yangi</span>`:''}
+    const list=Object.values(map).sort((a,b)=>b.lastTime-a.lastTime);
+    const listEl=$('adminChatList');
+    if(!listEl)return;
+    if(!list.length){listEl.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">💬 Hech qanday xabar yo\'q</div>';return;}
+    listEl.innerHTML=list.map(c=>{
+      const lastShort=String(c.last||'').slice(0,80);
+      return `<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:transform 0.15s;" onclick="openAdminChat('${c.chatId}')" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:8px;">
+          <div style="font-size:14px;font-weight:800;color:var(--text);min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtmlMsg(c.name)} <span style="font-size:11px;color:var(--text2);font-weight:700;">${escHtmlMsg(c.tg)}</span></div>
+          ${c.unread?`<span style="background:#e23b3b;color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:800;flex-shrink:0;">${c.unread} yangi</span>`:''}
         </div>
-        <div style="font-size:12px;color:var(--text2)">${c.last}</div>
-      </div>`).join('')}</div>
-    <div id="adminChatConv" style="display:none"></div>`;
-  }catch(e){el.innerHTML='<div style="color:var(--text2)">Xatolik</div>';}
-}
-window.openAdminChat=uid=>{
-  $('adminChatList').style.display='none';
-  const conv=$('adminChatConv');conv.style.display='block';
-  db.collection('chats').where('chatId','==',uid).orderBy('createdAt','asc').onSnapshot(snap=>{
-    const msgs=snap.docs.map(d=>{
-      const m=d.data();
-      return m.from==='admin'
-        ?`<div class="chat-msg admin" style="margin-bottom:6px"><div class="chat-from">Магазин</div>${m.text}</div>`
-        :`<div class="chat-msg user" style="margin-bottom:6px">${m.text}</div>`;
-    }).join('');
-    conv.innerHTML=`
-      <button class="big-btn sec" style="margin-bottom:12px" onclick="$('adminChatList').style.display='block';$('adminChatConv').style.display='none'">← Назад</button>
-      <div style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:12px">${msgs||'<div style="color:var(--text2);text-align:center;padding:20px">Сообщений нет</div>'}</div>
-      <div class="chat-input-row">
-        <input class="chat-inp" id="adminReplyInp" placeholder="Ответить...">
-        <button class="chat-send" onclick="sendAdminReply('${uid}')">➤</button>
+        <div style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtmlMsg(lastShort)}</div>
       </div>`;
-    snap.docs.forEach(d=>{if(!d.data().read&&d.data().from!=='admin')db.collection('chats').doc(d.id).update({read:true});});
+    }).join('');
+  },err=>{
+    const listEl=$('adminChatList');
+    if(listEl)listEl.innerHTML='<div style="color:#e23b3b;text-align:center;padding:20px">Xatolik: '+(err.message||err)+'</div>';
   });
+}
+
+window.openAdminChat=uid=>{
+  adminCurrentChatId=uid;
+  $('adminChatList').style.display='none';
+  const conv=$('adminChatConv');
+  conv.style.display='block';
+  // Render scaffold ONCE — input survives across snapshot updates
+  conv.innerHTML=`
+    <button class="big-btn sec" style="margin-bottom:12px" onclick="closeAdminChat()">← Orqaga</button>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-align:center;" id="adminChatHdr">Yuklanmoqda...</div>
+    <div id="adminChatMsgs" style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;padding:12px;background:var(--bg);border-radius:14px;border:1.5px solid var(--border);"></div>
+    <div class="chat-input-row">
+      <input class="chat-inp" id="adminReplyInp" placeholder="Javob yozing..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendAdminReply('${uid}');}">
+      <button class="chat-send" onclick="sendAdminReply('${uid}')">➤</button>
+    </div>`;
+  if(adminChatConvUnsub){adminChatConvUnsub();adminChatConvUnsub=null;}
+  // Load messages WITHOUT orderBy (avoids needing a Firestore composite index); sort client-side
+  adminChatConvUnsub=db.collection('chats').where('chatId','==',uid).onSnapshot(snap=>{
+    const docs=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>{
+        const ta=a.createdAt?.toDate?a.createdAt.toDate():new Date(a.createdAt||0);
+        const tb=b.createdAt?.toDate?b.createdAt.toDate():new Date(b.createdAt||0);
+        return ta-tb;
+      });
+    const m=$('adminChatMsgs');if(!m)return;
+    if(!docs.length){
+      m.innerHTML='<div style="text-align:center;color:var(--text2);padding:30px 16px;font-size:13px;">Xabarlar yo\'q</div>';
+    } else {
+      const first=docs[0];
+      const hdr=$('adminChatHdr');
+      if(hdr)hdr.textContent=`${first.userName||'Mijoz'} ${first.telegram||''}`.trim();
+      m.innerHTML=docs.map(x=>{
+        const time=x.createdAt?.toDate?x.createdAt.toDate():new Date(x.createdAt||0);
+        const tStr=time.toLocaleTimeString('uz-UZ',{hour:'2-digit',minute:'2-digit'});
+        return x.from==='admin'
+          ?`<div class="chat-msg admin"><div class="chat-from">Do'kon · ${tStr}</div>${escHtmlMsg(x.text)}</div>`
+          :`<div class="chat-msg user"><div class="chat-from">${escHtmlMsg(x.userName||'Mijoz')} · ${tStr}</div>${escHtmlMsg(x.text)}</div>`;
+      }).join('');
+    }
+    m.scrollTop=m.scrollHeight;
+    docs.forEach(x=>{if(!x.read&&x.from!=='admin')db.collection('chats').doc(x.id).update({read:true}).catch(()=>{});});
+  },err=>{
+    const m=$('adminChatMsgs');
+    if(m)m.innerHTML='<div style="color:#e23b3b;text-align:center;padding:20px">Xatolik: '+(err.message||err)+'</div>';
+  });
+  setTimeout(()=>$('adminReplyInp')?.focus(),200);
 };
+
+window.closeAdminChat=()=>{
+  if(adminChatConvUnsub){adminChatConvUnsub();adminChatConvUnsub=null;}
+  adminCurrentChatId=null;
+  const list=$('adminChatList');if(list)list.style.display='block';
+  const conv=$('adminChatConv');if(conv){conv.style.display='none';conv.innerHTML='';}
+};
+
 window.sendAdminReply=async uid=>{
-  const inp=$('adminReplyInp');const text=inp.value.trim();if(!text)return;
+  const inp=$('adminReplyInp');if(!inp)return;
+  const text=inp.value.trim();if(!text)return;
   inp.value='';
-  await db.collection('chats').add({chatId:uid,text,from:'admin',createdAt:new Date(),read:false});
+  try{
+    await db.collection('chats').add({chatId:uid,text,from:'admin',createdAt:new Date(),read:false});
+    haptic('light');
+    inp.focus();
+    // Try to notify customer via Telegram bot if their chatId looks like a numeric TG user ID
+    if(/^-?\d+$/.test(uid)&&botConfig.token){
+      try{
+        await fetch(`https://api.telegram.org/bot${botConfig.token}/sendMessage`,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({chat_id:uid,text:`💬 <b>Do'kondan javob</b>\n\n${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`,parse_mode:'HTML'})
+        });
+      }catch(_){}
+    }
+  }catch(e){toast('❌ '+(e.message||'Xatolik'));haptic('error');}
 };
 
 /* PREORDER */
