@@ -146,6 +146,22 @@ body.dark #app-root{
 .fc-price{font-size:15px;font-weight:900;color:#fff;letter-spacing:-0.3px;}
 @keyframes fcIn{from{transform:translateY(20px) scale(0.9);opacity:0;}to{transform:translateY(0) scale(1);opacity:1;}}
 
+.fab-search{
+  position:fixed;bottom:24px;right:16px;z-index:149;
+  width:54px;height:54px;border-radius:50%;
+  background:var(--grad-accent);color:#fff;border:none;
+  font-size:24px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px var(--accent-glow),0 4px 10px rgba(0,0,0,0.12);
+  transition:transform var(--t),box-shadow var(--t);
+  animation:fcIn 280ms var(--tr) backwards;
+}
+.fab-search:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 34px var(--accent-glow),0 6px 14px rgba(0,0,0,0.14);}
+.fab-search:active{transform:scale(0.92);}
+.fab-search.hidden{display:none;}
+/* When float-cart is visible, push search FAB up above it */
+.fab-search.cart-visible{bottom:96px;}
+
 .main{padding:16px 12px 100px;min-height:calc(100vh - 70px);background:var(--bg);}
 
 .cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -900,6 +916,44 @@ body.dark .pd-gal-arrow{background:rgba(40,40,40,0.92);color:var(--text);}
 .fav-link-tx{font-size:14px;font-weight:800;color:var(--text);}
 .fav-link-cnt{font-size:12px;font-weight:700;color:var(--text2);}
 
+.cat-all-card{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-radius:16px;cursor:pointer;
+  margin-bottom:14px;
+  background:var(--grad-accent);color:#fff;
+  box-shadow:0 8px 22px var(--accent-glow);
+  transition:transform var(--t),box-shadow var(--t);
+}
+.cat-all-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px var(--accent-glow);}
+.cat-all-card:active{transform:scale(0.98);}
+.cat-all-l{display:flex;align-items:center;gap:14px;}
+.cat-all-ic{font-size:30px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.18));}
+.cat-all-tx{font-size:17px;font-weight:900;letter-spacing:-0.2px;}
+.cat-all-cnt{font-size:12px;font-weight:700;opacity:0.92;margin-top:2px;}
+.cat-all-arr{font-size:24px;font-weight:900;}
+
+/* Delivery toggle */
+.dlv-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dlv-opt{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:12px 8px;border-radius:12px;
+  border:1.5px solid var(--border);background:var(--bg);
+  font-family:'Nunito',sans-serif;color:var(--text);cursor:pointer;
+  transition:transform var(--t-fast),background var(--t),border-color var(--t),box-shadow var(--t),color var(--t);
+}
+.dlv-opt:hover{border-color:var(--border-strong);}
+.dlv-opt:active{transform:scale(0.97);}
+.dlv-opt .dlv-ic{font-size:22px;line-height:1;margin-bottom:4px;}
+.dlv-opt .dlv-tx{font-size:13px;font-weight:900;}
+.dlv-opt .dlv-sub{font-size:11px;font-weight:700;color:var(--text2);}
+.dlv-opt.on{
+  background:var(--grad-accent);border-color:transparent;color:#fff;
+  box-shadow:0 6px 18px var(--accent-glow);
+}
+.dlv-opt.on .dlv-sub{color:rgba(255,255,255,0.9);}
+.dlv-info{font-size:12px;color:var(--text2);font-weight:700;margin-top:6px;line-height:1.45;padding:8px 10px;background:var(--accent-lt);border-radius:10px;}
+body.dark .dlv-info{background:rgba(43,212,120,0.10);}
+
 
 
 /* Improved dark mode contrasts */
@@ -941,6 +995,8 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
     <div class="fc-price" id="fcPrice">0 so'm</div>
   </div>
 </div>
+
+<button class="fab-search hidden" id="fabSearch" onclick="openSearch()" aria-label="Search" title="Qidirish">🔍</button>
 
 <div class="main" id="mainArea">
     <div style="font-size:22px;font-weight:900;margin-bottom:4px;color:var(--text)">Категории</div>
@@ -1031,9 +1087,29 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
   </div>
   <div class="s-body">
     <div class="f-info" id="orderInfo"></div>
+    <div class="f-grp">
+      <label class="f-lbl" id="deliveryLbl">📦 Yetkazib berish turi *</label>
+      <div class="dlv-toggle">
+        <button type="button" class="dlv-opt on" id="dlvPickupBtn" onclick="setDeliveryType('pickup')">
+          <span class="dlv-ic">🏪</span>
+          <span class="dlv-tx" id="dlvPickupTx">Olib ketish</span>
+          <span class="dlv-sub" id="dlvPickupSub">Bepul</span>
+        </button>
+        <button type="button" class="dlv-opt" id="dlvYandexBtn" onclick="setDeliveryType('yandex')">
+          <span class="dlv-ic">🚕</span>
+          <span class="dlv-tx" id="dlvYandexTx">Yandex</span>
+          <span class="dlv-sub" id="dlvYandexSub">To'lov mijoz</span>
+        </button>
+      </div>
+    </div>
     <div class="f-grp"><label class="f-lbl" data-tr="o_name">Ism Familiya *</label><input class="f-inp" id="oName" data-tr-ph="o_name_ph" placeholder="Sarvar Karimov"></div>
     <div class="f-grp"><label class="f-lbl" data-tr="o_phone">Telefon *</label><input class="f-inp" id="oPhone" placeholder="+998 90 123 45 67" type="tel"></div>
-    <div class="f-grp"><label class="f-lbl" data-tr="o_time">Olib ketish vaqti *</label>
+    <div class="f-grp" id="oAddrGrp" style="display:none">
+      <label class="f-lbl" id="oAddrLbl">📍 Yetkazib berish manzili *</label>
+      <textarea class="f-ta" id="oAddr" rows="2" placeholder="Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy, 12-xonadon"></textarea>
+      <div class="dlv-info" id="oAddrInfo">Yandex Go orqali yetkazamiz. Yo'l haqi mijozdan olinadi (~15-30 ming so'm Toshkent ichida).</div>
+    </div>
+    <div class="f-grp" id="oTimeGrp"><label class="f-lbl" id="oTimeLbl" data-tr="o_time">Olib ketish vaqti *</label>
       <select class="f-sel" id="oTime"></select>
     </div>
     <div class="f-grp"><label class="f-lbl" data-tr="o_note">Izoh</label><textarea class="f-ta" id="oNote" data-tr-ph="o_note_ph" placeholder="Boshqa vaqt yoki ma'lumot..."></textarea></div>
@@ -1368,7 +1444,13 @@ const DEFAULT_CATS=[
   {id:'sovun',label_uz:'Sovunlar',label_ru:'Мыло',icon:'🧼',order:3},
   {id:'boshqa',label_uz:'Boshqa mahsulotlar',label_ru:'Другие товары',icon:'📦',order:4},
 ];
-let CATS=DEFAULT_CATS.map(c=>({...c,label:c.label_uz}));
+let CATS=(()=>{
+  try{
+    const c=JSON.parse(localStorage.getItem('cache_cats')||'null');
+    if(Array.isArray(c)&&c.length)return c;
+  }catch(_){}
+  return DEFAULT_CATS.map(c=>({...c,label:c.label_uz}));
+})();
 let categoriesLoaded=false;
 const ICONS={};
 function rebuildIcons(){CATS.forEach(c=>ICONS[c.id]=c.icon);}
@@ -1379,12 +1461,13 @@ const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor'
 const PROMO_GOAL=1000000;
 const PROMO_DISCOUNT=0.05;
 
-let products=[],cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={},editExtraImgs=[];
+let products=(()=>{ try { const c=JSON.parse(localStorage.getItem('cache_products')||'[]'); return Array.isArray(c)?c:[]; } catch(_) { return []; } })();
+let cart={},currentPage='cats',currentCat=null,editVars=[],editVarPrices={},editExtraImgs=[];
 let promoCode=null,appliedPromo=null,myPromo=null;
 let toastTimer=null;
 let currentLang=localStorage.getItem('lang')||'ru';
 let isDarkTheme=localStorage.getItem('darkTheme')==='true';
-let productsLoaded=false;
+let productsLoaded=products.length>0;
 let sortMode=localStorage.getItem('sortMode')||'def';
 let searchQuery='';
 let favIds=(()=>{ try { return JSON.parse(localStorage.getItem('favIds')||'[]'); } catch(_) { return []; } })();
@@ -1427,7 +1510,7 @@ const TR={
   contact_phone_lbl:{uz:"Telefon",ru:"Телефон"},
   contact_hours_lbl:{uz:"Ish vaqti",ru:"Время работы"},
   contact_delivery_lbl:{uz:"Yetkazib berish",ru:"Доставка"},
-  contact_delivery_val:{uz:"Faqat o'zi olib ketish",ru:"Только самовывоз"},
+  contact_delivery_val:{uz:"Olib ketish yoki Yandex orqali yetkazamiz",ru:"Самовывоз или доставка через Yandex"},
   contact_call_btn:{uz:"📞 Qo'ng'iroq qilish",ru:"📞 Позвонить"},
   profile_title:{uz:"👤 Profil",ru:"👤 Профиль"},
   chat_title:{uz:"💬 Onlayn chat",ru:"💬 Онлайн чат"},
@@ -1468,7 +1551,7 @@ const TR={
   fav_added:{uz:"❤️ Sevimlilarga qo'shildi",ru:"❤️ Добавлено в избранное"},
   fav_removed:{uz:"💔 Sevimlilardan olindi",ru:"💔 Удалено из избранного"},
   share_copied:{uz:"🔗 Havola nusxalandi",ru:"🔗 Ссылка скопирована"},
-  order_info_msg:{uz:"ℹ️ Bizda <span>yetkazib berish yo'q</span>. Buyurtma qilib, kelganingizda tayyor bo'ladi.",ru:"ℹ️ У нас <span>нет доставки</span>. Заказ будет готов, когда вы придёте."},
+  order_info_msg:{uz:"ℹ️ <span>Olib ketish</span> bepul. <span>Yandex yetkazib berish</span> qo'shimcha to'lov bilan (mijoz to'laydi).",ru:"ℹ️ <span>Самовывоз</span> бесплатно. <span>Доставка Yandex</span> с дополнительной оплатой (оплачивает клиент)."},
   preorder_info_msg:{uz:"ℹ️ <span>Kerakli mahsulot yo'qmi?</span> Oldindan buyurtma qoldiring — mahsulot kelganda biz siz bilan bog'lanamiz.",ru:"ℹ️ <span>Нет нужного товара?</span> Оставьте предзаказ — мы свяжемся с вами, когда товар появится."},
   time_select:{uz:"— Tanlang —",ru:"— Выберите —"},
   time_today:{uz:"Bugun",ru:"Сегодня"},
@@ -1712,6 +1795,8 @@ function renderHeroBanner({saleCnt,newCnt,lab}){
 
 function renderCatsPage(){
   currentPage='cats';
+  // Show search FAB on home page
+  const fs=$('fabSearch');if(fs)fs.classList.remove('hidden');
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
@@ -1747,6 +1832,16 @@ function renderCatsPage(){
       </div>
       <div style="font-size:18px;color:var(--accent);font-weight:900">→</div>
     </div>`:''}
+    <div class="cat-all-card" onclick="openVirtualCat('__all')">
+      <div class="cat-all-l">
+        <div class="cat-all-ic">📦</div>
+        <div>
+          <div class="cat-all-tx">${currentLang==='uz'?'Barcha mahsulotlar':'Все товары'}</div>
+          <div class="cat-all-cnt">${products.filter(p=>p.active!==false).length} ${tr('products_count')}</div>
+        </div>
+      </div>
+      <div class="cat-all-arr">→</div>
+    </div>
     <div class="cats-grid">
       ${CATS.map((c,i)=>`
         <div class="cat-card" style="animation-delay:${i*40}ms" onclick="window.openCat('${c.id}')">
@@ -1843,6 +1938,8 @@ function productCardHTML(p,opts){
 }
 
 function renderProductsPage(){
+  // Hide search FAB on inner pages
+  const fs=$('fabSearch');if(fs)fs.classList.add('hidden');
   const isVirtual=typeof currentCat==='string'&&currentCat.startsWith('__');
   let cat,all,virtualLoading=false;
   if(isVirtual){
@@ -1852,6 +1949,9 @@ function renderProductsPage(){
     } else if(currentCat==='__new'){
       cat={id:'__new',icon:'🆕',label_uz:'Yangi',label_ru:'Новые'};
       all=products.filter(isNewProduct);
+    } else if(currentCat==='__all'){
+      cat={id:'__all',icon:'📦',label_uz:'Barcha mahsulotlar',label_ru:'Все товары'};
+      all=products.filter(p=>p.active!==false);
     } else if(currentCat==='__top'){
       cat={id:'__top',icon:'⭐',label_uz:'Top sotuvda',label_ru:'Хиты продаж'};
       if(!Array.isArray(topSellerIds)){
@@ -2415,6 +2515,16 @@ function initProducts(){
       products=Object.entries(val).map(([id,data])=>({id,...data}));
     }
     productsLoaded=true;
+    // Cache to localStorage for instant load next time (skip image dataURIs to keep it small)
+    try{
+      const slim=products.map(p=>{
+        const o={...p};
+        if(typeof o.img==='string'&&o.img.startsWith('data:')&&o.img.length>50000)delete o.img;
+        if(Array.isArray(o.imgs))o.imgs=o.imgs.filter(x=>!(typeof x==='string'&&x.startsWith('data:')&&x.length>50000));
+        return o;
+      });
+      localStorage.setItem('cache_products',JSON.stringify(slim));
+    }catch(_){}
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
     if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
@@ -2468,6 +2578,7 @@ function initCategories(){
         order:typeof d.order==='number'?d.order:9999,
       })).sort((a,b)=>a.order-b.order||a.label_uz.localeCompare(b.label_uz));
     }
+    try{localStorage.setItem('cache_cats',JSON.stringify(CATS));}catch(_){}
     categoriesLoaded=true;
     rebuildIcons();
     rebuildCatSelect();
@@ -2609,6 +2720,9 @@ function updateCartUI(){
   $('discountVal').textContent='-'+fmt(discount);
   $('discountRow').style.display=discount>0?'flex':'none';
   $('orderBtn').disabled=cnt===0;
+  // Push search FAB up when cart is visible to avoid overlap
+  const fs=$('fabSearch');
+  if(fs)fs.classList.toggle('cart-visible',cnt>0);
   updateMainButton(cnt,tot);
 }
 
@@ -2705,12 +2819,45 @@ window.closeAll=()=>{
   try{if(pdReviewsUnsub){pdReviewsUnsub();pdReviewsUnsub=null;}}catch(_){}
   updateBackBtn();
 };
-window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');haptic('light');updateBackBtn();};
+window.toOrder=()=>{$('cartSheet').classList.remove('on');$('orderSheet').classList.add('on');applyDeliveryLang();haptic('light');updateBackBtn();};
 window.backToCart=()=>{$('orderSheet').classList.remove('on');$('cartSheet').classList.add('on');renderCartBody();haptic('light');updateBackBtn();};
+
+let deliveryType='pickup'; // 'pickup' | 'yandex'
+window.setDeliveryType=t=>{
+  deliveryType=t;
+  $('dlvPickupBtn').classList.toggle('on',t==='pickup');
+  $('dlvYandexBtn').classList.toggle('on',t==='yandex');
+  $('oAddrGrp').style.display=t==='yandex'?'block':'none';
+  // Toggle time label and select
+  if(t==='yandex'){
+    $('oTimeLbl').textContent=currentLang==='uz'?'🕒 Yetkazib berish vaqti *':'🕒 Время доставки *';
+  }else{
+    $('oTimeLbl').textContent=currentLang==='uz'?'Olib ketish vaqti *':'Время самовывоза *';
+  }
+  haptic('selection');
+};
+function applyDeliveryLang(){
+  const uz=currentLang==='uz';
+  $('deliveryLbl').textContent=uz?'📦 Yetkazib berish turi *':'📦 Способ получения *';
+  $('dlvPickupTx').textContent=uz?'Olib ketish':'Самовывоз';
+  $('dlvPickupSub').textContent=uz?'Bepul':'Бесплатно';
+  $('dlvYandexTx').textContent=uz?'Yandex yetkazib berish':'Yandex доставка';
+  $('dlvYandexSub').textContent=uz?"To'lov mijoz":'Оплачивает клиент';
+  $('oAddrLbl').textContent=uz?'📍 Yetkazib berish manzili *':'📍 Адрес доставки *';
+  $('oAddr').placeholder=uz?'Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy, 12-xonadon':'г. Ташкент, Юнусабадский район, X-квартал, дом 5, кв 12';
+  $('oAddrInfo').textContent=uz?"Yandex Go orqali yetkazamiz. Yo'l haqi mijozdan olinadi (~15-30 ming so'm Toshkent ichida).":'Доставка через Yandex Go. Стоимость оплачивает клиент (~15-30 тыс сум по Ташкенту).';
+  if(deliveryType==='yandex'){
+    $('oTimeLbl').textContent=uz?'🕒 Yetkazib berish vaqti *':'🕒 Время доставки *';
+  }else{
+    $('oTimeLbl').textContent=uz?'Olib ketish vaqti *':'Время самовывоза *';
+  }
+}
 
 window.submitOrder=async()=>{
   const name=g('oName'),phone=g('oPhone'),time=$('oTime').value,note=g('oNote');
+  const addr=g('oAddr');
   if(!name||!phone||!time){toast(tr('err_fill_required'));haptic('warning');return;}
+  if(deliveryType==='yandex'&&!addr){toast(currentLang==='uz'?'Manzilni kiriting':'Введите адрес');haptic('warning');return;}
   const items=Object.values(cart);
   let total=items.reduce((s,i)=>s+i.price*i.qty,0);
   let discount=0;
@@ -2720,6 +2867,8 @@ window.submitOrder=async()=>{
   try{
     await db.collection('orders').add({
       code,name,phone,time,note,
+      deliveryType,
+      address:deliveryType==='yandex'?addr:null,
       telegram:tgUser?`@${tgUser.username||tgUser.first_name}`:'—',
       userId,
       items:items.map(i=>({name:i.name,price:i.price,qty:i.qty,variant:i.variant||null})),
@@ -2752,14 +2901,18 @@ window.submitOrder=async()=>{
     $('successSheet').classList.add('on');
     haptic('success');
     confetti();
-    ['oName','oPhone','oNote'].forEach(id=>$(id).value='');
+    ['oName','oPhone','oNote','oAddr'].forEach(id=>{const el=$(id);if(el)el.value='';});
     $('oTime').value='';
+    setDeliveryType('pickup');
     loadMyOrders();
     updateBackBtn();
     // Notify admin via bot
     const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const itemsTxt=items.map(i=>`• ${escHtml(i.name)}${i.variant?' ('+escHtml(i.variant)+')':''} × ${i.qty} = ${fmt(i.price*i.qty)}`).join('\n');
-    notifyBot(`🛒 <b>Yangi buyurtma</b> #${code}\n👤 ${escHtml(name)}\n📞 ${escHtml(phone)}\n⏰ ${escHtml(time)}${note?`\n📝 ${escHtml(note)}`:''}\n${tgUser?`\n💬 @${tgUser.username||tgUser.first_name}`:''}\n\n${itemsTxt}\n\n💰 <b>${fmt(total)}</b>${discount?` (chegirma: −${fmt(discount)})`:''}`);
+    const dlvLine=deliveryType==='yandex'
+      ?`\n🚕 <b>Yandex yetkazib berish</b>\n📍 ${escHtml(addr)}`
+      :`\n🏪 <b>Olib ketish</b>`;
+    notifyBot(`🛒 <b>Yangi buyurtma</b> #${code}\n👤 ${escHtml(name)}\n📞 ${escHtml(phone)}\n⏰ ${escHtml(time)}${dlvLine}${note?`\n📝 ${escHtml(note)}`:''}\n${tgUser?`\n💬 @${tgUser.username||tgUser.first_name}`:''}\n\n${itemsTxt}\n\n💰 <b>${fmt(total)}</b>${discount?` (chegirma: −${fmt(discount)})`:''}`);
   }catch(e){toast(tr('err_generic'));haptic('error');}
 };
 
@@ -3061,11 +3214,14 @@ window.searchOrder=async()=>{
 function renderOrdCard(oid,o){
   const st=o.status||'yangi';
   const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString('uz-UZ'):'—';
+  const dlvLine=o.deliveryType==='yandex'
+    ?`<br>🚕 <b>Yandex yetkazib berish</b><br>📍 ${escText(o.address||'—')}`
+    :(o.deliveryType==='pickup'?'<br>🏪 Olib ketish':'');
   return `<div class="ord-card">
     <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${S_LABEL[st]||st}</span></div>
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
     <div class="ord-total">Jami: ${fmt(o.total)}${o.discount?` (chegirma: -${fmt(o.discount)})`:''}</div>
-    <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
+    <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}${dlvLine}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
     <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'var(--card)':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
   </div>`;
 }
