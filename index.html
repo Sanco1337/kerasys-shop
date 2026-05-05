@@ -254,9 +254,9 @@ body.dark .qchip.top .qc{color:#ffd24a;}
   box-shadow:0 3px 10px rgba(247,181,0,0.40);
 }
 .p-body{padding:10px 12px 12px;}
-.p-name{font-size:13px;font-weight:800;line-height:1.3;margin-bottom:8px;color:var(--text);min-height:34px;letter-spacing:-0.1px;}
+.p-name{font-size:15px;font-weight:800;line-height:1.3;margin-bottom:8px;color:var(--text);min-height:40px;letter-spacing:-0.2px;}
 .p-foot{display:flex;align-items:center;justify-content:space-between;gap:6px;}
-.p-price{font-size:15px;font-weight:900;color:var(--accent);letter-spacing:-0.3px;}
+.p-price{font-size:16px;font-weight:900;color:var(--accent);letter-spacing:-0.3px;}
 .p-oldprice{font-size:10px;color:var(--text3);text-decoration:line-through;}
 .add-btn{
   width:32px;height:32px;border-radius:10px;
@@ -1996,7 +1996,6 @@ function renderProductDetail(p){
       ${p.oldPrice?`<span class="pd-old">${fmt(p.oldPrice)}</span>`:''}
     </div>
     <div class="pd-rating-row" id="pdRatingRow"><span class="stars"><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span><span class="st off">★</span></span></div>
-    ${p.desc?`<div class="pd-desc">${p.desc}</div>`:''}
     ${hasVars
       ?`<div class="pd-section-title">${tr('pd_choose_var')}</div>
          <button class="big-btn pri" onclick="closeAll();setTimeout(()=>window.openVarPicker('${p.id}'),200)">${tr('add_to_cart')}</button>`
@@ -2009,6 +2008,7 @@ function renderProductDetail(p){
                 <button class="q-btn" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
               </div>`}
         </div>`}
+    ${p.desc?`<div class="pd-desc" style="margin-top:16px">${p.desc}</div>`:''}
 
     <div id="reviewsAnchor" style="margin-top:22px;padding-top:14px;border-top:1.5px solid var(--border);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
