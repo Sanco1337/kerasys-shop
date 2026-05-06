@@ -2509,6 +2509,37 @@ window.shareProduct=async pid=>{
 // ─── Realtime Database (mahsulotlar uchun) ───
 const rtdb=firebase.database();
 
+// ─── User analytics (har bir kirishni yozish) ───
+function getUserUid(){
+  if(tgUser?.id)return 'tg_'+tgUser.id;
+  let g=localStorage.getItem('guestChatId');
+  if(!g){g='guest_'+Math.random().toString(36).slice(2,10);localStorage.setItem('guestChatId',g);}
+  return g;
+}
+async function trackUser(){
+  try{
+    const uid=getUserUid();
+    const ref=rtdb.ref('analytics/users/'+uid);
+    const snap=await ref.once('value');
+    const now=Date.now();
+    const cur=snap.val();
+    const data={
+      uid,
+      lastSeen:now,
+      visits:(cur?.visits||0)+1,
+      tgId:tgUser?.id||null,
+      username:tgUser?.username||null,
+      firstName:tgUser?.first_name||null,
+      lastName:tgUser?.last_name||null,
+      isGuest:!tgUser,
+      lang:tgUser?.language_code||currentLang||'uz'
+    };
+    if(!cur)data.firstSeen=now;
+    await ref.update(data);
+  }catch(e){console.warn('trackUser:',e);}
+}
+trackUser();
+
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
 
@@ -3212,23 +3243,79 @@ window.moveCategory=async(id,dir)=>{
 async function loadStats(){
   const el=$('aStats');
   try{
-    const pSnap=await db.collection('products').get();
-    const oSnap=await db.collection('orders').get();
+    const [pSnap,oSnap,uSnap]=await Promise.all([
+      db.collection('products').get(),
+      db.collection('orders').get(),
+      rtdb.ref('analytics/users').once('value')
+    ]);
     const orders=oSnap.docs.map(d=>d.data());
     const total=orders.reduce((s,o)=>s+(o.total||0),0);
     const today=new Date().toDateString();
     const todayOrds=orders.filter(o=>o.createdAt?.toDate?.().toDateString()===today);
     const todayTotal=todayOrds.reduce((s,o)=>s+(o.total||0),0);
+    // User analytics
+    const usersObj=uSnap.val()||{};
+    const users=Object.values(usersObj);
+    const now=Date.now();
+    const dayMs=86400000;
+    const todayMs=new Date();todayMs.setHours(0,0,0,0);const todayStart=todayMs.getTime();
+    const activeToday=users.filter(u=>(u.lastSeen||0)>=todayStart).length;
+    const newToday=users.filter(u=>(u.firstSeen||0)>=todayStart).length;
+    const activeWeek=users.filter(u=>(u.lastSeen||0)>=now-7*dayMs).length;
+    const tgUsers=users.filter(u=>u.tgId).length;
+    const guestUsers=users.length-tgUsers;
+    // Top users by visits
+    const top=users.filter(u=>u.visits>0).sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,10);
+    const fmtAgo=(ts)=>{
+      if(!ts)return '—';
+      const d=now-ts;
+      if(d<60000)return 'hozir';
+      if(d<3600000)return Math.floor(d/60000)+' daq oldin';
+      if(d<dayMs)return Math.floor(d/3600000)+' soat oldin';
+      return Math.floor(d/dayMs)+' kun oldin';
+    };
+    const userName=u=>{
+      const n=[u.firstName,u.lastName].filter(Boolean).join(' ').trim();
+      if(n)return n;
+      if(u.username)return '@'+u.username;
+      return u.isGuest?'Mehmon':'?';
+    };
+    const topHtml=top.length?`
+      <div style="margin-top:18px">
+        <div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px">🏆 Eng faol foydalanuvchilar</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${top.map((u,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px">
+            <div style="font-size:14px;font-weight:900;color:var(--accent);min-width:24px">${i+1}.</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escText(userName(u))}${u.username&&!userName(u).startsWith('@')?` <span style="color:var(--text2);font-weight:600">@${escText(u.username)}</span>`:''}</div>
+              <div style="font-size:11px;color:var(--text2);font-weight:700">${u.isGuest?'👤 Mehmon · ':'📱 Telegram · '}${fmtAgo(u.lastSeen)}</div>
+            </div>
+            <div style="font-size:13px;font-weight:900;color:var(--accent);background:var(--accent-lt);padding:4px 10px;border-radius:8px">${u.visits||1} 👁</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    `:'';
     el.innerHTML=`
       <div class="stats-grid">
         <div class="stat-c"><div class="stat-ic">📦</div><div class="stat-v">${pSnap.size}</div><div class="stat-l">Mahsulotlar</div></div>
         <div class="stat-c"><div class="stat-ic">🛒</div><div class="stat-v">${orders.length}</div><div class="stat-l">Buyurtmalar</div></div>
-        <div class="stat-c"><div class="stat-ic">📅</div><div class="stat-v">${todayOrds.length}</div><div class="stat-l">Bugun</div></div>
+        <div class="stat-c"><div class="stat-ic">📅</div><div class="stat-v">${todayOrds.length}</div><div class="stat-l">Bugun buyurtma</div></div>
         <div class="stat-c"><div class="stat-ic">✅</div><div class="stat-v">${orders.filter(o=>o.status==='tayyor').length}</div><div class="stat-l">Tayyor</div></div>
         <div class="stat-c" style="grid-column:1/-1"><div class="stat-ic">💰</div><div class="stat-v" style="font-size:18px">${fmt(total)}</div><div class="stat-l">Jami savdo</div></div>
         <div class="stat-c" style="grid-column:1/-1"><div class="stat-ic">📈</div><div class="stat-v" style="font-size:18px">${fmt(todayTotal)}</div><div class="stat-l">Bugungi savdo</div></div>
-      </div>`;
-  }catch(e){el.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik</div>';}
+      </div>
+      <div style="margin-top:16px;font-size:14px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px">👥 Foydalanuvchilar</div>
+      <div class="stats-grid" style="margin-top:8px">
+        <div class="stat-c"><div class="stat-ic">👥</div><div class="stat-v">${users.length}</div><div class="stat-l">Jami foydalanuvchi</div></div>
+        <div class="stat-c"><div class="stat-ic">📅</div><div class="stat-v">${activeToday}</div><div class="stat-l">Bugun faol</div></div>
+        <div class="stat-c"><div class="stat-ic">🆕</div><div class="stat-v">${newToday}</div><div class="stat-l">Yangi (bugun)</div></div>
+        <div class="stat-c"><div class="stat-ic">📊</div><div class="stat-v">${activeWeek}</div><div class="stat-l">Haftalik faol</div></div>
+        <div class="stat-c"><div class="stat-ic">📱</div><div class="stat-v">${tgUsers}</div><div class="stat-l">Telegram</div></div>
+        <div class="stat-c"><div class="stat-ic">👤</div><div class="stat-v">${guestUsers}</div><div class="stat-l">Mehmon</div></div>
+      </div>
+      ${topHtml}
+    `;
+  }catch(e){console.error(e);el.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik: '+(e.message||e)+'</div>';}
 }
 
 async function loadPromoCodes(){
