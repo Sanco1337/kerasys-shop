@@ -13,6 +13,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://kerasys-dokon-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
+<link rel="preload" href="https://kerasys-dokon-default-rtdb.firebaseio.com/products.json" as="fetch" crossorigin>
+<script>
+// Eager fetch products before any other script (saves ~200-500ms on first paint)
+window.__earlyProducts = fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null).catch(()=>null);
+</script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
@@ -1831,15 +1842,13 @@ function renderCatsPage(){
     new:currentLang==='uz'?'Yangi':'Новые',
     top:currentLang==='uz'?'Top sotuvda':'Хиты продаж'
   };
-  const loadingHint=!productsLoaded?`<div class="loading-hint"><span>⏳ ${currentLang==='uz'?'Mahsulotlar yuklanmoqda...':'Загружаются товары...'}</span><button class="retry-btn" onclick="event.stopPropagation();retryProducts();">🔄 ${currentLang==='uz'?'Yangilash':'Обновить'}</button></div>`:'';
   $('mainArea').innerHTML=`
-    ${productsLoaded?renderHeroBanner({saleCnt,newCnt,lab}):''}
-    ${loadingHint}
-    ${productsLoaded?`<div class="qchips">
+    ${renderHeroBanner({saleCnt,newCnt,lab})}
+    <div class="qchips">
       ${saleCnt?`<button class="qchip sale" onclick="openVirtualCat('__sale')"><span class="qe">🔥</span>${lab.sale}<span class="qc">${saleCnt}</span></button>`:''}
       ${newCnt?`<button class="qchip new" onclick="openVirtualCat('__new')"><span class="qe">🆕</span>${lab.new}<span class="qc">${newCnt}</span></button>`:''}
       <button class="qchip top" onclick="openVirtualCat('__top')"><span class="qe">⭐</span>${lab.top}</button>
-    </div>`:''}
+    </div>
     <div class="sec-h"><div class="sec-tt"><span class="sec-em">📂</span>${tr('cats_title')}</div></div>
     ${favCnt>0?`<div class="fav-link" onclick="openFav()">
       <div class="fav-link-l">
@@ -2543,20 +2552,42 @@ trackUser();
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
 
+// Race RTDB SDK against direct REST fetch — whichever returns first paints products
+function fetchProductsREST(){
+  if(productsLoaded)return;
+  // Reuse the early-fetch promise kicked off in <head> if available
+  const p = window.__earlyProducts || fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);
+  window.__earlyProducts = null;
+  Promise.resolve(p).then(val=>{
+    if(productsLoaded||!val)return;
+    products=Object.entries(val).map(([id,data])=>({id,...data}));
+    productsLoaded=true;
+    try{
+      const slim=products.map(p=>{
+        const o={...p};
+        if(typeof o.img==='string'&&o.img.startsWith('data:')&&o.img.length>50000)delete o.img;
+        if(Array.isArray(o.imgs))o.imgs=o.imgs.filter(x=>!(typeof x==='string'&&x.startsWith('data:')&&x.length>50000));
+        return o;
+      });
+      localStorage.setItem('cache_products',JSON.stringify(slim));
+    }catch(_){}
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
+  }).catch(()=>{});
+}
 function initProducts(){
   if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
   if(productsListenerRef){try{productsListenerRef.off();}catch(_){}}
   productsListenerRef=rtdb.ref('products');
-  // Fallback: if Firebase doesn't respond in 12s, show retry hint and let UI continue
+  fetchProductsREST();
+  // Silent fallback: if nothing arrived in 15s, mark as loaded with empty state (no banner)
   productsTimeoutHandle=setTimeout(()=>{
     if(!productsLoaded){
-      console.warn('Products load timeout — showing retry');
-      productsLoaded=true; // allow UI to render with empty state
+      productsLoaded=true;
       if(currentPage==='cats')renderCatsPage();
       else if(currentPage==='products')renderProductsPage();
-      toast(currentLang==='uz'?'Internetni tekshiring va qayta urining':'Проверьте интернет и повторите');
     }
-  },12000);
+  },15000);
   productsListenerRef.on('value', snap=>{
     if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     const val=snap.val();
