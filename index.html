@@ -13,6 +13,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://kerasys-dokon-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
+<link rel="preload" href="https://kerasys-dokon-default-rtdb.firebaseio.com/products.json" as="fetch" crossorigin>
+<script>
+// Eager fetch products before any other script (saves ~200-500ms on first paint)
+window.__earlyProducts = fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null).catch(()=>null);
+</script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
@@ -20,7 +31,7 @@
   --bg:#F4FBF6;
   --bg2:#FFFFFF;
   --bg3:#EAF6EE;
-  --card:rgba(255,255,255,0.65);
+  --card:#FFFFFF;
   --card2:#F1F9F3;
   --accent:#1FA150;
   --accent-dk:#157A3B;
@@ -59,7 +70,7 @@ body.dark{
   --bg:#0B100C;
   --bg2:#141A15;
   --bg3:#1A211B;
-  --card:rgba(22,29,23,0.65);
+  --card:#161D17;
   --card2:#1F2620;
   --accent:#2BD478;
   --accent-dk:#1FA862;
@@ -109,7 +120,7 @@ body.dark #app-root{
 }
 
 .hdr{
-  background:var(--card) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  background:var(--card) !important;
   padding:11px 10px;
   border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;gap:8px;
@@ -166,7 +177,7 @@ body.dark #app-root{
 
 .cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .cat-card{
-  background:var(--card) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);border-radius:var(--r);
+  background:var(--card) !important;border-radius:var(--r);
   border:1px solid var(--border);padding:20px 16px 18px;
   cursor:pointer;transition:transform var(--t) var(--tr),box-shadow var(--t) var(--tr);
   display:flex;flex-direction:column;align-items:flex-start;gap:6px;
@@ -244,7 +255,7 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .p-card{
-  background:var(--card) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);border-radius:var(--r);
+  background:var(--card) !important;border-radius:var(--r);
   border:1px solid var(--border);overflow:hidden;
   transition:transform var(--t) var(--tr),box-shadow var(--t) var(--tr);position:relative;
   box-shadow:var(--shadow);
@@ -299,8 +310,8 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .overlay.on{opacity:1;pointer-events:all;}
 .sheet{
   position:fixed;bottom:0;left:0;right:0;
-  background:var(--card) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  background-color: transparent !important;
+  background:var(--card) !important;
+  background-color:var(--card) !important;
   border-radius:24px 24px 0 0;
   z-index:201;transform:translateY(100%);
   transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
@@ -1831,15 +1842,13 @@ function renderCatsPage(){
     new:currentLang==='uz'?'Yangi':'Новые',
     top:currentLang==='uz'?'Top sotuvda':'Хиты продаж'
   };
-  const loadingHint=!productsLoaded?`<div class="loading-hint"><span>⏳ ${currentLang==='uz'?'Mahsulotlar yuklanmoqda...':'Загружаются товары...'}</span><button class="retry-btn" onclick="event.stopPropagation();retryProducts();">🔄 ${currentLang==='uz'?'Yangilash':'Обновить'}</button></div>`:'';
   $('mainArea').innerHTML=`
-    ${productsLoaded?renderHeroBanner({saleCnt,newCnt,lab}):''}
-    ${loadingHint}
-    ${productsLoaded?`<div class="qchips">
+    ${renderHeroBanner({saleCnt,newCnt,lab})}
+    <div class="qchips">
       ${saleCnt?`<button class="qchip sale" onclick="openVirtualCat('__sale')"><span class="qe">🔥</span>${lab.sale}<span class="qc">${saleCnt}</span></button>`:''}
       ${newCnt?`<button class="qchip new" onclick="openVirtualCat('__new')"><span class="qe">🆕</span>${lab.new}<span class="qc">${newCnt}</span></button>`:''}
       <button class="qchip top" onclick="openVirtualCat('__top')"><span class="qe">⭐</span>${lab.top}</button>
-    </div>`:''}
+    </div>
     <div class="sec-h"><div class="sec-tt"><span class="sec-em">📂</span>${tr('cats_title')}</div></div>
     ${favCnt>0?`<div class="fav-link" onclick="openFav()">
       <div class="fav-link-l">
@@ -2543,20 +2552,42 @@ trackUser();
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
 
+// Race RTDB SDK against direct REST fetch — whichever returns first paints products
+function fetchProductsREST(){
+  if(productsLoaded)return;
+  // Reuse the early-fetch promise kicked off in <head> if available
+  const p = window.__earlyProducts || fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);
+  window.__earlyProducts = null;
+  Promise.resolve(p).then(val=>{
+    if(productsLoaded||!val)return;
+    products=Object.entries(val).map(([id,data])=>({id,...data}));
+    productsLoaded=true;
+    try{
+      const slim=products.map(p=>{
+        const o={...p};
+        if(typeof o.img==='string'&&o.img.startsWith('data:')&&o.img.length>50000)delete o.img;
+        if(Array.isArray(o.imgs))o.imgs=o.imgs.filter(x=>!(typeof x==='string'&&x.startsWith('data:')&&x.length>50000));
+        return o;
+      });
+      localStorage.setItem('cache_products',JSON.stringify(slim));
+    }catch(_){}
+    if(currentPage==='cats')renderCatsPage();
+    else if(currentPage==='products')renderProductsPage();
+  }).catch(()=>{});
+}
 function initProducts(){
   if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
   if(productsListenerRef){try{productsListenerRef.off();}catch(_){}}
   productsListenerRef=rtdb.ref('products');
-  // Fallback: if Firebase doesn't respond in 12s, show retry hint and let UI continue
+  fetchProductsREST();
+  // Silent fallback: if nothing arrived in 15s, mark as loaded with empty state (no banner)
   productsTimeoutHandle=setTimeout(()=>{
     if(!productsLoaded){
-      console.warn('Products load timeout — showing retry');
-      productsLoaded=true; // allow UI to render with empty state
+      productsLoaded=true;
       if(currentPage==='cats')renderCatsPage();
       else if(currentPage==='products')renderProductsPage();
-      toast(currentLang==='uz'?'Internetni tekshiring va qayta urining':'Проверьте интернет и повторите');
     }
-  },12000);
+  },15000);
   productsListenerRef.on('value', snap=>{
     if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     const val=snap.val();
