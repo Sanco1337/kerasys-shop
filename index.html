@@ -207,6 +207,26 @@ body.dark #app-root{
 .cat-card:hover .cat-arr{transform:translateX(4px);}
 @keyframes cardFadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
+/* Stories row */
+.stories-row{display:flex;gap:10px;margin:0 0 14px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 0;}
+.stories-row::-webkit-scrollbar{display:none;}
+.story-circle{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform var(--t-fast);width:68px;}
+.story-circle:active{transform:scale(0.93);}
+.story-ring{width:60px;height:60px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--accent),var(--a2),var(--warm));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px var(--accent-glow);}
+.story-ring-img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid var(--card);overflow:hidden;}
+.story-ring-img img{width:100%;height:100%;object-fit:cover;}
+.story-label{font-size:10px;font-weight:800;color:var(--text2);text-align:center;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Story viewer overlay */
+.story-viewer{position:fixed;inset:0;z-index:300;background:#000;display:none;flex-direction:column;}
+.story-viewer.on{display:flex;}
+.story-viewer-top{display:flex;gap:4px;padding:8px 8px 4px;}
+.story-progress-bar{flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;overflow:hidden;}
+.story-progress-fill{height:100%;background:#fff;width:0;border-radius:2px;transition:width 0.1s linear;}
+.story-viewer-img{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;position:relative;}
+.story-viewer-img img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;}
+.story-viewer-caption{text-align:center;padding:12px 16px 24px;color:#fff;font-size:14px;font-weight:700;}
+.story-close-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:18px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;}
+
 /* Quick chips on home page */
 .qchips{display:flex;gap:8px;margin:0 0 14px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .qchips::-webkit-scrollbar{display:none;}
@@ -741,6 +761,27 @@ body.dark .csv-row-result.err{background:#3a1010;}
 .partial-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:3px 0;}
 .partial-row span:last-child{font-weight:700;color:var(--accent);}
 
+/* Spin wheel */
+.spin-wheel-wrap{text-align:center;padding:10px 0;}
+.spin-container{position:relative;width:260px;height:260px;margin:0 auto 16px;}
+.spin-wheel{width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;transition:transform 3s cubic-bezier(0.17,0.67,0.12,0.99);box-shadow:0 8px 32px rgba(0,0,0,0.2),0 0 0 6px var(--card),0 0 0 10px var(--accent);background:var(--card);}
+.spin-wheel-spin{animation:none;}
+.spin-segment{position:absolute;width:50%;height:50%;transform-origin:bottom right;left:50%;top:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);padding-right:10px;box-sizing:border-box;clip-path:polygon(0 0,100% 0,0 100%);}
+.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:var(--card);border:4px solid var(--accent);z-index:10;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:transform 0.15s;color:var(--accent);}
+.spin-center:active{transform:translate(-50%,-50%) scale(0.92);}
+.spin-arrow{position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:11;font-size:32px;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.3));}
+.spin-result{font-size:18px;font-weight:900;color:var(--accent);margin:12px 0;min-height:28px;}
+.spin-info{font-size:13px;color:var(--text2);font-weight:700;margin-bottom:12px;}
+.spin-btn{background:var(--grad-accent);color:#fff;border:none;padding:14px 40px;border-radius:30px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 8px 24px var(--accent-glow);transition:transform 0.15s;}
+.spin-btn:active{transform:scale(0.95);}
+.spin-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+.spin-prizes{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+.spin-prize{padding:6px 14px;border-radius:16px;font-size:12px;font-weight:700;background:var(--accent-lt);color:var(--accent-dk);}
+
+/* Cart fly animation */
+.cart-fly{position:fixed;z-index:9999;pointer-events:none;width:48px;height:48px;border-radius:12px;object-fit:cover;transition:all 0.7s cubic-bezier(0.25,0.46,0.45,0.94);opacity:1;}
+.cart-fly.fly-end{transform:scale(0.2)!important;opacity:0;}
+
 .toast{
   position:fixed;bottom:106px;left:50%;
   transform:translateX(-50%) translateY(16px);
@@ -1000,6 +1041,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       <span class="chat-badge" id="chatBadge">0</span>
     </div>
     <button class="hbtn" onclick="openContact()" data-icon-only data-tr-title="hdr_contact">📞</button>
+    <button class="hbtn" onclick="openSpin()" data-icon-only title="🎰 Bonus">🎰</button>
     <button class="hbtn" onclick="openProfile()" data-icon-only data-tr-title="hdr_profile">👤</button>
     <button class="hbtn" id="pwaInstallBtn" style="display:none" data-icon-only title="O'rnatish" onclick="installPWA()">📲</button>
     <button class="hbtn" id="adminBtn" style="display:none" data-icon-only onclick="openAdmin()">⚙️</button>
@@ -1278,6 +1320,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <div class="f-grp"><label class="f-lbl">Nomi (uz) *</label><input class="f-inp" id="catNewLabelUz" placeholder="Parfumeriya"></div>
           <div class="f-grp"><label class="f-lbl">Nomi (ru) *</label><input class="f-inp" id="catNewLabelRu" placeholder="Парфюмерия"></div>
         </div>
+        <div class="f-grp"><label class="f-lbl">Nomi (en)</label><input class="f-inp" id="catNewLabelEn" placeholder="Perfumery"></div>
         <button class="big-btn" onclick="addCategory()">➕ Qo'shish</button>
       </div>
       <div id="catList"></div>
@@ -1305,6 +1348,17 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
     </div>
     <div id="aSettings" style="display:none">
       <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">📸 Story aksiyalar</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Instagram'dagidek aylana stikerlar. Asosiy sahifada ko'rinadi. Rasm+matn qo'shing.</div>
+        <div id="storyAdminList" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input class="f-inp" id="storyImgInp" placeholder="Rasm URL" style="flex:2;min-width:120px;padding:10px;">
+          <input class="f-inp" id="storyLabelInp" placeholder="Matn (ixtiyoriy)" style="flex:1;min-width:80px;padding:10px;">
+          <button class="var-add-btn" onclick="addAdminStory()">+ Qo'sh</button>
+        </div>
+        <div id="storyAdminStatus" style="font-size:11px;color:var(--text2);margin-top:6px;"></div>
+      </div>
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
         <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🤖 Telegram bot integratsiyasi</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Yangi buyurtma va pre-order kelganida bot avtomatik ushbu chatga xabar yuboradi.</div>
         <div class="f-grp"><label class="f-lbl">Bot token</label><input class="f-inp" id="botTokenInp" placeholder="123456:ABC-DEF..."></div>
@@ -1325,8 +1379,36 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <div class="f-grp" style="margin-bottom:0"><label class="f-lbl">Longitude (ixtiyoriy)</label><input class="f-inp" id="storeLonInp" placeholder="69.2797" inputmode="decimal"></div>
         </div>
         <div style="font-size:11px;color:var(--text2);margin:10px 0;line-height:1.5;">💡 Koordinata kiritish ixtiyoriy. Agar kiritsangiz, Yandex Go aniq joydan boshlaydi (yo'l haqi to'g'ri hisoblanadi). Koordinatani <a href="https://yandex.uz/maps" target="_blank" style="color:var(--accent)">yandex.uz/maps</a> dan olishingiz mumkin (do'kon ustiga bossangiz pastda chiqadi).</div>
-        <button class="big-btn" style="width:100%" onclick="saveStoreConfig()">💾 Saqlash</button>
+          <button class="big-btn" style="width:100%" onclick="saveStoreConfig()">💾 Saqlash</button>
         <div id="storeStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
+      </div>
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🖼 Banner (asosiy sahifa)</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Asosiy sahifa tepasida ko'rinadigan rasm banner.</div>
+        <div class="img-upload-area" id="bannerUploadArea" onclick="document.getElementById('bannerFileInput').click()">
+          <img class="img-upload-preview" id="bannerPreview" src="">
+          <div id="bannerPlaceholder">
+            <div class="img-upload-icon">🖼</div>
+            <div class="img-upload-txt">Banner rasmini tanlash</div>
+          </div>
+        </div>
+        <input type="file" id="bannerFileInput" accept="image/*" style="display:none" onchange="handleBannerFile(this)">
+        <input class="f-inp" id="bannerUrlInp" placeholder="Yoki URL..." style="margin-top:6px;">
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="big-btn" style="flex:1;margin:0;padding:10px;font-size:12px;" onclick="saveBanner()">💾 Saqlash</button>
+          <button class="big-btn" style="flex:0.4;margin:0;padding:10px;font-size:12px;background:var(--card);color:var(--a2);border:1.5px solid var(--border);" onclick="removeBanner()">🗑 O'chirish</button>
+        </div>
+        <div id="bannerStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:6px;"></div>
+      </div>
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">📢 Telegram kanal post</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Mahsulot qo'shilganda avtomatik kanalga post qilish. Bot kanalda admin bo'lishi kerak.</div>
+        <div class="f-grp"><label class="f-lbl">Kanal ID (masalan: @channel yoki -100...)</label><input class="f-inp" id="channelIdInp" placeholder="@kanal_nomi yoki -1001234567890"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="big-btn" style="flex:1;" onclick="saveChannelConfig()">💾 Saqlash</button>
+          <button class="big-btn" style="flex:1;background:var(--card);color:var(--accent);border:1.5px solid var(--accent);" onclick="testChannelPost()">📤 Test post</button>
+        </div>
+        <div id="channelStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
       </div>
     </div>
     <div id="aAdd" style="display:none">
@@ -1395,6 +1477,9 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
         </div>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0;padding:10px 14px;background:var(--accent-lt);border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--accent-dk);">
+        <input type="checkbox" id="postToChannelCb" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;"> 📢 Kanalga avtomatik post qilish
+      </label>
       <button class="big-btn pri" id="saveBtnFull" style="margin-top:14px" onclick="saveProduct()">💾 Saqlash</button>
       <button class="big-btn pri" id="saveBtnQuick" style="margin-top:14px" onclick="saveProductQuick()">💾 Saqlash va davom etish ⚡</button>
       <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor</button>
@@ -1468,11 +1553,11 @@ const adminBtnEl=document.getElementById('adminBtn');
 if(adminBtnEl&&isAdmin) adminBtnEl.style.display='flex';
 
 const DEFAULT_CATS=[
-  {id:'kukun',label_uz:'Kir yuvish kukunlari',label_ru:'Стиральные порошки',icon:'🧺',order:0},
-  {id:'gel',label_uz:'Gellar',label_ru:'Гели',icon:'🧴',order:1},
-  {id:'shampun',label_uz:'Shampunlar',label_ru:'Шампуни',icon:'🚿',order:2},
-  {id:'sovun',label_uz:'Sovunlar',label_ru:'Мыло',icon:'🧼',order:3},
-  {id:'boshqa',label_uz:'Boshqa mahsulotlar',label_ru:'Другие товары',icon:'📦',order:4},
+  {id:'kukun',label_uz:'Kir yuvish kukunlari',label_ru:'Стиральные порошки',label_en:'Laundry powders',icon:'🧺',order:0},
+  {id:'gel',label_uz:'Gellar',label_ru:'Гели',label_en:'Gels',icon:'🧴',order:1},
+  {id:'shampun',label_uz:'Shampunlar',label_ru:'Шампуни',label_en:'Shampoos',icon:'🚿',order:2},
+  {id:'sovun',label_uz:'Sovunlar',label_ru:'Мыло',label_en:'Soaps',icon:'🧼',order:3},
+  {id:'boshqa',label_uz:'Boshqa mahsulotlar',label_ru:'Другие товары',label_en:'Other products',icon:'📦',order:4},
 ];
 let CATS=(()=>{
   try{
@@ -1486,7 +1571,7 @@ const ICONS={};
 function rebuildIcons(){CATS.forEach(c=>ICONS[c.id]=c.icon);}
 rebuildIcons();
 const STATUSES=['yangi','jarayonda','tayyor','bekor'];
-const S_LABEL={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
+const S_LABEL={yangi:{uz:'🟢 Yangi',ru:'🟢 Новый',en:'🟢 New'},jarayonda:{uz:'🟡 Jarayonda',ru:'🟡 В процессе',en:'🟡 Processing'},tayyor:{uz:'✅ Tayyor',ru:'✅ Готов',en:'✅ Ready'},bekor:{uz:'❌ Bekor',ru:'❌ Отменён',en:'❌ Cancelled'}};
 
 const PROMO_GOAL=1000000;
 const PROMO_DISCOUNT=0.05;
@@ -1511,84 +1596,84 @@ function saveFavs(){localStorage.setItem('favIds',JSON.stringify(favIds));}
 
 /* ─── TRANSLATIONS ─── */
 const TR={
-  hdr_preorder:{uz:"Oldindan buyurtma",ru:"Предзаказ"},
-  hdr_chat:{uz:"Onlayn chat",ru:"Онлайн чат"},
-  hdr_contact:{uz:"Kontaktlar",ru:"Контакты"},
-  hdr_profile:{uz:"Profil",ru:"Профиль"},
-  cart_title:{uz:"🛒 Savat",ru:"🛒 Корзина"},
-  promo_ph:{uz:"Promokod (ixtiyoriy)",ru:"Промокод (необязательно)"},
-  apply:{uz:"Qo'llash",ru:"Применить"},
-  discount_5:{uz:"5% chegirma",ru:"5% скидка"},
-  discount_lbl:{uz:"Chegirma (5%)",ru:"Скидка (5%)"},
-  total_lbl:{uz:"Jami:",ru:"Итого:"},
-  checkout_btn:{uz:"Buyurtma berish →",ru:"Оформить заказ →"},
-  order_title:{uz:"📋 Buyurtma",ru:"📋 Заказ"},
-  o_name:{uz:"Ism Familiya *",ru:"Имя Фамилия *"},
-  o_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов"},
-  o_phone:{uz:"Telefon *",ru:"Телефон *"},
-  o_time:{uz:"Olib ketish vaqti *",ru:"Время получения *"},
-  o_note:{uz:"Izoh",ru:"Комментарий"},
-  o_note_ph:{uz:"Boshqa vaqt yoki ma'lumot...",ru:"Другое время или информация..."},
-  confirm_btn:{uz:"✅ Tasdiqlash",ru:"✅ Подтвердить"},
-  back_btn:{uz:"← Orqaga",ru:"← Назад"},
-  success_title:{uz:"Buyurtma qabul qilindi!",ru:"Заказ принят!"},
-  success_sub:{uz:"Belgilangan vaqtda olib ketishingiz mumkin.<br>Kodni saqlab qo'ying:",ru:"Вы можете забрать в указанное время.<br>Сохраните код:"},
-  success_code_lbl:{uz:"Buyurtma kodi",ru:"Код заказа"},
-  success_code_hint:{uz:"Bu kodni do'konda ko'rsating",ru:"Покажите этот код в магазине"},
-  continue_btn:{uz:"Davom etish 🛍",ru:"Продолжить 🛍"},
-  contact_title:{uz:"📞 Kontaktlar",ru:"📞 Контакты"},
-  contact_phone_lbl:{uz:"Telefon",ru:"Телефон"},
-  contact_hours_lbl:{uz:"Ish vaqti",ru:"Время работы"},
-  contact_delivery_lbl:{uz:"Yetkazib berish",ru:"Доставка"},
-  contact_delivery_val:{uz:"Olib ketish yoki Yandex orqali yetkazamiz",ru:"Самовывоз или доставка через Yandex"},
-  contact_call_btn:{uz:"📞 Qo'ng'iroq qilish",ru:"📞 Позвонить"},
-  profile_title:{uz:"👤 Profil",ru:"👤 Профиль"},
-  chat_title:{uz:"💬 Onlayn chat",ru:"💬 Онлайн чат"},
-  chat_input_ph:{uz:"Xabar yozing...",ru:"Написать сообщение..."},
-  preorder_title:{uz:"📋 Oldindan buyurtma",ru:"📋 Предзаказ"},
-  po_name_lbl:{uz:"Ismingiz *",ru:"Ваше имя *"},
-  po_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов"},
-  po_items_lbl:{uz:"Oldindan buyurtma uchun mahsulotlar *",ru:"Товары для предзаказа *"},
-  po_item_ph:{uz:"Mahsulot nomi",ru:"Название товара"},
-  po_note_ph:{uz:"Qo'shimcha ma'lumot...",ru:"Дополнительная информация..."},
-  po_submit_btn:{uz:"✅ Oldindan buyurtmani yuborish",ru:"✅ Отправить предзаказ"},
-  search_title:{uz:"🔍 Qidiruv",ru:"🔍 Поиск"},
-  search_ph:{uz:"Mahsulotni qidirish...",ru:"Найти товар..."},
-  fav_title:{uz:"❤️ Sevimlilar",ru:"❤️ Избранное"},
-  pd_title:{uz:"📦 Mahsulot",ru:"📦 Товар"},
-  add_to_cart:{uz:"Savatga qo'shish",ru:"Добавить в корзину"},
-  empty_cart_title:{uz:"Savat bo'sh",ru:"Корзина пуста"},
-  empty_cart_sub:{uz:"Mahsulotlarni tanlash uchun katalogga qayting.",ru:"Вернитесь в каталог, чтобы выбрать товары."},
-  empty_cart_btn:{uz:"🛍 Katalogga",ru:"🛍 К каталогу"},
-  empty_search_title:{uz:"Hech narsa topilmadi",ru:"Ничего не найдено"},
-  empty_search_sub:{uz:"Boshqa kalit so'z bilan urinib ko'ring.",ru:"Попробуйте другое ключевое слово."},
-  empty_fav_title:{uz:"Sevimlilar bo'sh",ru:"Избранное пусто"},
-  empty_fav_sub:{uz:"Yoqqan mahsulotlarni ❤️ tugmasi orqali qo'shing.",ru:"Добавляйте товары через кнопку ❤️."},
-  empty_products_cat:{uz:"Bu kategoriyada hozircha mahsulot yo'q",ru:"В этой категории пока нет товаров"},
-  cats_title:{uz:"Kategoriyalar",ru:"Категории"},
-  cats_sub:{uz:"Xohlagan kategoriyani tanlang",ru:"Выберите категорию"},
-  back:{uz:"Orqaga",ru:"Назад"},
-  products_count:{uz:"ta mahsulot",ru:"товаров"},
-  fav_link_tx:{uz:"Sevimlilar",ru:"Избранное"},
-  fav_link_cnt_tpl:{uz:"$N ta",ru:"$N шт"},
-  sort_def:{uz:"⚡ Standart",ru:"⚡ По умолчанию"},
-  sort_price_asc:{uz:"⬆️ Arzon",ru:"⬆️ Дешёвые"},
-  sort_price_desc:{uz:"⬇️ Qimmat",ru:"⬇️ Дорогие"},
-  sort_name:{uz:"🔤 Nom",ru:"🔤 Имя"},
-  pd_share:{uz:"Ulashish",ru:"Поделиться"},
-  pd_choose_var:{uz:"Xilini tanlang",ru:"Выберите вариант"},
-  added_toast:{uz:"qo'shildi",ru:"добавлен"},
-  fav_added:{uz:"❤️ Sevimlilarga qo'shildi",ru:"❤️ Добавлено в избранное"},
-  fav_removed:{uz:"💔 Sevimlilardan olindi",ru:"💔 Удалено из избранного"},
-  share_copied:{uz:"🔗 Havola nusxalandi",ru:"🔗 Ссылка скопирована"},
-  order_info_msg:{uz:"ℹ️ <span>Olib ketish</span> bepul. <span>Yandex yetkazib berish</span> qo'shimcha to'lov bilan (mijoz to'laydi).",ru:"ℹ️ <span>Самовывоз</span> бесплатно. <span>Доставка Yandex</span> с дополнительной оплатой (оплачивает клиент)."},
-  preorder_info_msg:{uz:"ℹ️ <span>Kerakli mahsulot yo'qmi?</span> Oldindan buyurtma qoldiring — mahsulot kelganda biz siz bilan bog'lanamiz.",ru:"ℹ️ <span>Нет нужного товара?</span> Оставьте предзаказ — мы свяжемся с вами, когда товар появится."},
-  time_select:{uz:"— Tanlang —",ru:"— Выберите —"},
-  time_today:{uz:"Bugun",ru:"Сегодня"},
-  time_tomorrow:{uz:"Ertaga",ru:"Завтра"},
-  time_other:{uz:"Boshqa (izohda yozing)",ru:"Другое (напишите в комментарии)"},
-  err_fill_required:{uz:"❗ Ism, telefon va vaqt kiritilsin",ru:"❗ Введите имя, телефон и время"},
-  err_generic:{uz:"❌ Xatolik",ru:"❌ Ошибка"},
+  hdr_preorder:{uz:"Oldindan buyurtma",ru:"Предзаказ",en:"Pre-order"},
+  hdr_chat:{uz:"Onlayn chat",ru:"Онлайн чат",en:"Online chat"},
+  hdr_contact:{uz:"Kontaktlar",ru:"Контакты",en:"Contacts"},
+  hdr_profile:{uz:"Profil",ru:"Профиль",en:"Profile"},
+  cart_title:{uz:"🛒 Savat",ru:"🛒 Корзина",en:"🛒 Cart"},
+  promo_ph:{uz:"Promokod (ixtiyoriy)",ru:"Промокод (необязательно)",en:"Promo code (optional)"},
+  apply:{uz:"Qo'llash",ru:"Применить",en:"Apply"},
+  discount_5:{uz:"5% chegirma",ru:"5% скидка",en:"5% discount"},
+  discount_lbl:{uz:"Chegirma (5%)",ru:"Скидка (5%)",en:"Discount (5%)"},
+  total_lbl:{uz:"Jami:",ru:"Итого:",en:"Total:"},
+  checkout_btn:{uz:"Buyurtma berish →",ru:"Оформить заказ →",en:"Checkout →"},
+  order_title:{uz:"📋 Buyurtma",ru:"📋 Заказ",en:"📋 Order"},
+  o_name:{uz:"Ism Familiya *",ru:"Имя Фамилия *",en:"Full Name *"},
+  o_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов",en:"John Smith"},
+  o_phone:{uz:"Telefon *",ru:"Телефон *",en:"Phone *"},
+  o_time:{uz:"Olib ketish vaqti *",ru:"Время получения *",en:"Pickup time *"},
+  o_note:{uz:"Izoh",ru:"Комментарий",en:"Note"},
+  o_note_ph:{uz:"Boshqa vaqt yoki ma'lumot...",ru:"Другое время или информация...",en:"Other time or info..."},
+  confirm_btn:{uz:"✅ Tasdiqlash",ru:"✅ Подтвердить",en:"✅ Confirm"},
+  back_btn:{uz:"← Orqaga",ru:"← Назад",en:"← Back"},
+  success_title:{uz:"Buyurtma qabul qilindi!",ru:"Заказ принят!",en:"Order accepted!"},
+  success_sub:{uz:"Belgilangan vaqtda olib ketishingiz mumkin.<br>Kodni saqlab qo'ying:",ru:"Вы можете забрать в указанное время.<br>Сохраните код:",en:"Pick up at the specified time.<br>Save the code:"},
+  success_code_lbl:{uz:"Buyurtma kodi",ru:"Код заказа",en:"Order code"},
+  success_code_hint:{uz:"Bu kodni do'konda ko'rsating",ru:"Покажите этот код в магазине",en:"Show this code at the store"},
+  continue_btn:{uz:"Davom etish 🛍",ru:"Продолжить 🛍",en:"Continue 🛍"},
+  contact_title:{uz:"📞 Kontaktlar",ru:"📞 Контакты",en:"📞 Contacts"},
+  contact_phone_lbl:{uz:"Telefon",ru:"Телефон",en:"Phone"},
+  contact_hours_lbl:{uz:"Ish vaqti",ru:"Время работы",en:"Working hours"},
+  contact_delivery_lbl:{uz:"Yetkazib berish",ru:"Доставка",en:"Delivery"},
+  contact_delivery_val:{uz:"Olib ketish yoki Yandex orqali yetkazamiz",ru:"Самовывоз или доставка через Yandex",en:"Pickup or Yandex delivery"},
+  contact_call_btn:{uz:"📞 Qo'ng'iroq qilish",ru:"📞 Позвонить",en:"📞 Call"},
+  profile_title:{uz:"👤 Profil",ru:"👤 Профиль",en:"👤 Profile"},
+  chat_title:{uz:"💬 Onlayn chat",ru:"💬 Онлайн чат",en:"💬 Online chat"},
+  chat_input_ph:{uz:"Xabar yozing...",ru:"Написать сообщение...",en:"Type a message..."},
+  preorder_title:{uz:"📋 Oldindan buyurtma",ru:"📋 Предзаказ",en:"📋 Pre-order"},
+  po_name_lbl:{uz:"Ismingiz *",ru:"Ваше имя *",en:"Your name *"},
+  po_name_ph:{uz:"Sarvar Karimov",ru:"Иван Иванов",en:"John Smith"},
+  po_items_lbl:{uz:"Oldindan buyurtma uchun mahsulotlar *",ru:"Товары для предзаказа *",en:"Products for pre-order *"},
+  po_item_ph:{uz:"Mahsulot nomi",ru:"Название товара",en:"Product name"},
+  po_note_ph:{uz:"Qo'shimcha ma'lumot...",ru:"Дополнительная информация...",en:"Additional info..."},
+  po_submit_btn:{uz:"✅ Oldindan buyurtmani yuborish",ru:"✅ Отправить предзаказ",en:"✅ Submit pre-order"},
+  search_title:{uz:"🔍 Qidiruv",ru:"🔍 Поиск",en:"🔍 Search"},
+  search_ph:{uz:"Mahsulotni qidirish...",ru:"Найти товар...",en:"Search products..."},
+  fav_title:{uz:"❤️ Sevimlilar",ru:"❤️ Избранное",en:"❤️ Favorites"},
+  pd_title:{uz:"📦 Mahsulot",ru:"📦 Товар",en:"📦 Product"},
+  add_to_cart:{uz:"Savatga qo'shish",ru:"Добавить в корзину",en:"Add to cart"},
+  empty_cart_title:{uz:"Savat bo'sh",ru:"Корзина пуста",en:"Cart is empty"},
+  empty_cart_sub:{uz:"Mahsulotlarni tanlash uchun katalogga qayting.",ru:"Вернитесь в каталог, чтобы выбрать товары.",en:"Go back to catalog to choose products."},
+  empty_cart_btn:{uz:"🛍 Katalogga",ru:"🛍 К каталогу",en:"🛍 To catalog"},
+  empty_search_title:{uz:"Hech narsa topilmadi",ru:"Ничего не найдено",en:"Nothing found"},
+  empty_search_sub:{uz:"Boshqa kalit so'z bilan urinib ko'ring.",ru:"Попробуйте другое ключевое слово.",en:"Try a different keyword."},
+  empty_fav_title:{uz:"Sevimlilar bo'sh",ru:"Избранное пусто",en:"Favorites is empty"},
+  empty_fav_sub:{uz:"Yoqqan mahsulotlarni ❤️ tugmasi orqali qo'shing.",ru:"Добавляйте товары через кнопку ❤️.",en:"Add products via ❤️ button."},
+  empty_products_cat:{uz:"Bu kategoriyada hozircha mahsulot yo'q",ru:"В этой категории пока нет товаров",en:"No products in this category yet"},
+  cats_title:{uz:"Kategoriyalar",ru:"Категории",en:"Categories"},
+  cats_sub:{uz:"Xohlagan kategoriyani tanlang",ru:"Выберите категорию",en:"Choose a category"},
+  back:{uz:"Orqaga",ru:"Назад",en:"Back"},
+  products_count:{uz:"ta mahsulot",ru:"товаров",en:"products"},
+  fav_link_tx:{uz:"Sevimlilar",ru:"Избранное",en:"Favorites"},
+  fav_link_cnt_tpl:{uz:"$N ta",ru:"$N шт",en:"$N pcs"},
+  sort_def:{uz:"⚡ Standart",ru:"⚡ По умолчанию",en:"⚡ Default"},
+  sort_price_asc:{uz:"⬆️ Arzon",ru:"⬆️ Дешёвые",en:"⬆️ Cheap"},
+  sort_price_desc:{uz:"⬇️ Qimmat",ru:"⬇️ Дорогие",en:"⬇️ Expensive"},
+  sort_name:{uz:"🔤 Nom",ru:"🔤 Имя",en:"🔤 Name"},
+  pd_share:{uz:"Ulashish",ru:"Поделиться",en:"Share"},
+  pd_choose_var:{uz:"Xilini tanlang",ru:"Выберите вариант",en:"Choose variant"},
+  added_toast:{uz:"qo'shildi",ru:"добавлен",en:"added"},
+  fav_added:{uz:"❤️ Sevimlilarga qo'shildi",ru:"❤️ Добавлено в избранное",en:"❤️ Added to favorites"},
+  fav_removed:{uz:"💔 Sevimlilardan olindi",ru:"💔 Удалено из избранного",en:"💔 Removed from favorites"},
+  share_copied:{uz:"🔗 Havola nusxalandi",ru:"🔗 Ссылка скопирована",en:"🔗 Link copied"},
+  order_info_msg:{uz:"ℹ️ <span>Olib ketish</span> bepul. <span>Yandex yetkazib berish</span> qo'shimcha to'lov bilan (mijoz to'laydi).",ru:"ℹ️ <span>Самовывоз</span> бесплатно. <span>Доставка Yandex</span> с дополнительной оплатой (оплачивает клиент).",en:"ℹ️ <span>Pickup</span> is free. <span>Yandex delivery</span> at extra cost (paid by customer)."},
+  preorder_info_msg:{uz:"ℹ️ <span>Kerakli mahsulot yo'qmi?</span> Oldindan buyurtma qoldiring — mahsulot kelganda biz siz bilan bog'lanamiz.",ru:"ℹ️ <span>Нет нужного товара?</span> Оставьте предзаказ — мы свяжемся с вами, когда товар появится.",en:"ℹ️ <span>Need a product?</span> Leave a pre-order — we'll contact you when it arrives."},
+  time_select:{uz:"— Tanlang —",ru:"— Выберите —",en:"— Select —"},
+  time_today:{uz:"Bugun",ru:"Сегодня",en:"Today"},
+  time_tomorrow:{uz:"Ertaga",ru:"Завтра",en:"Tomorrow"},
+  time_other:{uz:"Boshqa (izohda yozing)",ru:"Другое (напишите в комментарии)",en:"Other (write in note)"},
+  err_fill_required:{uz:"❗ Ism, telefon va vaqt kiritilsin",ru:"❗ Введите имя, телефон и время",en:"❗ Enter name, phone and time"},
+  err_generic:{uz:"❌ Xatolik",ru:"❌ Ошибка",en:"❌ Error"},
 };
 function tr(key){return (TR[key]&&TR[key][currentLang])||key;}
 window.tr=tr;
@@ -1718,6 +1803,7 @@ function genPromoCode(){
 const catName=c=>{
   if(!c)return '';
   if(currentLang==='uz')return c.label_uz||c.label||c.id;
+  if(currentLang==='en')return c.label_en||c.label_uz||c.label||c.id;
   return c.label_ru||c.label_uz||c.label||c.id;
 };
 const escAttr=s=>String(s||'').replace(/"/g,'&quot;').replace(/'/g,"\\'");
@@ -1788,28 +1874,30 @@ function invalidateTopSellers(){topSellerIds=null;}
 
 function renderHeroBanner({saleCnt,newCnt,lab}){
   const h=new Date().getHours();
-  const greet=currentLang==='uz'
-    ?(h<5?'Hayrli tun':h<12?'Hayrli tong':h<18?'Xayrli kun':'Xayrli kech')
-    :(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер');
+  const greet=currentLang==='en'
+    ?(h<5?'Good night':h<12?'Good morning':h<18?'Good afternoon':'Good evening')
+    :(currentLang==='uz'
+      ?(h<5?'Hayrli tun':h<12?'Hayrli tong':h<18?'Xayrli kun':'Xayrli kech')
+      :(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер'));
   let eyebrow,title,sub,cta,onclick,emoji;
   if(saleCnt>0){
-    eyebrow=currentLang==='uz'?'🔥 Bugungi aksiyalar':'🔥 Сегодняшние акции';
-    title=currentLang==='uz'?`Tejash vaqti — ${saleCnt} ta aksiya`:`Время экономить — ${saleCnt} акций`;
-    sub=currentLang==='uz'?'Eng yaxshi narxlarga shoshiling, miqdor cheklangan!':'Спешите за лучшими ценами, количество ограничено!';
-    cta=currentLang==='uz'?'Ko\'rish →':'Смотреть →';
+    eyebrow=currentLang==='en'?'🔥 Today\'s promotions':currentLang==='uz'?'🔥 Bugungi aksiyalar':'🔥 Сегодняшние акции';
+    title=currentLang==='en'?`Sale time — ${saleCnt} deals`:currentLang==='uz'?`Tejash vaqti — ${saleCnt} ta aksiya`:`Время экономить — ${saleCnt} акций`;
+    sub=currentLang==='en'?'Hurry up, limited stock!':currentLang==='uz'?'Eng yaxshi narxlarga shoshiling, miqdor cheklangan!':'Спешите за лучшими ценами, количество ограничено!';
+    cta=currentLang==='en'?'View →':currentLang==='uz'?'Ko\'rish →':'Смотреть →';
     onclick=`openVirtualCat('__sale')`;
     emoji='🛍️';
   }else if(newCnt>0){
-    eyebrow=currentLang==='uz'?'🆕 Yangi mahsulotlar':'🆕 Новые товары';
-    title=currentLang==='uz'?`${greet}!`:`${greet}!`;
-    sub=currentLang==='uz'?`${newCnt} ta yangi mahsulot kelgan — birinchi bo'lib ko'ring`:`${newCnt} новых товаров уже здесь`;
+    eyebrow=currentLang==='en'?'🆕 New products':currentLang==='uz'?'🆕 Yangi mahsulotlar':'🆕 Новые товары';
+    title=currentLang==='en'?`${greet}!`:`${greet}!`;
+    sub=currentLang==='en'?`${newCnt} new products — be the first to see`:currentLang==='uz'?`${newCnt} ta yangi mahsulot kelgan — birinchi bo'lib ko'ring`:`${newCnt} новых товаров уже здесь`;
     cta=lab.new+' →';
     onclick=`openVirtualCat('__new')`;
     emoji='✨';
   }else{
-    eyebrow=currentLang==='uz'?'👋 Salom':'👋 Привет';
-    title=currentLang==='uz'?`${greet}, Kerasys'ga xush kelibsiz`:`${greet}, добро пожаловать в Kerasys`;
-    sub=currentLang==='uz'?'Sifatli mahsulotlar, tez yetkazib berish':'Качественные товары, быстрая доставка';
+    eyebrow=currentLang==='en'?'👋 Hello':currentLang==='uz'?'👋 Salom':'👋 Привет';
+    title=currentLang==='en'?`${greet}, welcome to Kerasys`:currentLang==='uz'?`${greet}, Kerasys'ga xush kelibsiz`:`${greet}, добро пожаловать в Kerasys`;
+    sub=currentLang==='en'?'Quality products, fast delivery':currentLang==='uz'?'Sifatli mahsulotlar, tez yetkazib berish':'Качественные товары, быстрая доставка';
     cta=lab.top+' →';
     onclick=`openVirtualCat('__top')`;
     emoji='🏪';
@@ -1832,17 +1920,21 @@ function renderCatsPage(){
   const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
   // Recently viewed: only existing & active products, max 10
   const recentList=recentIds.map(rid=>products.find(p=>p.id===rid&&p.active!==false)).filter(Boolean).slice(0,10);
-  const recentTitle=currentLang==='uz'?"Siz ko'rgan":'Вы смотрели';
-  const recentClear=currentLang==='uz'?'Tozalash':'Очистить';
+  const recentTitle=currentLang==='en'?'Recently viewed':currentLang==='uz'?"Siz ko'rgan":'Вы смотрели';
+  const recentClear=currentLang==='en'?'Clear':currentLang==='uz'?'Tozalash':'Очистить';
   // Quick chip counts
   const saleCnt=products.filter(isSaleProduct).length;
   const newCnt=products.filter(isNewProduct).length;
   const lab={
-    sale:currentLang==='uz'?'Aksiyalar':'Акции',
-    new:currentLang==='uz'?'Yangi':'Новые',
-    top:currentLang==='uz'?'Top sotuvda':'Хиты продаж'
+    sale:currentLang==='en'?'Promotions':currentLang==='uz'?'Aksiyalar':'Акции',
+    new:currentLang==='en'?'New':currentLang==='uz'?'Yangi':'Новые',
+    top:currentLang==='en'?'Top sellers':currentLang==='uz'?'Top sotuvda':'Хиты продаж'
   };
   $('mainArea').innerHTML=`
+    ${bannerConfig.img?`<div style="border-radius:var(--rl);overflow:hidden;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);" onclick="(bannerConfig.link?window.open(bannerConfig.link,'_blank'):null)">
+      <img src="${bannerConfig.img}" style="width:100%;display:block;aspect-ratio:auto;max-height:180px;object-fit:cover;" onerror="this.style.display='none'">
+    </div>`:''}
+    ${renderStoriesRow()}
     ${renderHeroBanner({saleCnt,newCnt,lab})}
     <div class="qchips">
       ${saleCnt?`<button class="qchip sale" onclick="openVirtualCat('__sale')"><span class="qe">🔥</span>${lab.sale}<span class="qc">${saleCnt}</span></button>`:''}
@@ -1864,7 +1956,7 @@ function renderCatsPage(){
       <div class="cat-all-l">
         <div class="cat-all-ic">📦</div>
         <div>
-          <div class="cat-all-tx">${currentLang==='uz'?'Barcha mahsulotlar':'Все товары'}</div>
+          <div class="cat-all-tx">${currentLang==='en'?'All products':currentLang==='uz'?'Barcha mahsulotlar':'Все товары'}</div>
           <div class="cat-all-cnt">${products.filter(p=>p.active!==false).length} ${tr('products_count')}</div>
         </div>
       </div>
@@ -1954,11 +2046,11 @@ function productCardHTML(p,opts){
         ${hasVars
           ?`<button class="add-btn" onclick="event.stopPropagation();window.openVarPicker('${p.id}')">+</button>`
           :(qty===0
-            ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>`
+            ?`<button class="add-btn" onclick="event.stopPropagation();window.addSimple('${p.id}',this)">+</button>`
             :`<div class="qty-w on">
                 <button class="q-btn" onclick="event.stopPropagation();window.rmSimple('${p.id}')">−</button>
                 <span class="q-n">${qty}</span>
-                <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}')">+</button>
+                <button class="q-btn" onclick="event.stopPropagation();window.addSimple('${p.id}',this)">+</button>
               </div>`)}
       </div>
     </div>
@@ -1972,16 +2064,16 @@ function renderProductsPage(){
   let cat,all,virtualLoading=false;
   if(isVirtual){
     if(currentCat==='__sale'){
-      cat={id:'__sale',icon:'🔥',label_uz:'Aksiyalar',label_ru:'Акции'};
+      cat={id:'__sale',icon:'🔥',label_uz:'Aksiyalar',label_ru:'Акции',label_en:'Promotions'};
       all=products.filter(isSaleProduct);
     } else if(currentCat==='__new'){
-      cat={id:'__new',icon:'🆕',label_uz:'Yangi',label_ru:'Новые'};
+      cat={id:'__new',icon:'🆕',label_uz:'Yangi',label_ru:'Новые',label_en:'New'};
       all=products.filter(isNewProduct);
     } else if(currentCat==='__all'){
-      cat={id:'__all',icon:'📦',label_uz:'Barcha mahsulotlar',label_ru:'Все товары'};
+      cat={id:'__all',icon:'📦',label_uz:'Barcha mahsulotlar',label_ru:'Все товары',label_en:'All products'};
       all=products.filter(p=>p.active!==false);
     } else if(currentCat==='__top'){
-      cat={id:'__top',icon:'⭐',label_uz:'Top sotuvda',label_ru:'Хиты продаж'};
+      cat={id:'__top',icon:'⭐',label_uz:'Top sotuvda',label_ru:'Хиты продаж',label_en:'Top sellers'};
       if(!Array.isArray(topSellerIds)){
         all=[];virtualLoading=true;
       } else {
@@ -2130,19 +2222,19 @@ function renderProductDetail(p){
          <button class="big-btn pri" onclick="closeAll();setTimeout(()=>window.openVarPicker('${p.id}'),200)">${tr('add_to_cart')}</button>`
       :`<div class="pd-actions">
           ${qty===0
-            ?`<button class="big-btn pri" style="margin-top:0;flex:1" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">${tr('add_to_cart')} +</button>`
+            ?`<button class="big-btn pri" style="margin-top:0;flex:1" onclick="window.addSimple('${p.id}',this);renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">${tr('add_to_cart')} +</button>`
             :`<div class="pd-qty">
                 <button class="q-btn" onclick="window.rmSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">−</button>
                 <span class="q-n">${qty}</span>
-                <button class="q-btn" onclick="window.addSimple('${p.id}');renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
+                <button class="q-btn" onclick="window.addSimple('${p.id}',this);renderProductDetail(${JSON.stringify(p).replace(/"/g,'&quot;')});">+</button>
               </div>`}
         </div>`}
     ${p.desc?`<div class="pd-desc" style="margin-top:16px">${p.desc}</div>`:''}
 
     <div id="reviewsAnchor" style="margin-top:22px;padding-top:14px;border-top:1.5px solid var(--border);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:14px;font-weight:900;color:var(--text);">⭐ ${currentLang==='uz'?'Sharhlar':'Отзывы'}</div>
-        <button class="var-add-btn" onclick="openReviewModal('${p.id}')">+ ${currentLang==='uz'?'Sharh yozish':'Написать'}</button>
+        <div style="font-size:14px;font-weight:900;color:var(--text);">⭐ ${currentLang==='en'?'Reviews':currentLang==='uz'?'Sharhlar':'Отзывы'}</div>
+        <button class="var-add-btn" onclick="openReviewModal('${p.id}')">+ ${currentLang==='en'?'Write review':currentLang==='uz'?'Sharh yozish':'Написать'}</button>
       </div>
       <div id="pdReviewList"><div class="spin"></div></div>
     </div>
@@ -2161,7 +2253,7 @@ function starsHTML(rating,total){
 }
 function reviewerName(){
   if(tgUser?.first_name)return tgUser.first_name+(tgUser.last_name?(' '+tgUser.last_name):'');
-  return currentLang==='uz'?'Mijoz':'Клиент';
+  return currentLang==='en'?'Customer':currentLang==='uz'?'Mijoz':'Клиент';
 }
 function reviewerId(){
   if(tgUser?.id)return tgUser.id.toString();
@@ -2330,10 +2422,11 @@ function relTime(d){
   if(!d)return '—';
   const diff=Date.now()-d.getTime();
   const day=24*3600*1000;
-  if(diff<day)return currentLang==='uz'?'Bugun':'Сегодня';
-  if(diff<2*day)return currentLang==='uz'?'Kecha':'Вчера';
-  if(diff<7*day)return Math.floor(diff/day)+' '+(currentLang==='uz'?'kun oldin':'дн назад');
-  if(diff<30*day)return Math.floor(diff/(7*day))+' '+(currentLang==='uz'?'hafta oldin':'нед назад');
+  const L=currentLang;
+  if(diff<day)return L==='en'?'Today':L==='uz'?'Bugun':'Сегодня';
+  if(diff<2*day)return L==='en'?'Yesterday':L==='uz'?'Kecha':'Вчера';
+  if(diff<7*day)return Math.floor(diff/day)+' '+(L==='en'?'d ago':L==='uz'?'kun oldin':'дн назад');
+  if(diff<30*day)return Math.floor(diff/(7*day))+' '+(L==='en'?'w ago':L==='uz'?'hafta oldin':'нед назад');
   return d.toLocaleDateString();
 }
 function renderCustomerList(){
@@ -2645,7 +2738,7 @@ function initCategories(){
       // First-time seed of defaults (only admin can write)
       if(isAdmin){
         const upd={};
-        DEFAULT_CATS.forEach(c=>{upd[c.id]={label_uz:c.label_uz,label_ru:c.label_ru,icon:c.icon,order:c.order};});
+        DEFAULT_CATS.forEach(c=>{upd[c.id]={label_uz:c.label_uz,label_ru:c.label_ru,label_en:c.label_en||'',icon:c.icon,order:c.order};});
         rtdb.ref('categories').update(upd).catch(e=>console.warn('seed cats:',e));
       }
       CATS=DEFAULT_CATS.map(c=>({...c,label:c.label_uz}));
@@ -2655,6 +2748,7 @@ function initCategories(){
         icon:d.icon||'📦',
         label_uz:d.label_uz||d.label||id,
         label_ru:d.label_ru||d.label_uz||d.label||id,
+        label_en:d.label_en||d.label_uz||d.label||id,
         label:d.label_uz||d.label||id,
         order:typeof d.order==='number'?d.order:9999,
       })).sort((a,b)=>a.order-b.order||a.label_uz.localeCompare(b.label_uz));
@@ -2692,6 +2786,66 @@ rtdb.ref('config/bot').on('value', s=>{
   if(st)st.textContent=botConfig.token&&botConfig.chatId?'🟢 Bot ulangan':'🔴 Bot ulanmagan';
 }, e=>console.warn('bot config:',e));
 
+/* ─── Telegram channel config ─── */
+let channelConfig={id:''};
+rtdb.ref('config/channel').on('value', s=>{
+  channelConfig=s.val()||{id:''};
+  const ci=document.getElementById('channelIdInp');if(ci&&!ci.matches(':focus'))ci.value=channelConfig.id||'';
+  const cs=document.getElementById('channelStatus');
+  if(cs)cs.textContent=channelConfig.id?'🟢 Kanal ulangan: '+channelConfig.id:'🔴 Kanal ulanmagan';
+}, e=>console.warn('channel config:',e));
+
+window.saveChannelConfig=async()=>{
+  const id=(g('channelIdInp')||'').trim();
+  try{
+    await rtdb.ref('config/channel').set({id});
+    haptic('success');toast('✅ Kanal sozlandi');
+  }catch(e){toast('❌ '+e.message);haptic('error');}
+};
+
+window.testChannelPost=async()=>{
+  const id=(g('channelIdInp')||'').trim();
+  if(!id||!botConfig.token){toast('❗ Avval bot token va kanal ID kiriting');haptic('warning');return;}
+  const prev=channelConfig;channelConfig={id};
+  const ok=await postToChannel('🧪 <b>Test post</b>\nKerasysShop kanal ulanishi muvaffaqiyatli!', null);
+  channelConfig=prev;
+  toast(ok?'✅ Kanalga yuborildi':'❌ Xatolik (bot kanalda adminmi? token/ID tekshiring)');
+  haptic(ok?'success':'error');
+};
+
+async function postToChannel(text, imgUrl){
+  if(!botConfig.token||!channelConfig.id)return false;
+  try{
+    if(imgUrl){
+      const r=await fetch(`https://api.telegram.org/bot${botConfig.token}/sendPhoto`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:channelConfig.id,photo:imgUrl,caption:text,parse_mode:'HTML'})
+      });
+      const d=await r.json();
+      return d.ok===true;
+    } else {
+      const r=await fetch(`https://api.telegram.org/bot${botConfig.token}/sendMessage`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:channelConfig.id,text,parse_mode:'HTML',disable_web_page_preview:true})
+      });
+      const d=await r.json();
+      return d.ok===true;
+    }
+  }catch(e){console.warn('postToChannel:',e);return false;}
+}
+
+async function postProductToChannel(p){
+  if(!botConfig.token||!channelConfig.id)return;
+  const appUrl=location.origin+location.pathname;
+  const priceStr=fmt(p.price);
+  const oldStr=p.oldPrice?` <s>${fmt(p.oldPrice)}</s>`:'';
+  const badgeStr=p.badge?`🔥 ${p.badge}\n`:'';
+  const caption=`<b>${escText(p.name)}</b>\n${badgeStr}💰 ${priceStr}${oldStr}\n\n<a href="${appUrl}?p=${p.id}">🛒 Sotib olish</a>`;
+  const ok=await postToChannel(caption, p.img);
+  if(ok)console.log('Posted to channel:',p.name);
+  else console.warn('Failed to post to channel:',p.name);
+}
+
 async function notifyBot(text){
   if(!botConfig.token||!botConfig.chatId)return false;
   try{
@@ -2725,6 +2879,60 @@ window.testBotMessage=async()=>{
   botConfig=prev;
   toast(ok?'✅ Yuborildi':'❌ Xatolik (token/chat ID tekshiring)');
   haptic(ok?'success':'error');
+};
+
+/* ─── Admin banner ─── */
+let bannerConfig={img:''};
+rtdb.ref('config/banner').on('value', s=>{
+  bannerConfig=s.val()||{img:''};
+  const pv=document.getElementById('bannerPreview');
+  const pl=document.getElementById('bannerPlaceholder');
+  const urlInp=document.getElementById('bannerUrlInp');
+  if(pv&&pl){
+    if(bannerConfig.img){
+      pv.src=bannerConfig.img;pv.classList.add('show');pl.style.display='none';
+      document.getElementById('bannerUploadArea')?.classList.add('has-img');
+    } else {
+      pv.classList.remove('show');pl.style.display='block';
+      document.getElementById('bannerUploadArea')?.classList.remove('has-img');
+    }
+  }
+  if(urlInp&&!urlInp.matches(':focus'))urlInp.value=bannerConfig.img||'';
+  const bs=document.getElementById('bannerStatus');
+  if(bs)bs.textContent=bannerConfig.img?'🟢 Banner mavjud':'🔴 Banner yo\'q';
+}, e=>console.warn('banner config:',e));
+
+window.handleBannerFile=input=>{
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const b64=e.target.result;
+    document.getElementById('bannerUrlInp').value=b64;
+    const prev=document.getElementById('bannerPreview');
+    prev.src=b64;prev.classList.add('show');
+    document.getElementById('bannerPlaceholder').style.display='none';
+    document.getElementById('bannerUploadArea').classList.add('has-img');
+  };
+  reader.readAsDataURL(file);
+};
+
+window.saveBanner=async()=>{
+  const url=(document.getElementById('bannerUrlInp').value||'').trim();
+  if(!url){toast('❗ Rasm URL yoki fayl tanlang');haptic('warning');return;}
+  try{
+    await rtdb.ref('config/banner').set({img:url});
+    haptic('success');toast('✅ Banner saqlandi');
+    if(currentPage==='cats')renderCatsPage();
+  }catch(e){toast('❌ '+e.message);haptic('error');}
+};
+
+window.removeBanner=async()=>{
+  if(!confirm(currentLang==='uz'?'Bannerni o\'chirish?':'Удалить баннер?'))return;
+  try{
+    await rtdb.ref('config/banner').remove();
+    haptic('selection');toast('🗑 O\'chirildi');
+    if(currentPage==='cats')renderCatsPage();
+  }catch(e){toast('❌ '+e.message);}
 };
 
 /* ─── Yandex Go store config ─── */
@@ -2776,14 +2984,46 @@ window.buildYandexGoUrl=function(o){
 };
 
 const cartKey=(pid,variant)=>variant?`${pid}::${variant}`:pid;
-window.addSimple=id=>{
+
+function cartFlyAnimation(el){
+  if(!el)return;
+  const fc=document.getElementById('floatCart');
+  if(!fc||fc.classList.contains('hidden'))return;
+  const rect=el.getBoundingClientRect();
+  const fcRect=fc.getBoundingClientRect();
+  const fly=document.createElement('div');
+  fly.className='cart-fly';
+  const bg=window.getComputedStyle(el).backgroundColor;
+  if(bg&&bg!=='transparent'&&bg!=='rgba(0,0,0,0)')fly.style.background=bg;
+  else fly.style.background='var(--accent)';
+  fly.textContent='🛒';
+  fly.style.display='flex';fly.style.alignItems='center';fly.style.justifyContent='center';
+  fly.style.fontSize='24px';
+  fly.style.left=rect.left+'px';
+  fly.style.top=rect.top+'px';
+  fly.style.width='40px';fly.style.height='40px';
+  document.body.appendChild(fly);
+  requestAnimationFrame(()=>{
+    fly.style.left=(fcRect.left+fcRect.width/2-20)+'px';
+    fly.style.top=(fcRect.top+fcRect.height/2-20)+'px';
+    fly.style.width='32px';fly.style.height='32px';
+    fly.style.borderRadius='50%';
+    setTimeout(()=>{
+      fly.classList.add('fly-end');
+      setTimeout(()=>fly.remove(),700);
+    },700);
+  });
+}
+
+window.addSimple=(id,btn)=>{
   const p=products.find(x=>x.id===id);if(!p)return;
   const key=cartKey(id,null);
   if(!cart[key])cart[key]={pid:id,name:p.name,price:p.price,icon:ICONS[p.cat]||'📦',img:p.img||'',variant:null,qty:0};
   cart[key].qty++;
   updateCartUI();refreshOpenViews();
   haptic('light');
-  toast(`✓ ${p.name} ${tr('added_toast')}`);
+  cartFlyAnimation(btn);
+  toast(`✓ ${p.name} ${tr('added_toast')});
 };
 window.rmSimple=id=>{
   const key=cartKey(id,null);
@@ -2828,6 +3068,7 @@ window.openVarPicker=pid=>{
     cart[key].qty++;
     updateCartUI();refreshOpenViews();closeAll();
     haptic('success');
+    cartFlyAnimation(document.querySelector('#varSheet .big-btn'));
     toast(`✓ ${p2.name} (${varSelected})`);
   };
   render();
@@ -2966,19 +3207,20 @@ window.setDeliveryType=t=>{
   haptic('selection');
 };
 function applyDeliveryLang(){
-  const uz=currentLang==='uz';
-  $('deliveryLbl').textContent=uz?'📦 Yetkazib berish turi *':'📦 Способ получения *';
-  $('dlvPickupTx').textContent=uz?'Olib ketish':'Самовывоз';
-  $('dlvPickupSub').textContent=uz?'Bepul':'Бесплатно';
-  $('dlvYandexTx').textContent=uz?'Yandex yetkazib berish':'Yandex доставка';
-  $('dlvYandexSub').textContent=uz?"To'lov mijoz":'Оплачивает клиент';
-  $('oAddrLbl').textContent=uz?'📍 Yetkazib berish manzili *':'📍 Адрес доставки *';
-  $('oAddr').placeholder=uz?'Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy, 12-xonadon':'г. Ташкент, Юнусабадский район, X-квартал, дом 5, кв 12';
-  $('oAddrInfo').textContent=uz?"Yandex Go orqali yetkazamiz. Yo'l haqi mijozdan olinadi (~15-30 ming so'm Toshkent ichida).":'Доставка через Yandex Go. Стоимость оплачивает клиент (~15-30 тыс сум по Ташкенту).';
+  const L=currentLang;
+  $('deliveryLbl').textContent=L==='en'?'📦 Delivery type *':L==='uz'?'📦 Yetkazib berish turi *':'📦 Способ получения *';
+  $('dlvPickupTx').textContent=L==='en'?'Pickup':'Самовывоз';
+  if(L==='uz')$('dlvPickupTx').textContent='Olib ketish';
+  $('dlvPickupSub').textContent=L==='en'?'Free':L==='uz'?'Bepul':'Бесплатно';
+  $('dlvYandexTx').textContent=L==='en'?'Yandex delivery':L==='uz'?'Yandex yetkazib berish':'Yandex доставка';
+  $('dlvYandexSub').textContent=L==='en'?"Paid by customer":L==='uz'?"To'lov mijoz":'Оплачивает клиент';
+  $('oAddrLbl').textContent=L==='en'?'📍 Delivery address *':L==='uz'?'📍 Yetkazib berish manzili *':'📍 Адрес доставки *';
+  $('oAddr').placeholder=L==='en'?'Tashkent city, Yunusabad district...':L==='uz'?'Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy, 12-xonadon':'г. Ташкент, Юнусабадский район, X-квартал, дом 5, кв 12';
+  $('oAddrInfo').textContent=L==='en'?"Delivery via Yandex Go. The customer pays the fare (~15-30 thousand soums within Tashkent).":L==='uz'?"Yandex Go orqali yetkazamiz. Yo'l haqi mijozdan olinadi (~15-30 ming so'm Toshkent ichida).":'Доставка через Yandex Go. Стоимость оплачивает клиент (~15-30 тыс сум по Ташкенту).';
   if(deliveryType==='yandex'){
-    $('oTimeLbl').textContent=uz?'🕒 Yetkazib berish vaqti *':'🕒 Время доставки *';
+    $('oTimeLbl').textContent=L==='en'?'🕒 Delivery time *':L==='uz'?'🕒 Yetkazib berish vaqti *':'🕒 Время доставки *';
   }else{
-    $('oTimeLbl').textContent=uz?'Olib ketish vaqti *':'Время самовывоза *';
+    $('oTimeLbl').textContent=L==='en'?'Pickup time *':L==='uz'?'Olib ketish vaqti *':'Время самовывоза *';
   }
 }
 
@@ -2990,7 +3232,21 @@ window.submitOrder=async()=>{
   const items=Object.values(cart);
   let total=items.reduce((s,i)=>s+i.price*i.qty,0);
   let discount=0;
+  let spinDiscountPct=0;
   if(appliedPromo){discount=Math.round(total*PROMO_DISCOUNT);total-=discount;}
+  const sd=getActiveDiscount();
+  if(sd>0&&!appliedPromo){
+    spinDiscountPct=sd;
+    const sdAmount=Math.round(total*sd/100);
+    discount+=sdAmount;
+    total-=sdAmount;
+  }
+  // Referral discount
+  const refResult=applyReferralDiscount(total);
+  if(refResult.refCode&&!appliedPromo&&spinDiscountPct===0){
+    discount+=refResult.discount;
+    total=refResult.total;
+  }
   const code=genCode();
   const userId=tgUser?.id?.toString()||tgUser?.username||phone;
   try{
@@ -3002,7 +3258,7 @@ window.submitOrder=async()=>{
       userId,
       items:items.map(i=>({name:i.name,price:i.price,qty:i.qty,variant:i.variant||null})),
       total,originalTotal:items.reduce((s,i)=>s+i.price*i.qty,0),
-      discount,promoCode:appliedPromo||null,
+      discount,promoCode:appliedPromo||null,spinDiscount:spinDiscountPct||0,referralCode:getStoredRefCode(),
       status:'yangi',createdAt:new Date()
     });
     if(appliedPromo){
@@ -3060,7 +3316,9 @@ window.toggleTheme=()=>{
 };
 
 window.toggleLang=()=>{
-  currentLang=currentLang==='uz'?'ru':'uz';
+  const langs=['uz','ru','en'];
+  const idx=langs.indexOf(currentLang);
+  currentLang=langs[(idx+1)%langs.length];
   localStorage.setItem('lang',currentLang);
   applyLang();
   haptic('selection');
@@ -3100,12 +3358,12 @@ async function loadMyOrders(){
     const remaining=PROMO_GOAL-totalSpent;
     
     const L=currentLang;
-    const sLabel={yangi:L==='uz'?'🟢 Yangi':'🟢 Новый',jarayonda:L==='uz'?'🟡 Jarayonda':'🟡 В процессе',tayyor:L==='uz'?'✅ Tayyor':'✅ Готов',bekor:L==='uz'?'❌ Bekor':'❌ Отменён'};
+    const sLabel={yangi:L==='en'?'🟢 New':L==='uz'?'🟢 Yangi':'🟢 Новый',jarayonda:L==='en'?'🟡 Processing':L==='uz'?'🟡 Jarayonda':'🟡 В процессе',tayyor:L==='en'?'✅ Ready':L==='uz'?'✅ Tayyor':'✅ Готов',bekor:L==='en'?'❌ Cancelled':L==='uz'?'❌ Bekor':'❌ Отменён'};
     
     body.innerHTML=`
       <div class="profile-settings">
-        <button class="setting-btn" onclick="toggleTheme()">${isDarkTheme?'☀️':'🌙'} ${L==='uz'?'Yorug\'':'Светлая'}</button>
-        <button class="setting-btn" onclick="toggleLang()">${L==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek'}</button>
+        <button class="setting-btn" onclick="toggleTheme()">${isDarkTheme?'☀️':'🌙'} ${L==='en'?'Theme':L==='uz'?'Yorug\'':'Светлая'}</button>
+        <button class="setting-btn" onclick="toggleLang()">${L==='en'?'🇺🇿 Uz':L==='uz'?'🇷🇺 Rus':'🇺🇿 O\'zbek'}</button>
       </div>
       <div class="profile-header">
         <div class="profile-avatar">${tgUser?.first_name?.[0]||'👤'}</div>
@@ -3113,9 +3371,10 @@ async function loadMyOrders(){
         <div class="profile-phone">${tgUser?.username?'@'+tgUser.username:phone||''}</div>
       </div>
       <div class="profile-stats">
-        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">${L==='uz'?'Buyurtmalar':'Заказы'}</div></div>
-        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">${L==='uz'?'Jami sarflangan':'Всего потрачено'}</div></div>
+        <div class="prof-stat"><div class="prof-stat-val">${orders.length}</div><div class="prof-stat-lbl">${L==='en'?'Orders':L==='uz'?'Buyurtmalar':'Заказы'}</div></div>
+        <div class="prof-stat highlight"><div class="prof-stat-val">${fmt(totalSpent)}</div><div class="prof-stat-lbl">${L==='en'?'Total spent':L==='uz'?'Jami sarflangan':'Всего потрачено'}</div></div>
       </div>
+      ${renderReferralSection()}
       ${myCode?`
         <div class="my-code-section">
           <div class="my-code-badge">🎁 ${L==='uz'?'Sizning promo kodingiz':'Ваш промокод'}</div>
@@ -3146,11 +3405,54 @@ async function loadMyOrders(){
             <div class="oh-date">${date} · 🕐 ${o.time||'—'}</div>
             <div class="oh-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty}`).join(', ')}</div>
             <div class="oh-total">${fmt(o.total)}${o.discount?` <span style="font-size:12px;color:var(--a2)">(-${fmt(o.discount)})</span>`:''}</div>
+            <div style="margin-top:8px;display:flex;gap:6px;">
+              <button class="var-add-btn" style="flex:1;font-size:11px;padding:6px;" onclick="repeatOrder('${d.id}')">🔄 ${L==='en'?'Repeat':L==='uz'?'Takrorlash':'Повторить'}</button>
+              <button class="var-add-btn" style="flex:1;font-size:11px;padding:6px;background:var(--warm-lt);color:var(--warm-dk);" onclick="printOrderReceipt('${d.id}')">🧾 ${L==='en'?'Receipt':L==='uz'?'Chek':'Чек'}</button>
+            </div>
+            ${renderTimeline(o.statusHistory)}
           </div>`;
         }).join('')}
     `;
   }catch(e){body.innerHTML='<div style="color:var(--text2);padding:20px">Xatolik</div>';}
 }
+
+/* #8 Tezkor qayta buyurtma */
+window.repeatOrder=async orderId=>{
+  try{
+    const snap=await db.collection('orders').doc(orderId).get();
+    const o=snap.data();if(!o)return;
+    cart={};
+    (o.items||[]).forEach(item=>{
+      const p=products.find(x=>x.name===item.name);
+      if(!p)return;
+      if(item.variant){
+        const key=p.id+'::'+item.variant;
+        cart[key]={pid:p.id,name:p.name,price:item.price,icon:ICONS[p.cat]||'📦',img:p.img||'',variant:item.variant,qty:item.qty};
+      } else {
+        const key=p.id;
+        cart[key]={pid:p.id,name:p.name,price:item.price,icon:ICONS[p.cat]||'📦',img:p.img||'',variant:null,qty:item.qty};
+      }
+    });
+    updateCartUI();
+    closeAll();
+    setTimeout(()=>window.openCart(),300);
+    haptic('success');
+    toast((currentLang==='uz'?'✅ Buyurtma savatga qo\'shildi':'✅ Заказ добавлен в корзину'));
+  }catch(e){toast('❌ '+(e.message||''));}
+};
+window.showOrderTimeline=oStr=>{
+  try{
+    const o=JSON.parse(oStr);
+    const h=o.statusHistory||[];
+    if(!h.length){toast(currentLang==='uz'?'Holat tarixi yo\'q':'Нет истории статусов');return;}
+    const labels={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
+    const lines=h.map((hx,i)=>{
+      const t=hx.at?new Date(hx.at).toLocaleString('uz-UZ'):'';
+      return `${i+1}. ${labels[hx.status]||hx.status} — ${t}`;
+    }).join('\n');
+    toast(lines.slice(0,200));
+  }catch(_){toast(currentLang==='uz'?'Xatolik':'Ошибка');}
+};
 
 /* ADMIN */
 window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();haptic('light');updateBackBtn();};
@@ -3223,13 +3525,14 @@ window.addCategory=async()=>{
   const icon=($('catNewIcon').value||'').trim()||'📦';
   const label_uz=($('catNewLabelUz').value||'').trim();
   const label_ru=($('catNewLabelRu').value||'').trim();
+  const label_en=($('catNewLabelEn').value||'').trim();
   if(!id){toast('❌ ID kiriting (lotin harflari)');return;}
   if(!label_uz||!label_ru){toast('❌ Nomlarni to\'liq kiriting');return;}
   if(CATS.some(c=>c.id===id)){toast('❌ Bu ID allaqachon mavjud');return;}
   const order=CATS.length?Math.max(...CATS.map(c=>c.order||0))+1:0;
   try{
-    await rtdb.ref('categories/'+id).set({label_uz,label_ru,icon,order});
-    $('catNewId').value='';$('catNewIcon').value='';$('catNewLabelUz').value='';$('catNewLabelRu').value='';
+    await rtdb.ref('categories/'+id).set({label_uz,label_ru,label_en,icon,order});
+    $('catNewId').value='';$('catNewIcon').value='';$('catNewLabelUz').value='';$('catNewLabelRu').value='';$('catNewLabelEn').value='';
     haptic('success');toast('✅ Kategoriya qo\'shildi');
   }catch(e){console.error(e);toast('❌ Xatolik: '+e.message);}
 };
@@ -3239,7 +3542,8 @@ window.editCategory=id=>{
   const newIcon=prompt('Icon:',c.icon);if(newIcon===null)return;
   const newUz=prompt('Nomi (uz):',c.label_uz);if(newUz===null)return;
   const newRu=prompt('Nomi (ru):',c.label_ru);if(newRu===null)return;
-  rtdb.ref('categories/'+id).update({icon:newIcon||c.icon,label_uz:newUz||c.label_uz,label_ru:newRu||c.label_ru})
+  const newEn=prompt('Nomi (en):',c.label_en||'');if(newEn===null)return;
+  rtdb.ref('categories/'+id).update({icon:newIcon||c.icon,label_uz:newUz||c.label_uz,label_ru:newRu||c.label_ru,label_en:newEn||c.label_en||''})
     .then(()=>{toast('✅ Yangilandi');haptic('success');})
     .catch(e=>toast('❌ '+e.message));
 };
@@ -3400,6 +3704,25 @@ window.searchOrder=async()=>{
   }catch(e){el.innerHTML='<div style="color:var(--text2)">Xatolik</div>';}
 };
 
+function renderTimeline(history){
+  if(!history||!history.length)return '';
+  const labels={yangi:{uz:'🟢 Yangi',ru:'🟢 Новый',en:'🟢 New'},jarayonda:{uz:'🟡 Jarayonda',ru:'🟡 В процессе',en:'🟡 Processing'},tayyor:{uz:'✅ Tayyor',ru:'✅ Готов',en:'✅ Ready'},bekor:{uz:'❌ Bekor',ru:'❌ Отменён',en:'❌ Cancelled'}};
+  const timeStyle='font-size:10px;color:var(--text2);font-weight:700;';
+  return `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+    <div style="font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">${currentLang==='en'?'📋 Status history':currentLang==='uz'?'📋 Holat tarixi':'📋 История статусов'}</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${history.map((h,i)=>{
+        const t=h.at?new Date(h.at).toLocaleString('uz-UZ',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'}):'';
+        return `<div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${i===history.length-1?'var(--accent)':'var(--text3)'};flex-shrink:0;"></span>
+          <span style="font-weight:700;color:var(--text);">${(labels[h.status]&&labels[h.status][currentLang])||h.status}</span>
+          <span style="${timeStyle}">${t}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
 function renderOrdCard(oid,o){
   const st=o.status||'yangi';
   const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString('uz-UZ'):'—';
@@ -3413,14 +3736,65 @@ function renderOrdCard(oid,o){
   const callBtn=phoneClean?`<a class="sp-btn call-btn" href="tel:${phoneClean}" onclick="event.stopPropagation();">📞 Qo'ng'iroq</a>`:'';
   const actionRow=(yangoBtn||callBtn)?`<div class="ord-actions">${yangoBtn}${callBtn}</div>`:'';
   return `<div class="ord-card">
-    <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${S_LABEL[st]||st}</span></div>
+    <div class="ord-top"><span class="ord-code-badge">${o.code}</span><span class="ord-status ${st}">${(S_LABEL[st]&&S_LABEL[st][currentLang])||st}</span></div>
     <div class="ord-items">${o.items.map(i=>`${i.name}${i.variant?' ('+i.variant+')':''} ×${i.qty} — ${fmt(i.price*i.qty)}`).join('<br>')}</div>
     <div class="ord-total">Jami: ${fmt(o.total)}${o.discount?` (chegirma: -${fmt(o.discount)})`:''}</div>
     <div class="ord-info">👤 ${o.name} · 📱 ${o.phone}<br>⏰ ${o.time||'—'}${dlvLine}<br>✈️ ${o.telegram} · 🕐 ${date}${o.note?'<br>💬 '+o.note:''}</div>
+    ${renderTimeline(o.statusHistory)}
     ${actionRow}
-    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'var(--card)':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${S_LABEL[s]}</button>`).join('')}</div>
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <button class="sp-btn" style="background:var(--accent-lt);color:var(--accent);flex:1;" onclick="printOrderReceipt('${oid}')">🧾 PDF chek</button>
+    </div>
+    <div class="sp-wrap">${STATUSES.map(s=>`<button class="sp-btn" style="background:${s===st?'var(--accent)':'var(--accent-lt)'};color:${s===st?'var(--card)':'var(--accent)'}" onclick="window.setSt('${oid}','${s}')">${(S_LABEL[s]&&S_LABEL[s][currentLang])||s}</button>`).join('')}</div>
   </div>`;
 }
+
+/* ─── #20 PDF RECEIPT ─── */
+window.printOrderReceipt=async orderId=>{
+  try{
+    const snap=await db.collection('orders').doc(orderId).get();
+    const o=snap.data();if(!o)return;
+    const L=currentLang;
+    const t=o.createdAt?.toDate?o.createdAt.toDate():new Date();
+    const dateStr=t.toLocaleDateString()+' '+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const itemsHtml=o.items.map(i=>
+      `<tr><td style="padding:4px 0;">${escText(i.name)}${i.variant?' ('+escText(i.variant)+')':''}</td><td style="text-align:center;padding:4px 8px;">×${i.qty}</td><td style="text-align:right;padding:4px 0;">${fmt(i.price*i.qty)}</td></tr>`
+    ).join('');
+    const payStatus=L==='uz'?'To\'lov qilinmagan':L==='ru'?'Оплата не произведена':'Payment not made';
+    const win=window.open('','_blank','width=400,height=700');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Chek #${o.code}</title>
+    <style>body{font-family:Arial,sans-serif;margin:0;padding:20px;color:#222;font-size:14px;}
+      @media print{body{padding:10px;}}
+      .header{text-align:center;margin-bottom:16px;}
+      .header h1{font-size:20px;margin:0 0 4px;color:#1FA150;}
+      .header .sub{font-size:12px;color:#888;}
+      .info{font-size:13px;line-height:1.8;margin-bottom:12px;}
+      table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+      th{text-align:left;font-size:12px;color:#888;padding:4px 0;border-bottom:2px solid #ddd;}
+      .total-row td{font-weight:bold;border-top:2px solid #222;padding-top:8px;}
+      .pay-status{text-align:center;font-size:16px;font-weight:bold;color:#e23b3b;margin:16px 0;padding:12px;border:2px dashed #e23b3b;}
+      .footer{text-align:center;font-size:11px;color:#aaa;margin-top:16px;padding-top:12px;border-top:1px solid #ddd;}
+    </style></head><body>
+    <div class="header">
+      <h1>Kerasys Shop</h1>
+      <div class="sub">${dateStr}</div>
+    </div>
+    <div class="info">
+      <b>${o.name}</b><br>📱 ${o.phone}<br>🕐 ${o.time||'—'}<br>#${o.code}
+    </div>
+    <table>
+      <tr><th>Mahsulot</th><th style="text-align:center">Soni</th><th style="text-align:right">Summa</th></tr>
+      ${itemsHtml}
+      <tr class="total-row"><td colspan="2">${L==='uz'?'Jami':'Итого'}:</td><td style="text-align:right">${fmt(o.total)}</td></tr>
+      ${o.discount?`<tr><td colspan="2" style="color:#e23b3b">${L==='uz'?'Chegirma':'Скидка'}:</td><td style="text-align:right;color:#e23b3b">-${fmt(o.discount)}</td></tr>`:''}
+    </table>
+    <div class="pay-status">${payStatus.toUpperCase()}</div>
+    <div class="footer">Kerasys Shop — ${L==='uz'?'Rahmat!':'Спасибо!'}</div>
+    <script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+    </body></html>`);
+    win.document.close();
+  }catch(e){console.error('print receipt:',e);toast('❌ '+e.message);}
+};
 
 let ordUnsub=null;
 function loadAdminOrders(){
@@ -3436,7 +3810,29 @@ function loadAdminOrders(){
     el.innerHTML=snap.docs.map(d=>renderOrdCard(d.id,d.data())).join('');
   });
 }
-window.setSt=async(id,status)=>{await db.collection('orders').doc(id).update({status});toast(`✅ ${S_LABEL[status]}`);};
+window.setSt=async(id,status)=>{
+  try{
+    const snap=await db.collection('orders').doc(id).get();
+    const o=snap.data();if(!o)return;
+    const history=o.statusHistory||[];
+    history.push({status,at:new Date().toISOString()});
+    await db.collection('orders').doc(id).update({status,statusHistory:history});
+    toast(`✅ ${(S_LABEL[status]&&S_LABEL[status][currentLang])||status}`);
+    haptic('success');
+    // Notify customer via Telegram
+    const chatId=o.userId;
+    if(chatId&&/^-?\d+$/.test(chatId)&&botConfig.token){
+      const statusTxt={yangi:'🟢 Yangi',jarayonda:'🟡 Jarayonda',tayyor:'✅ Tayyor',bekor:'❌ Bekor'};
+      const msg=`📦 <b>Buyurtma #${o.code}</b>\n\nHolati: ${statusTxt[status]||status}\n\n<a href="${location.origin+location.pathname}?p=order_${o.code}">👀 Buyurtmani ko'rish</a>`;
+      try{
+        await fetch(`https://api.telegram.org/bot${botConfig.token}/sendMessage`,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({chat_id:chatId,text:msg,parse_mode:'HTML',disable_web_page_preview:true})
+        });
+      }catch(_){}
+    }
+  }catch(e){toast('❌ '+e.message);haptic('error');}
+};
 
 /* IMAGE UPLOAD */
 window.switchImgTab=mode=>{
@@ -3490,6 +3886,105 @@ window.filterAdminProducts=()=>{
   const filtered=q?products.filter(p=>p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q)):products;
   const el=$('prodList');if(!el)return;
   if(!filtered.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Topilmadi</div>';return;}
+/* ─── #18 STORY PROMOTIONS ─── */
+let stories=[];
+rtdb.ref('stories').on('value', s=>{
+  const val=s.val();
+  stories=val?Object.entries(val).map(([id,d])=>({id,...d})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)):[];
+  renderStoriesAdmin();
+  if(currentPage==='cats')renderCatsPage();
+}, e=>console.warn('stories:',e));
+
+function renderStoriesRow(){
+  if(!stories.length)return '';
+  const active=stories.filter(s=>s.active!==false);
+  if(!active.length)return '';
+  return `<div class="stories-row">${active.map((s,i)=>`
+    <div class="story-circle" onclick="openStoryViewer(${i})" style="animation-delay:${i*50}ms">
+      <div class="story-ring">
+        <div class="story-ring-img">${s.img?`<img src="${s.img}" onerror="this.parentNode.textContent='📸'">`:'📸'}</div>
+      </div>
+      <div class="story-label">${escText(s.label||'')}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderStoriesAdmin(){
+  const el=document.getElementById('storyAdminList');if(!el)return;
+  if(!stories.length){el.innerHTML='<div style="font-size:12px;color:var(--text2);padding:6px 0;">Hali story yo\'q</div>';return;}
+  el.innerHTML=stories.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px;">
+      <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;">${s.img?`<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;">`:'📸'}</div>
+      <div style="flex:1;min-width:0;font-size:12px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escText(s.label||'(matnsiz)')}</div>
+      <button class="ia tog ${s.active!==false?'':'off'}" onclick="toggleStory('${s.id}',${s.active!==false})" title="${s.active!==false?'Yashirish':'Ko\'rsatish'}">${s.active!==false?'👁':'🚫'}</button>
+      <button class="ia del" onclick="deleteStory('${s.id}')" title="O'chirish">🗑</button>
+    </div>`).join('');
+}
+
+window.addAdminStory=async()=>{
+  const img=(document.getElementById('storyImgInp').value||'').trim();
+  const label=(document.getElementById('storyLabelInp').value||'').trim();
+  if(!img){toast('❗ Rasm URL kiriting');haptic('warning');return;}
+  try{
+    await rtdb.ref('stories').push({img,label,active:true,createdAt:Date.now()});
+    document.getElementById('storyImgInp').value='';document.getElementById('storyLabelInp').value='';
+    haptic('success');toast('✅ Story qo\'shildi');
+  }catch(e){toast('❌ '+e.message);}
+};
+
+window.toggleStory=async(id,active)=>{
+  await rtdb.ref('stories/'+id).update({active:!active});
+  haptic('selection');
+};
+
+window.deleteStory=async id=>{
+  if(!confirm('O\'chirish?'))return;
+  await rtdb.ref('stories/'+id).remove();
+  haptic('selection');toast('🗑 O\'chirildi');
+};
+
+/* Story viewer */
+let storyViewerTimer=null;
+let storyViewerIdx=0;
+window.openStoryViewer=idx=>{
+  const active=stories.filter(s=>s.active!==false);
+  if(!active.length||!active[idx])return;
+  storyViewerIdx=idx;
+  document.getElementById('storyViewer').classList.add('on');
+  showStory(active,idx);
+  haptic('light');
+};
+function showStory(list,idx){
+  if(storyViewerTimer){clearInterval(storyViewerTimer);storyViewerTimer=null;}
+  const s=list[idx];
+  if(!s){closeStoryViewer();return;}
+  // Progress bars
+  document.getElementById('storyProgressBar').innerHTML=list.map((_,i)=>`<div class="story-progress-bar"><div class="story-progress-fill" id="spf${i}" style="width:${i<idx?'100%':i===idx?'0%':'0%'}"></div></div>`).join('');
+  document.getElementById('storyViewerImg').innerHTML=s.img?`<img src="${s.img}" onerror="this.parentNode.innerHTML='📸'" style="max-width:100%;max-height:100%;object-fit:contain;">`:'📸';
+  document.getElementById('storyViewerCaption').textContent=s.label||'';
+  // Auto-progress
+  let elapsed=0;
+  storyViewerTimer=setInterval(()=>{
+    elapsed+=100;
+    const pct=Math.min((elapsed/3000)*100,100);
+    const fill=document.getElementById('spf'+idx);
+    if(fill)fill.style.width=pct+'%';
+    if(elapsed>=3000){
+      clearInterval(storyViewerTimer);storyViewerTimer=null;
+      if(idx<list.length-1)showStory(list,idx+1);
+      else closeStoryViewer();
+    }
+  },100);
+}
+window.nextStory=()=>{
+  const active=stories.filter(s=>s.active!==false);
+  if(storyViewerIdx<active.length-1)showStory(active,storyViewerIdx+1);
+  else closeStoryViewer();
+};
+window.closeStoryViewer=()=>{
+  if(storyViewerTimer){clearInterval(storyViewerTimer);storyViewerTimer=null;}
+  document.getElementById('storyViewer').classList.remove('on');
+};
+
   el.innerHTML=filtered.map(p=>{
     const active=p.active!==false;
     return `<div class="adm-p">
@@ -4044,14 +4539,26 @@ window.saveProduct=async()=>{
   };
 
   const editId=g('editId');
+  const postToChannel=document.getElementById('postToChannelCb')?.checked||false;
   toast('⏳ Saqlanmoqda...');
   try{
+    let newRef;
     if(editId){
       await rtdb.ref('products/'+editId).update(data);
       toast('✅ Yangilandi!');
+      if(postToChannel){
+        const p=products.find(x=>x.id===editId);
+        if(p)postProductToChannel(p);
+      }
     } else {
-      await rtdb.ref('products').push({...data,createdAt:Date.now()});
+      newRef=await rtdb.ref('products').push({...data,createdAt:Date.now()});
       toast('✅ Mahsulot qo\'shildi!');
+      if(postToChannel){
+        const newId=newRef.key;
+        const savedProducts=await rtdb.ref('products').once('value');
+        const all=savedProducts.val();
+        if(all&&all[newId])postProductToChannel({id:newId,...all[newId]});
+      }
     }
     cancelEditFn();
   }catch(e){
@@ -4073,6 +4580,114 @@ window.setAddMode=mode=>{
 };
 function applyAddMode(){document.body.classList.toggle('add-quick',addMode==='quick');}
 applyAddMode();
+
+/* ─── #6 KUNLIK SPIN ─── */
+const SPIN_SEGMENTS=[
+  {label:{uz:'2%',ru:'2%',en:'2%'},value:2,color:'#2BD478',prize:2},
+  {label:{uz:'5%',ru:'5%',en:'5%'},value:5,color:'#F7B500',prize:5},
+  {label:{uz:'7%',ru:'7%',en:'7%'},value:7,color:'#FF6E96',prize:7},
+  {label:{uz:'2%',ru:'2%',en:'2%'},value:2,color:'#5BB1FF',prize:2},
+  {label:{uz:'5%',ru:'5%',en:'5%'},value:5,color:'#FFC533',prize:5},
+  {label:{uz:'7%',ru:'7%',en:'7%'},value:7,color:'#FF8AA9',prize:7},
+  {label:{uz:'2%',ru:'2%',en:'2%'},value:2,color:'#2BD478',prize:2},
+  {label:{uz:'5%',ru:'5%',en:'5%'},value:5,color:'#F7B500',prize:5},
+];
+function buildSpinWheel(){
+  const el=document.getElementById('spinWheel');if(!el)return;
+  const n=SPIN_SEGMENTS.length;
+  const deg=360/n;
+  el.innerHTML=SPIN_SEGMENTS.map((s,i)=>{
+    const rot=i*deg;
+    return `<div class="spin-segment" style="transform:rotate(${rot}deg);background:${s.color};">${s.label[currentLang]||s.label.ru}</div>`;
+  }).join('');
+}
+function getSpinState(){
+  try{return JSON.parse(localStorage.getItem('spinState')||'{}');}catch(_){return{};}
+}
+function saveSpinState(st){
+  try{localStorage.setItem('spinState',JSON.stringify(st));}catch(_){}
+}
+function canSpinToday(){
+  const st=getSpinState();
+  const today=new Date().toDateString();
+  return st.lastSpin!==today;
+}
+function getActiveDiscount(){
+  const st=getSpinState();
+  if(!st.discount||!st.expires)return 0;
+  if(Date.now()>st.expires){st.discount=0;st.expires=0;saveSpinState(st);return 0;}
+  return st.discount;
+}
+window.getSpinDiscount=getActiveDiscount;
+function renderSpinPrizes(){
+  const el=document.getElementById('spinPrizes');if(!el)return;
+  const d=getActiveDiscount();
+  if(d>0){
+    const exp=new Date(localStorage.getItem('spinState')?JSON.parse(localStorage.getItem('spinState')).expires:0);
+    el.innerHTML=`<span class="spin-prize">🎉 ${d}% chegirma ${exp.toLocaleDateString()}gacha</span>`;
+  } else {
+    el.innerHTML=SPIN_SEGMENTS.filter((s,i)=>i%2===0).map(s=>`<span class="spin-prize">${s.label[currentLang]||s.label.ru}</span>`).join('');
+  }
+}
+let isSpinning=false;
+window.doSpin=async()=>{
+  if(isSpinning)return;
+  if(!canSpinToday()){
+    document.getElementById('spinResult').textContent=currentLang==='uz'?'⏳ Bugun aylantirgansiz! Ertaga yana keling':'⏳ Вы уже крутили! Приходите завтра';
+    haptic('warning');
+    return;
+  }
+  isSpinning=true;
+  const btn=document.getElementById('spinBtn');if(btn)btn.disabled=true;
+  const wheel=document.getElementById('spinWheel');
+  const resultEl=document.getElementById('spinResult');
+  resultEl.textContent='';
+  
+  // Pick random segment
+  const idx=Math.floor(Math.random()*SPIN_SEGMENTS.length);
+  const seg=SPIN_SEGMENTS[idx];
+  const degPerSeg=360/SPIN_SEGMENTS.length;
+  // Add extra full rotations for visual appeal
+  const extraRotations=5+Math.floor(Math.random()*3);
+  const targetDeg=extraRotations*360+(360-idx*degPerSeg-degPerSeg/2);
+  
+  wheel.style.transition='transform 3.5s cubic-bezier(0.17,0.67,0.12,0.99)';
+  wheel.style.transform=`rotate(${targetDeg}deg)`;
+  
+  await new Promise(r=>setTimeout(r,3700));
+  
+  // Save spin state
+  const st=getSpinState();
+  st.lastSpin=new Date().toDateString();
+  st.discount=seg.prize;
+  st.expires=Date.now()+7*86400000; // 7 days
+  saveSpinState(st);
+  
+  const prizeText=currentLang==='uz'?`🎉 ${seg.prize}% chegirma yutdingiz!`:`🎉 Вы выиграли ${seg.prize}% скидку!`;
+  resultEl.textContent=prizeText;
+  toast(prizeText);
+  haptic('success');
+  confetti(48);
+  renderSpinPrizes();
+  isSpinning=false;
+  if(btn)btn.disabled=false;
+};
+window.openSpin=()=>{
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('spinSheet').classList.add('on');
+  buildSpinWheel();
+  renderSpinPrizes();
+  const info=document.getElementById('spinInfo');
+  if(!canSpinToday())info.textContent=currentLang==='uz'?'⏳ Bugun aylantirgansiz!':'⏳ Вы уже крутили!';
+  else info.textContent=currentLang==='uz'?'🎰 Aylantir va chegrma yut!':'🎰 Крути и выигрывай скидку!';
+  haptic('light');
+  updateBackBtn();
+};
+// Apply saved discount at checkout
+(function applySpinDiscount(){
+  const origSubmitOrder=window.submitOrder;
+  if(!origSubmitOrder)return;
+})();
 
 function renderQuickRecent(){
   const strip=$('quickRecentStrip'),row=$('quickRecentRow'),cnt=$('quickRecentCount');
@@ -4110,11 +4725,17 @@ window.saveProductQuick=async()=>{
     createdAt:Date.now()
   };
 
+  const postToCh=document.getElementById('postToChannelCb')?.checked||false;
   const btn=$('saveBtnQuick');if(btn)btn.disabled=true;
   toast('⏳ Saqlanmoqda...');
   try{
-    await rtdb.ref('products').push(data);
+    const newRef=await rtdb.ref('products').push(data);
     toast('✅ Saqlandi! Keyingisini kiriting');
+    if(postToCh){
+      const savedProducts=await rtdb.ref('products').once('value');
+      const all=savedProducts.val();
+      if(all&&all[newRef.key])postProductToChannel({id:newRef.key,...all[newRef.key]});
+    }
     haptic('confirm');
     quickRecent.push({name,price,img});
     renderQuickRecent();
@@ -4323,6 +4944,58 @@ function bootUI(){applyLang();renderCatsPage();updateBackBtn();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootUI);
 else bootUI();
 
+/* ─── #7 REFERRAL ─── */
+const REF_DISCOUNT=0.10; // 10%
+function getReferralCode(){
+  const uid=getUserUid();
+  // Generate a consistent code from userId
+  let code='KS'+uid.replace(/[^a-zA-Z0-9]/g,'').slice(-6).toUpperCase();
+  if(code.length<4)code='KS'+Math.random().toString(36).slice(2,8).toUpperCase();
+  return code;
+}
+function getMyRefLink(){
+  return location.origin+location.pathname+'?ref='+getReferralCode();
+}
+function getAppliedRefCode(){
+  try{const p=new URLSearchParams(location.search);return p.get('ref')||null;}catch(_){return null;}
+}
+// Store referral in localStorage when link is used
+(function applyRefOnLoad(){
+  const ref=getAppliedRefCode();
+  if(ref&&ref!==getReferralCode()){
+    try{localStorage.setItem('appliedRef',ref);}catch(_){}
+  }
+})();
+function getStoredRefCode(){
+  try{return localStorage.getItem('appliedRef')||null;}catch(_){return null;}
+}
+function applyReferralDiscount(total){
+  const ref=getStoredRefCode();
+  if(!ref)return{total,discount:0,refCode:null};
+  const refDiscount=Math.round(total*REF_DISCOUNT);
+  return{total:total-refDiscount,discount:refDiscount,refCode:ref};
+}
+// Show referral section in profile
+function renderReferralSection(){
+  const code=getReferralCode();
+  const link=getMyRefLink();
+  const L=currentLang;
+  return `<div class="my-code-section" style="margin-top:14px;">
+    <div class="my-code-badge">🎁 ${L==='uz'?"Do'stingizni taklif qiling":L==='ru'?'Пригласите друга':'Invite a friend'}</div>
+    <div class="my-code-value" style="font-size:16px;letter-spacing:1px;">${code}</div>
+    <div class="my-code-desc">${L==='uz'?'Do\'stingiz 10% chegirma oladi, siz ham bonus olasiz':L==='ru'?'Друг получит 10% скидку, вы тоже получите бонус':'Your friend gets 10% off, you get a bonus too'}</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="big-btn pri" style="margin:0;flex:1;padding:10px;font-size:12px;" onclick="copyRefLink()">📋 ${L==='uz'?'Havolani nusxalash':L==='ru'?'Копировать ссылку':'Copy link'}</button>
+    </div>
+  </div>`;
+}
+window.copyRefLink=()=>{
+  const link=getMyRefLink();
+  if(navigator.clipboard){navigator.clipboard.writeText(link);}
+  toast(currentLang==='uz'?'✅ Havola nusxalandi':'✅ Ссылка скопирована');
+  haptic('success');
+};
+
 /* ─── PWA: register service worker + install prompt ─── */
 let pwaInstallPrompt=null;
 if('serviceWorker' in navigator&&!tg){
@@ -4460,6 +5133,36 @@ window.installPWA=async()=>{
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="revBody"></div>
+</div>
+
+<!-- STORY VIEWER -->
+<div class="story-viewer" id="storyViewer">
+  <div class="story-viewer-top" id="storyProgressBar"></div>
+  <button class="story-close-btn" onclick="closeStoryViewer()">✕</button>
+  <div class="story-viewer-img" id="storyViewerImg" onclick="nextStory()"></div>
+  <div class="story-viewer-caption" id="storyViewerCaption"></div>
+</div>
+
+<!-- SPIN SHEET -->
+<div class="sheet" id="spinSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">🎰 Kunlik bonus</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body" style="text-align:center;padding:20px;">
+    <div class="spin-wheel-wrap">
+      <div class="spin-info" id="spinInfo">Bugungi bonusni yutib oling!</div>
+      <div class="spin-container">
+        <div class="spin-arrow">▼</div>
+        <div class="spin-wheel" id="spinWheel"></div>
+        <div class="spin-center" onclick="doSpin()">🎰</div>
+      </div>
+      <div class="spin-result" id="spinResult"></div>
+      <button class="spin-btn" id="spinBtn" onclick="doSpin()">🎰 Aylantirish</button>
+      <div class="spin-prizes" id="spinPrizes"></div>
+    </div>
+  </div>
 </div>
 
 </div><!-- /app-root -->
