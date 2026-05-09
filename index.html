@@ -982,7 +982,111 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
 /* Smoother sheet transitions */
 .sheet{transition:transform 0.32s cubic-bezier(0.22,0.61,0.36,1)!important;}
 .overlay{transition:opacity 0.28s ease!important;}
+
+/* ===== FEATURE STYLES ===== */
+
+/* #2 Auto post indicator */
+.auto-post-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;background:var(--accent-lt);color:var(--accent-dk);padding:2px 8px;border-radius:20px;font-weight:700;}
+
+/* #3 Order timeline */
+.timeline{display:flex;flex-direction:column;gap:0;padding:12px 0;}
+.tl-item{display:flex;gap:12px;position:relative;padding:0 0 24px 0;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{width:20px;height:20px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);flex-shrink:0;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.tl-item.done .tl-dot{background:var(--accent);border-color:var(--accent);}
+.tl-item.active .tl-dot{background:var(--warm);border-color:var(--warm);box-shadow:0 0 0 4px var(--warm-lt);animation:tl-pulse 1.5s infinite;}
+.tl-line{position:absolute;left:9px;top:20px;width:2px;height:calc(100% - 20px);background:var(--border);}
+.tl-item:last-child .tl-line{display:none;}
+.tl-item.done .tl-line{background:var(--accent);}
+.tl-content{flex:1;padding-top:1px;}
+.tl-title{font-size:13px;font-weight:700;color:var(--text);}
+.tl-desc{font-size:11px;color:var(--text2);margin-top:2px;}
+.tl-time{font-size:10px;color:var(--text3);margin-top:2px;}
+@keyframes tl-pulse{0%,100%{box-shadow:0 0 0 4px var(--warm-lt);}50%{box-shadow:0 0 0 8px transparent;}}
+
+/* Push notification badge */
+.push-dot{width:8px;height:8px;border-radius:50%;background:#FF3B30;position:absolute;top:-2px;right:-2px;border:2px solid var(--bg2);display:none;}
+.push-dot.show{display:block;}
+
+/* #6 Spin wheel */
+.spin-cont{display:flex;flex-direction:column;align-items:center;padding:10px 0;}
+.spin-wheel{width:280px;height:280px;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.15);margin-bottom:10px;}
+.spin-seg{position:absolute;width:100%;height:100%;left:0;top:0;transform-origin:50% 50%;clip-path:polygon(50% 50%,50% 0%,100% 0%,100% 100%,50% 100%,50% 50%);display:flex;align-items:flex-start;justify-content:center;padding-top:12px;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
+.spin-arrow{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:28px;z-index:5;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));}
+.spin-btn{width:64px;height:64px;border-radius:50%;background:var(--grad-accent);color:#fff;font-size:15px;font-weight:900;border:none;cursor:pointer;box-shadow:var(--shadow-glow);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:6;transition:transform 0.15s;}
+.spin-btn:active{transform:translate(-50%,-50%) scale(0.92);}
+.spin-btn:disabled{opacity:0.5;transform:translate(-50%,-50%) scale(0.95);}
+.spin-info{text-align:center;font-size:13px;color:var(--text2);margin-top:8px;}
+.spin-result{text-align:center;padding:16px;font-size:15px;font-weight:700;color:var(--accent);}
+.spin-countdown{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* #7 Referral */
+.ref-card{background:var(--card);border-radius:var(--r);padding:16px;margin:12px 0;box-shadow:var(--shadow);}
+.ref-code-box{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--rs);padding:10px 14px;margin:10px 0;}
+.ref-code{font-size:18px;font-weight:900;letter-spacing:2px;color:var(--accent);flex:1;text-align:center;}
+.ref-copy-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+.ref-stats{display:flex;gap:12px;margin:12px 0;}
+.ref-stat{flex:1;text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px;}
+.ref-stat-val{font-size:20px;font-weight:900;color:var(--accent);}
+.ref-stat-lbl{font-size:10px;color:var(--text2);margin-top:2px;}
+.ref-share-btn{width:100%;padding:12px;background:var(--grad-accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+
+/* #8 Quick re-order */
+.reorder-btn{display:inline-flex;align-items:center;gap:4px;background:var(--accent-lt);color:var(--accent-dk);border:none;border-radius:var(--rs);padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:background 0.15s;}
+.reorder-btn:active{background:var(--accent);color:#fff;}
+
+/* #15 Cart fly animation */
+.fly-item{position:fixed;z-index:9999;pointer-events:none;font-size:28px;transition:all 0.6s cubic-bezier(0.22,0.61,0.36,1);}
+.fly-item.fly-end{transform:scale(0.3);opacity:0;}
+
+/* #16 Admin banner */
+.admin-banner{width:100%;border-radius:var(--r);overflow:hidden;position:relative;margin-bottom:14px;cursor:pointer;}
+.admin-banner img{width:100%;display:block;object-fit:cover;max-height:160px;}
+.admin-banner .banner-close{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.4);color:#fff;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.banner-edit-area{background:var(--card);border:2px dashed var(--border);border-radius:var(--rs);padding:16px;text-align:center;margin:12px 0;}
+.banner-edit-area input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;margin:6px 0;background:var(--bg2);color:var(--text);}
+.banner-edit-area input[type=url]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;margin:6px 0;background:var(--bg2);color:var(--text);}
+
+/* #18 Story-style promotions */
+.stories-bar{display:flex;gap:10px;overflow-x:auto;padding:10px 0 14px 0;scrollbar-width:none;-ms-overflow-style:none;margin:0 -4px;padding:10px 4px 14px 4px;}
+.stories-bar::-webkit-scrollbar{display:none;}
+.story-ring{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;}
+.story-outer{width:64px;height:64px;border-radius:50%;padding:3px;background:conic-gradient(var(--accent) 0deg 120deg, var(--warm) 120deg 240deg, var(--rose) 240deg 360deg);}
+.story-outer.seen{background:var(--border);}
+.story-avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid var(--bg2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.story-label{font-size:10px;color:var(--text2);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
+
+/* Story viewer */
+.story-viewer{position:fixed;inset:0;z-index:300;background:#000;display:none;flex-direction:column;}
+.story-viewer.on{display:flex;}
+.story-viewer-head{display:flex;align-items:center;padding:12px 14px;gap:10px;position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(to bottom,rgba(0,0,0,0.6),transparent);}
+.story-viewer-head .story-av{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--bg3);}
+.story-viewer-head .story-un{font-size:13px;font-weight:700;color:#fff;}
+.story-viewer-head .story-close{position:absolute;right:12px;top:12px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.story-progress-bar{display:flex;gap:4px;padding:8px 12px 0 12px;position:absolute;top:0;left:0;right:0;z-index:6;}
+.story-progress-seg{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.3);overflow:hidden;}
+.story-progress-seg .sp-fill{height:100%;background:#fff;width:0%;transition:width 0.1s linear;}
+.story-progress-seg.active .sp-fill{width:100%;}
+.story-progress-seg.done .sp-fill{width:100%;background:#fff;}
+.story-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
+.story-img-wrap img{max-width:100%;max-height:100%;object-fit:contain;}
+.story-img-wrap video{max-width:100%;max-height:100%;}
+.story-caption{position:absolute;bottom:40px;left:20px;right:20px;color:#fff;font-size:14px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.6);text-align:center;}
+.story-nav{position:absolute;inset:0;display:flex;}
+.story-nav-left{flex:1;}
+.story-nav-right{flex:1;}
+
+/* #20 Order PDF */
+.pdf-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:8px 14px;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all 0.15s;}
+.pdf-btn:active{background:var(--accent-lt);border-color:var(--accent);color:var(--accent-dk);}
+
+/* #21 Full translation EN support */
+body .lang-en{display:none;}
+
+body.dark .spin-wheel{box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+body.dark .story-viewer{background:#000;}
 </style>
+
 </head>
 <body>
 <div id="app-root">
@@ -1148,7 +1252,9 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         <div class="order-code" id="successCode">------</div>
         <div class="order-code-hint" data-tr="success_code_hint">Bu kodni do'konda ko'rsating</div>
       </div>
-      <button class="big-btn pri" onclick="closeAll()" data-tr="continue_btn">Davom etish 🛍</button>
+      <div id="successActions" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center;">
+        <button class="big-btn pri" onclick="closeAll()" data-tr="continue_btn">Davom etish 🛍</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4462,5 +4568,864 @@ window.installPWA=async()=>{
   <div class="s-body" id="revBody"></div>
 </div>
 
+
+<!-- #3 ORDER TIMELINE SHEET -->
+<div class="sheet" id="tlSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">📋 Buyurtma holati</div>
+    <button class="s-close" onclick="closeAll();window._closeCustomSheets?.()">✕</button>
+  </div>
+  <div class="s-body" id="tlBody"></div>
+</div>
+
+<!-- #6 SPIN WHEEL SHEET -->
+<div class="sheet" id="spinSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">🎰 Kunlik spin</div>
+    <button class="s-close" onclick="closeAll();window._closeCustomSheets?.()">✕</button>
+  </div>
+  <div class="s-body" id="spinBody">
+    <div class="spin-cont">
+      <div class="spin-wheel" id="spinWheel"></div>
+      <div class="spin-info" id="spinInfo">Kuniga 1 marta spinningiz bor!</div>
+      <div class="spin-result" id="spinResult"></div>
+      <div class="spin-countdown" id="spinCountdown"></div>
+    </div>
+  </div>
+</div>
+
+<!-- #16 BANNER EDITOR SHEET (admin) -->
+<div class="sheet" id="bannerSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">🖼 Banner sozlamalari</div>
+    <button class="s-close" onclick="closeAll();window._closeCustomSheets?.()">✕</button>
+  </div>
+  <div class="s-body">
+    <div class="banner-edit-area">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Banner rasmi (URL)</div>
+      <input type="url" id="bannerImgInput" placeholder="https://example.com/banner.jpg">
+      <div style="font-size:13px;font-weight:700;margin:10px 0 6px;">Link (ixtiyoriy)</div>
+      <input type="text" id="bannerLinkInput" placeholder="https://t.me/yourchannel">
+      <button class="big-btn pri" style="margin-top:12px" onclick="window.saveBanner()">💾 Saqlash</button>
+      <button class="big-btn" style="margin-top:6px;background:var(--bg3);color:var(--text);" onclick="window.deleteBanner()">🗑 O'chirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- #18 STORIES VIEWER -->
+<div class="story-viewer" id="storyViewer">
+  <div class="story-progress-bar" id="storyProgressBar"></div>
+  <div class="story-viewer-head">
+    <img class="story-av" id="storyViewerAv" src="" alt="">
+    <span class="story-un" id="storyViewerName"></span>
+    <button class="story-close" onclick="window.closeStoryViewer()">✕</button>
+  </div>
+  <div class="story-img-wrap" id="storyImgWrap" onclick="window.storyNext()">
+    <img id="storyViewerImg" src="" alt="" style="display:none">
+  </div>
+  <div class="story-nav">
+    <div class="story-nav-left" onclick="event.stopPropagation();window.storyPrev()"></div>
+    <div class="story-nav-right" onclick="event.stopPropagation();window.storyNext()"></div>
+  </div>
+</div>
+
 </div><!-- /app-root -->
+
+<script>
+// ===== FEATURE: CUSTOM SHEET CLOSE =====
+window._closeCustomSheets=()=>{
+  ['tlSheet','spinSheet','bannerSheet'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('on');});
+  window.closeStoryViewer?.();
+};
+
+// ===== FEATURE #21: FULL TRANSLATION (EN) =====
+(function(){
+  const TR_EN={
+    added_toast:"added",
+    fav_added:"❤️ Added to favorites",
+    fav_removed:"💔 Removed",
+    search_title:"🔍 Search",
+    search_ph:"Search products...",
+    fav_title:"❤️ Favorites",
+    empty_cart:"Cart is empty",
+    empty_cart_btn:"🛍 Start shopping",
+    continue_btn:"Continue 🛍",
+    add_to_cart:"Add to cart",
+    pd_title:"📦 Product",
+    pd_choose_var:"Choose option",
+    pd_review:"Reviews",
+    pd_write_review:"Write a review",
+    cart_title:"🛒 Cart",
+    o_title:"📝 Order",
+    o_name:"Your name *",
+    o_phone:"Phone *",
+    o_addr:"Address",
+    o_note:"Note",
+    o_submit:"✅ Submit order",
+    o_delivery:"Delivery",
+    o_pickup:"Pickup",
+    o_time:"Time",
+    o_promo:"Promo code",
+    o_apply:"Apply",
+    o_total:"Total",
+    o_discount:"Discount",
+    success_title:"✅ Order accepted!",
+    success_sub:"You can pick up at the specified time.<br>Save your code:",
+    profile_title:"👤 Profile",
+    admin_title:"⚙️ Admin",
+    chat_title:"💬 Online chat",
+    contact_title:"📞 Contacts",
+    contact_addr:"Address",
+    contact_phone:"Phone",
+    contact_work:"Working hours",
+    contact_inst:"Instagram",
+    cat_title:"📂 Categories",
+    cats_sub:"Choose a category",
+    sale_btn:"🔥 Sales",
+    new_btn:"🆕 New",
+    top_btn:"⭐ Top sellers",
+    po_title:"📦 Pre-order",
+    po_name_lbl:"Your name *",
+    po_name_ph:"Sarvar Karimov",
+    po_items_lbl:"Pre-order items *",
+    po_item_ph:"Product name",
+    po_note_ph:"Additional info...",
+    po_submit_btn:"✅ Send pre-order",
+    sort_title:"Sort by",
+    sort_popular:"Popular",
+    sort_cheap:"Cheapest",
+    sort_expensive:"Most expensive",
+    sort_newest:"Newest",
+    fav_no_items:"No favorites yet",
+    pd_no_reviews:"No reviews yet",
+    pd_write_first:"Be the first to review!",
+    pd_rating:"Rating",
+    pd_review_placeholder:"Write your opinion about the product...",
+    pd_submit_review:"📤 Submit",
+  };
+  const _origTr=window.tr;
+  window.tr=function(key){
+    if(window.currentLang==='en'&&TR_EN[key])return TR_EN[key];
+    return _origTr(key);
+  };
+  // Override applyLang to handle English
+  const _origApplyLang=window.applyLang;
+  window.applyLang=function(){
+    _origApplyLang?.();
+    if(window.currentLang==='en'){
+      document.querySelectorAll('[data-tr]').forEach(el=>{
+        const k=el.dataset.tr;
+        if(TR_EN[k])el.textContent=TR_EN[k];
+      });
+      document.querySelectorAll('[data-tr-html]').forEach(el=>{
+        const k=el.dataset.trHtml;
+        if(TR_EN[k])el.innerHTML=TR_EN[k];
+      });
+    }
+  };
+  // Add EN to existing TR for tr() fallback
+  Object.keys(TR_EN).forEach(k=>{
+    if(!window.TR)window.TR={};
+    if(!window.TR[k])window.TR[k]={};
+    window.TR[k].en=TR_EN[k];
+  });
+  // Language switch: add English option
+  const _origToggleLang=window.toggleLang;
+  window.toggleLang=function(){
+    const langs=['uz','ru','en'];
+    const idx=langs.indexOf(window.currentLang);
+    window.currentLang=langs[(idx+1)%langs.length];
+    localStorage.setItem('lang',window.currentLang);
+    applyLang();
+    document.documentElement.setAttribute('lang',window.currentLang);
+    if(document.getElementById('profileSheet')?.classList.contains('on'))window.loadMyOrders?.();
+    haptic('light');
+  };
+  // Profile lang display
+  const _origOpenProfile=window.openProfile;
+  window.openProfile=function(){
+    if(_origOpenProfile)_origOpenProfile();
+    setTimeout(()=>{
+      const lbl=document.querySelector('.prof-lang .prof-val');
+      if(lbl){
+        const map={uz:"O'zbekcha",ru:"Русский",en:"English"};
+        lbl.textContent=map[window.currentLang]||'English';
+      }
+    },50);
+  };
+})();
+
+// ===== FEATURE #2: AUTO TG CHANNEL POST =====
+(function(){
+  window.autoPostToChannel=async function(orderData){
+    try{
+      const config=window.botConfig||{};
+      const token=config.token||'';
+      const chatId=config.chatId||'';
+      if(!token||!chatId)return;
+      const lang=window.currentLang||'ru';
+      const items=orderData.items||[];
+      const itemLines=items.map(i=>`• ${i.name} × ${i.qty} = ${fmt(i.price*i.qty)||(i.price*i.qty)}`).join('\n');
+      const msg=[
+        `🆕 *Yangi buyurtma!*`,
+        ``,
+        `👤 ${orderData.name||'—'}`,
+        `📞 ${orderData.phone||'—'}`,
+        `📍 ${orderData.deliveryType==='yandex'?'Yetkazib berish':'Olib ketish'}`,
+        orderData.address?`🏠 ${orderData.address}`:'',
+        ``,
+        `📦 *Mahsulotlar:*`,
+        itemLines||'   (bo\'sh)',
+        ``,
+        `💰 Jami: ${fmt(orderData.total)||orderData.total}`,
+        orderData.promoCode?`🏷 Promo: ${orderData.promoCode}`:'',
+        orderData.discount?`💵 Chegirma: ${orderData.discount}%`:'',
+        ``,
+        `🕐 ${new Date().toLocaleString('uz-UZ')}`,
+        `🔢 Kod: ${orderData.code||'—'}`
+      ].filter(Boolean).join('\n');
+      const url=`https://api.telegram.org/bot${token}/sendMessage`;
+      await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:chatId,text:msg,parse_mode:'Markdown'})
+      });
+    }catch(e){console.warn('Auto-post error:',e);}
+  };
+  // Patch submitOrder to call autoPost and add PDF button
+  const _origSubmit=window.submitOrder;
+  if(_origSubmit){
+    window.submitOrder=async function(...args){
+      const result=await _origSubmit.apply(this,args);
+      // capture order data
+      const code=document.getElementById('successCode')?.textContent||'—';
+      const total=window.cartTotal?.()||0;
+      const items=Object.values(window.cart||{}).filter(i=>i.qty>0).map(i=>({name:i.name,qty:i.qty,price:i.price}));
+      const orderData={name:document.getElementById('oName')?.value,phone:document.getElementById('oPhone')?.value,deliveryType:window.deliveryType||'pickup',address:document.getElementById('oAddr')?.value,total,items,code,discount:window.appliedPromo?.discount||0,promoCode:window.appliedPromo?.code||''};
+      window.autoPostToChannel(orderData);
+      // Add PDF button to success screen
+      setTimeout(()=>{
+        const btnContainer=document.getElementById('successActions');
+        if(btnContainer&&!document.getElementById('pdfCheckBtn')){
+          const btn=document.createElement('button');
+          btn.id='pdfCheckBtn';
+          btn.className='pdf-btn';
+          btn.style.marginTop='0';
+          btn.innerHTML='📄 '+(window.currentLang==='uz'?'Chekni yuklab olish':window.currentLang==='en'?'Download receipt':'Скачать чек');
+          btn.onclick=()=>window.generateOrderPdf({...orderData,createdAt:new Date()});
+          btnContainer.appendChild(btn);
+        }
+      },200);
+      return result;
+    };
+  }
+})();
+
+// ===== FEATURE #3: ORDER TIMELINE + PUSH =====
+(function(){
+  window.orderTimeline=[
+    {id:'placed',icon:'📝',uz:'Buyurtma qabul qilindi',ru:'Заказ принят',en:'Order placed'},
+    {id:'confirmed',icon:'✅',uz:'Tasdiqlandi',ru:'Подтвержден',en:'Confirmed'},
+    {id:'preparing',icon:'👨‍🍳',uz:'Tayyorlanmoqda',ru:'Готовится',en:'Preparing'},
+    {id:'ready',icon:'📦',uz:'Tayyor',ru:'Готов',en:'Ready'},
+    {id:'done',icon:'🎉',uz:'Yakunlandi',ru:'Завершен',en:'Completed'}
+  ];
+  window.openTimeline=function(orderData){
+    const tl=window.orderTimeline;
+    const currentIdx=orderData?.statusIdx??0;
+    let html='<div class="timeline">';
+    tl.forEach((s,i)=>{
+      const state=i<currentIdx?'done':i===currentIdx?'active':'';
+      const label=s[window.currentLang]||s.uz||s.ru;
+      html+=`<div class="tl-item ${state}">
+        <div style="position:relative">
+          <div class="tl-dot">${s.icon}</div>
+          ${i<tl.length-1?'<div class="tl-line"></div>':''}
+        </div>
+        <div class="tl-content">
+          <div class="tl-title">${label}</div>
+          ${i===currentIdx&&orderData?.statusDesc?`<div class="tl-desc">${orderData.statusDesc}</div>`:''}
+          ${orderData?.times?.[s.id]?`<div class="tl-time">${orderData.times[s.id]}</div>`:''}
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+    document.getElementById('tlBody').innerHTML=html;
+    document.getElementById('overlay').classList.add('on');
+    document.getElementById('tlSheet').classList.add('on');
+    window._updateBackBtn?.();
+  };
+  // Push notification (in-app toast with sound)
+  window.sendPushNotification=function(title,msg){
+    const el=document.getElementById('pushBadge')||(()=>{
+      const b=document.createElement('div');b.id='pushBadge';b.className='push-dot';
+      const cart=document.querySelector('.float-cart');if(cart){cart.style.position='relative';cart.appendChild(b);}
+      return b;
+    })();
+    el.classList.add('show');
+    window.toast?.(`🔔 ${title}: ${msg}`);
+    window.haptic?.('medium');
+    setTimeout(()=>el.classList.remove('show'),5000);
+  };
+})();
+
+// ===== FEATURE #6: DAILY SPIN =====
+(function(){
+  const SPIN_PRIZES=[
+    {label_uz:'5% chegirma',label_ru:'5% скидка',label_en:'5% discount',discount:5,color:'#FF6B6B'},
+    {label_uz:'10% chegirma',label_ru:'10% скидка',label_en:'10% discount',discount:10,color:'#F59E0B'},
+    {label_uz:'3% chegirma',label_ru:'3% скидка',label_en:'3% discount',discount:3,color:'#3B9DF5'},
+    {label_uz:'20% chegirma',label_ru:'20% скидка',label_en:'20% discount',discount:20,color:'#1FA150'},
+    {label_uz:'Bepul yetkazib',label_ru:'Беспл. доставка',label_en:'Free delivery',discount:0,color:'#FF8AA9'},
+    {label_uz:'2% chegirma',label_ru:'2% скидка',label_en:'2% discount',discount:2,color:'#A855F7'},
+    {label_uz:'15% chegirma',label_ru:'15% скидка',label_en:'15% discount',discount:15,color:'#EC4899'},
+    {label_uz:'50% chegirma',label_ru:'50% скидка',label_en:'50% discount',discount:50,color:'#F97316'}
+  ];
+  window.openSpin=function(){
+    document.getElementById('overlay').classList.add('on');
+    document.getElementById('spinSheet').classList.add('on');
+    window._updateBackBtn?.();
+    renderSpinWheel();
+  };
+  function renderSpinWheel(){
+    const wheel=document.getElementById('spinWheel');
+    const prizes=SPIN_PRIZES;
+    const segAngle=360/prizes.length;
+    let segs='';
+    prizes.forEach((p,i)=>{
+      const rot=i*segAngle;
+      const label=p[`label_${window.currentLang}`]||p.label_ru||p.label_uz;
+      segs+=`<div class="spin-seg" style="transform:rotate(${rot}deg);background:${p.color};">${label}</div>`;
+    });
+    wheel.innerHTML=`<div class="spin-arrow">▼</div>${segs}<button class="spin-btn" id="spinBtn" onclick="window.doSpin()">🎲</button>`;
+    updateSpinState();
+  }
+  window.doSpin=function(){
+    const btn=document.getElementById('spinBtn');
+    if(!btn||btn.disabled)return;
+    const lastSpin=localStorage.getItem('lastSpinDate');
+    const today=new Date().toDateString();
+    if(lastSpin===today){
+      document.getElementById('spinResult').textContent=window.currentLang==='uz'?"Bugun aylantirdingiz!":window.currentLang==='en'?"You already spun today!":"Вы уже крутили сегодня!";
+      return;
+    }
+    btn.disabled=true;
+    btn.textContent='⏳';
+    const prizes=SPIN_PRIZES;
+    const segAngle=360/prizes.length;
+    const winIdx=Math.floor(Math.random()*prizes.length);
+    const extraSpins=3+Math.floor(Math.random()*5);
+    const deg=360*extraSpins+(360-winIdx*segAngle-segAngle/2);
+    const wheel=document.getElementById('spinWheel');
+    wheel.style.transition='transform 3s cubic-bezier(0.17,0.67,0.12,0.99)';
+    wheel.style.transform=`rotate(${deg}deg)`;
+    setTimeout(()=>{
+      wheel.style.transition='none';
+      wheel.style.transform=`rotate(${winIdx*segAngle}deg)`;
+      localStorage.setItem('lastSpinDate',today);
+      const prize=prizes[winIdx];
+      const label=prize[`label_${window.currentLang}`]||prize.label_ru||prize.label_uz;
+      if(prize.discount>0){
+        window.toast?.(`🎉 ${label}!`);
+        // Apply discount as promo
+        const code='SPIN'+winIdx+Date.now().toString(36).toUpperCase();
+        if(window.genPromoCode){
+          window.appliedPromo={code,discount:prize.discount,source:'spin'};
+          window.toast?.(`🎉 ${label} qo'llandi! Kod: ${code}`);
+        }
+      }else if(prize.discount===0&&prize.label_uz.includes('Bepul')){
+        window.toast?.('🚚 Bepul yetkazib berish!');
+      }
+      document.getElementById('spinResult').textContent=`🎉 ${label}!`;
+      document.getElementById('spinInfo').textContent=window.currentLang==='uz'?"Ertaga yana kelib aylantiring!":window.currentLang==='en'?"Come back tomorrow to spin again!":"Приходите завтра крутить снова!";
+      btn.textContent='✅';
+      window.haptic?.('medium');
+      updateSpinState();
+    },3200);
+  };
+  function updateSpinState(){
+    const lastSpin=localStorage.getItem('lastSpinDate');
+    const today=new Date().toDateString();
+    const info=document.getElementById('spinInfo');
+    const btn=document.getElementById('spinBtn');
+    if(lastSpin===today&&btn){
+      btn.disabled=true;
+      btn.textContent='✅';
+      info.textContent=window.currentLang==='uz'?"Ertaga yana kelib aylantiring!":window.currentLang==='en'?"Come back tomorrow to spin again!":"Приходите завтра крутить снова!";
+    }else if(btn){
+      btn.disabled=false;
+      btn.textContent='🎲';
+      info.textContent=window.currentLang==='uz'?"Kuniga 1 marta spinningiz bor!":window.currentLang==='en'?"You have 1 spin per day!":"У вас 1 крутка в день!";
+    }
+    // countdown
+    const cd=document.getElementById('spinCountdown');
+    if(lastSpin===today&&cd){
+      const next=new Date();next.setHours(24,0,0,0);
+      const diff=next-Date.now();
+      const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);
+      cd.textContent=`${window.currentLang==='uz'?'Keyingi':window.currentLang==='en'?'Next':'След.'}: ${h}h ${m}m`;
+    }else if(cd){
+      cd.textContent='';
+    }
+  }
+  // Re-render on lang change
+  const _origApplyLangSpin=window.applyLang;
+  window.applyLang=function(){
+    _origApplyLangSpin?.();
+    if(document.getElementById('spinSheet')?.classList.contains('on'))renderSpinWheel();
+  };
+  setInterval(updateSpinState,30000);
+})();
+
+// ===== FEATURE #7: REFERRAL =====
+(function(){
+  window.getReferralCode=function(){
+    const userId=window.tgUser?.id||'guest';
+    let code=localStorage.getItem('refCode');
+    if(!code){
+      code='KRS'+userId.toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase();
+      localStorage.setItem('refCode',code);
+    }
+    return code;
+  };
+  window.getReferralCount=function(){
+    return parseInt(localStorage.getItem('refCount')||'0');
+  };
+  window.getReferralBonus=function(){
+    return parseFloat(localStorage.getItem('refBonus')||'0');
+  };
+  window.addReferral=function(){
+    const cnt=window.getReferralCount()+1;
+    localStorage.setItem('refCount',cnt.toString());
+    const bonus=window.getReferralCount()*5000;
+    localStorage.setItem('refBonus',bonus.toString());
+    window.toast?.('🎉 Do\'stingiz qo\'shildi! +5,000 so\'m bonus!');
+  };
+  window.shareReferral=async function(){
+    const code=window.getReferralCode();
+    const msg=window.currentLang==='uz'
+      ?`🛍 Kerasys Shop do'koniga taklif qilaman! Mening referral kodim: ${code}\n\n👉 https://t.me/kerasys_shop_bot?start=ref_${code}`
+      :window.currentLang==='en'
+      ?`🛍 I invite you to Kerasys Shop! My referral code: ${code}\n\n👉 https://t.me/kerasys_shop_bot?start=ref_${code}`
+      :`🛍 Приглашаю в Kerasys Shop! Мой реферальный код: ${code}\n\n👉 https://t.me/kerasys_shop_bot?start=ref_${code}`;
+    try{
+      if(navigator.share){await navigator.share({title:'Kerasys Shop',text:msg});}
+      else{
+        await navigator.clipboard.writeText(msg);
+        window.toast?.('📋 Havola nusxalandi!');
+      }
+    }catch(e){
+      try{await navigator.clipboard.writeText(msg);window.toast?.('📋 Havola nusxalandi!');}catch(_){}
+    }
+  };
+  // Render referral section in profile
+  const _origRenderProfile=window.renderProfileBody||window.openProfile;
+  window.renderReferralSection=function(){
+    const code=window.getReferralCode();
+    const count=window.getReferralCount();
+    const bonus=window.getReferralBonus();
+    const L=window.currentLang;
+    return `<div class="ref-card">
+      <div style="font-size:14px;font-weight:800;color:var(--text);">👥 ${L==='uz'?"Do'stingizni taklif qiling":L==='en'?'Invite a friend':'Пригласите друга'}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;">${L==='uz'?'Har bir do\'stingiz uchun 5,000 so\'m bonus!':L==='en'?'5,000 so\'m bonus for each friend!':'5,000 сум бонуса за каждого друга!'}</div>
+      <div class="ref-code-box">
+        <span class="ref-code">${code}</span>
+        <button class="ref-copy-btn" onclick="navigator.clipboard.writeText('${code}');window.toast?.('📋 Nusxalandi!')">${L==='uz'?'Nusxa':L==='en'?'Copy':'Копия'}</button>
+      </div>
+      <div class="ref-stats">
+        <div class="ref-stat"><div class="ref-stat-val">${count}</div><div class="ref-stat-lbl">${L==='uz'?'Do\'stlar':L==='en'?'Friends':'Друзья'}</div></div>
+        <div class="ref-stat"><div class="ref-stat-val">${fmt(bonus)||bonus}</div><div class="ref-stat-lbl">${L==='uz'?'Bonus':L==='en'?'Bonus':'Бонус'}</div></div>
+      </div>
+      <button class="ref-share-btn" onclick="window.shareReferral()">📤 ${L==='uz'?'Ulashish':L==='en'?'Share':'Поделиться'}</button>
+    </div>`;
+  };
+  // Inject referral into profile
+  const _origProfileFn=window.openProfile;
+  window.openProfile=function(){
+    _origProfileFn?.();
+    setTimeout(()=>{
+      const body=document.getElementById('profileBody');
+      if(body&&!document.getElementById('refSection')){
+        const div=document.createElement('div');div.id='refSection';
+        div.innerHTML=window.renderReferralSection();
+        body.appendChild(div);
+      }
+    },100);
+  };
+  // Handle referral from start param
+  (function(){
+    try{
+      const startParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+      if(startParam.startsWith('ref_')){
+        const refCode=startParam.replace('ref_','');
+        localStorage.setItem('referredBy',refCode);
+        window.addReferral?.();
+      }
+    }catch(_){}
+  })();
+})();
+
+// ===== FEATURE #8: QUICK RE-ORDER =====
+(function(){
+  window.reorderFromHistory=function(order){
+    if(!order||!order.items)return;
+    order.items.forEach(item=>{
+      const pid=item.pid||item.id;
+      if(pid&&window.addSimple){
+        // add multiple qty at once
+        for(let i=0;i<(item.qty||1);i++)window.addSimple(pid);
+      }
+    });
+    window.toast?.('🔄 Buyurtma qayta tiklandi!');
+    window.haptic?.('medium');
+  };
+  // Add reorder button to order history items
+  const _origRenderHistory=window.renderOrderHistory;
+  if(_origRenderHistory){
+    window.renderOrderHistory=function(){
+      // call original then patch
+      const result=_origRenderHistory();
+      // add reorder buttons
+      document.querySelectorAll('.order-history-item').forEach(el=>{
+        if(!el.querySelector('.reorder-btn')){
+          const btn=document.createElement('button');
+          btn.className='reorder-btn';
+          btn.innerHTML='🔄 '+(window.currentLang==='uz'?'Qayta':'Повтор'||'Reorder');
+          btn.onclick=()=>{
+            const idx=el.dataset.orderIdx;
+            if(idx!==undefined&&window.userOrders?.[idx]){
+              window.reorderFromHistory(window.userOrders[idx]);
+            }
+          };
+          el.querySelector('.order-actions')?.appendChild(btn);
+        }
+      });
+      return result;
+    };
+  }
+})();
+
+// ===== FEATURE #15: CART FLY ANIMATION =====
+(function(){
+  window.flyToCart=function(){
+    const fly=document.createElement('div');
+    fly.className='fly-item';
+    fly.textContent='🛒';
+    fly.style.left='40%';
+    fly.style.top='40%';
+    fly.style.fontSize='32px';
+    document.body.appendChild(fly);
+    const cart=document.querySelector('.float-cart');
+    if(cart){
+      const cartRect=cart.getBoundingClientRect();
+      requestAnimationFrame(()=>{
+        fly.style.left=cartRect.left+'px';
+        fly.style.top=cartRect.top+'px';
+        fly.style.width='0';
+        fly.style.height='0';
+        fly.classList.add('fly-end');
+      });
+    }
+    setTimeout(()=>fly.remove(),700);
+  };
+  // Patch addSimple to trigger fly
+  const _origAddSimple=window.addSimple;
+  window.addSimple=function(id){
+    _origAddSimple(id);
+    window.flyToCart();
+  };
+})();
+
+// ===== FEATURE #16: ADMIN BANNER =====
+(function(){
+  window.saveBanner=function(){
+    const img=document.getElementById('bannerImgInput')?.value?.trim();
+    const link=document.getElementById('bannerLinkInput')?.value?.trim();
+    if(!img){window.toast?.('❌ Rasm URL kiriting');return;}
+    const data={img,link:link||'',active:true,updatedAt:new Date().toISOString()};
+    localStorage.setItem('adminBanner',JSON.stringify(data));
+    window.toast?.('✅ Banner saqlandi!');
+    window.renderAdminBanner?.();
+    document.getElementById('overlay').classList.remove('on');
+    document.getElementById('bannerSheet')?.classList.remove('on');
+  };
+  window.deleteBanner=function(){
+    localStorage.removeItem('adminBanner');
+    window.toast?.('🗑 Banner o\'chirildi');
+    window.renderAdminBanner?.();
+    document.getElementById('overlay').classList.remove('on');
+    document.getElementById('bannerSheet')?.classList.remove('on');
+  };
+  window.renderAdminBanner=function(){
+    const container=document.getElementById('bannerContainer');
+    if(!container)return;
+    const data=JSON.parse(localStorage.getItem('adminBanner')||'null');
+    if(data&&data.img&&data.active){
+      const link=data.link?`onclick="window.open('${data.link}','_blank')" style="cursor:pointer"`:'';
+      container.innerHTML=`<div class="admin-banner" ${link}>
+        <img src="${data.img}" alt="banner" onerror="this.parentElement.style.display='none'">
+        <button class="banner-close" onclick="event.stopPropagation();window.dismissBanner()">✕</button>
+      </div>`;
+      container.style.display='block';
+    }else{
+      container.style.display='none';
+    }
+  };
+  window.dismissBanner=function(){
+    const bannerEl=document.querySelector('.admin-banner');
+    if(bannerEl)bannerEl.style.display='none';
+    sessionStorage.setItem('bannerDismissed','true');
+  };
+  // Show banner editor in admin panel
+  const _origAdminFn=window.renderAdminPanel||window.openAdmin;
+  window.openBannerEditor=function(){
+    const data=JSON.parse(localStorage.getItem('adminBanner')||'null');
+    document.getElementById('bannerImgInput').value=data?.img||'';
+    document.getElementById('bannerLinkInput').value=data?.link||'';
+    document.getElementById('overlay').classList.add('on');
+    document.getElementById('bannerSheet').classList.add('on');
+    window._updateBackBtn?.();
+  };
+  // Auto render banner on load
+  setTimeout(()=>window.renderAdminBanner?.(),500);
+})();
+
+// ===== FEATURE #18: STORY-STYLE PROMOTIONS =====
+(function(){
+  const DEFAULT_STORIES=[
+    {id:'s1',img:'https://via.placeholder.com/360x640/1FA150/ffffff?text=Yangiliklar',uz:'Yangi mahsulotlar!',ru:'Новые товары!',en:'New products!',label_uz:'Yangilik',label_ru:'Новинки',label_en:'News'},
+    {id:'s2',img:'https://via.placeholder.com/360x640/F59E0B/ffffff?text=Aksiya',uz:'Chegirmalar 50% gacha!',ru:'Скидки до 50%!',en:'Up to 50% off!',label_uz:'Aksiya',label_ru:'Акция',label_en:'Sale'},
+    {id:'s3',img:'https://via.placeholder.com/360x640/FF6B6B/ffffff?text=Bonus',uz:'Do\'stlaringizni taklif qiling!',ru:'Пригласите друзей!',en:'Invite friends!',label_uz:'Bonus',label_ru:'Бонус',label_en:'Bonus'}
+  ];
+  let storiesData=JSON.parse(localStorage.getItem('storiesData')||'null')||DEFAULT_STORIES;
+  window.renderStories=function(){
+    const container=document.getElementById('storiesContainer');
+    if(!container)return;
+    const seen=JSON.parse(localStorage.getItem('seenStories')||'[]');
+    const L=window.currentLang;
+    let html='<div class="stories-bar">';
+    storiesData.forEach(s=>{
+      const isSeen=seen.includes(s.id);
+      const label=s[`label_${L}`]||s.label_ru||s.label_uz||'';
+      html+=`<div class="story-ring" onclick="window.openStoryViewer('${s.id}')">
+        <div class="story-outer ${isSeen?'seen':''}">
+          <div class="story-avatar">${s.img?.startsWith('http')?`<img src="${s.img}" class="story-avatar" style="border-radius:50%" onerror="this.style.display='none'">`:s.img||'📸'}</div>
+        </div>
+        <div class="story-label">${label}</div>
+      </div>`;
+    });
+    html+='</div>';
+    container.innerHTML=html;
+  };
+  window.openStoryViewer=function(id){
+    const idx=storiesData.findIndex(s=>s.id===id);
+    if(idx===-1)return;
+    window._currentStoryIdx=idx;
+    window._storyTimer=null;
+    const viewer=document.getElementById('storyViewer');
+    viewer.classList.add('on');
+    window._showStory(idx);
+    // Mark as seen
+    const seen=JSON.parse(localStorage.getItem('seenStories')||'[]');
+    if(!seen.includes(id)){seen.push(id);localStorage.setItem('seenStories',JSON.stringify(seen));}
+    window.renderStories?.();
+  };
+  window._showStory=function(idx){
+    const s=storiesData[idx];
+    if(!s){window.closeStoryViewer();return;}
+    const L=window.currentLang;
+    document.getElementById('storyViewerAv').src=s.img||'';
+    document.getElementById('storyViewerName').textContent=s[`label_${L}`]||s.label_ru||s.label_uz||'';
+    const img=document.getElementById('storyViewerImg');
+    img.src=s.img||'';
+    img.style.display='block';
+    // Progress bar
+    const bar=document.getElementById('storyProgressBar');
+    bar.innerHTML=storiesData.map((_,i)=>`<div class="story-progress-seg ${i===idx?'active':i<idx?'done':''}"><div class="sp-fill"></div></div>`).join('');
+    // Auto advance
+    window._clearStoryTimer();
+    window._storyTimer=setTimeout(()=>window.storyNext?.(),5000);
+  };
+  window.storyNext=function(){
+    if(window._currentStoryIdx<storiesData.length-1){
+      window._currentStoryIdx++;
+      window._showStory(window._currentStoryIdx);
+    }else{
+      window.closeStoryViewer();
+    }
+  };
+  window.storyPrev=function(){
+    if(window._currentStoryIdx>0){
+      window._currentStoryIdx--;
+      window._showStory(window._currentStoryIdx);
+    }
+  };
+  window._clearStoryTimer=function(){
+    if(window._storyTimer){clearTimeout(window._storyTimer);window._storyTimer=null;}
+  };
+  window.closeStoryViewer=function(){
+    window._clearStoryTimer();
+    document.getElementById('storyViewer').classList.remove('on');
+  };
+  // Render stories on load
+  setTimeout(()=>window.renderStories?.(),800);
+})();
+
+// ===== FEATURE #20: ORDER PDF CHECK =====
+(function(){
+  window.generateOrderPdf=function(orderData){
+    if(!orderData)return;
+    const L=window.currentLang;
+    const lines=[
+      '═══════════════════════════════',
+      `  ${L==='uz'?'KERASYS SHOP - CHEK':L==='en'?'KERASYS SHOP - RECEIPT':'KERASYS SHOP - ЧЕК'}`,
+      '═══════════════════════════════',
+      '',
+      `  ${L==='uz'?'Sana':L==='en'?'Date':'Дата'}: ${new Date(orderData.createdAt||Date.now()).toLocaleString()}`,
+      `  ${L==='uz'?'Buyurtma':L==='en'?'Order':'Заказ'}: #${orderData.code||'—'}`,
+      '',
+      `  ${L==='uz'?'Mijoz':L==='en'?'Customer':'Клиент'}: ${orderData.name||'—'}`,
+      `  ${L==='uz'?'Telefon':L==='en'?'Phone':'Телефон'}: ${orderData.phone||'—'}`,
+      orderData.address?`  ${L==='uz'?'Manzil':L==='en'?'Address':'Адрес'}: ${orderData.address}`:'',
+      '',
+      '  --- '+(L==='uz'?'Mahsulotlar':L==='en'?'Items':'Товары')+' ---',
+      ''
+    ];
+    let total=0;
+    (orderData.items||[]).forEach(item=>{
+      const sum=item.price*(item.qty||1);
+      total+=sum;
+      lines.push(`  ${item.name} ×${item.qty||1} = ${fmt(sum)||sum}`);
+    });
+    lines.push('');
+    lines.push('  ─────────────────────────');
+    if(orderData.discount){
+      lines.push(`  ${L==='uz'?'Chegirma':L==='en'?'Discount':'Скидка'}: ${orderData.discount}%`);
+    }
+    lines.push(`  ${L==='uz'?'JAMI':L==='en'?'TOTAL':'ИТОГО'}: ${fmt(total)||total}`);
+    lines.push('═══════════════════════════════');
+    lines.push(`  ${L==='uz'?'Rahmat!':L==='en'?'Thank you!':'Спасибо!'}`);
+    lines.push('═══════════════════════════════');
+    const text=lines.join('\n');
+    // Download as .txt (simple version, no PDF lib needed)
+    const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`check_${orderData.code||'order'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    window.toast?.('📄 Chek yuklandi!');
+  };
+})();
+
+// ===== FEATURE: CLOSE CUSTOM SHEETS ON OVERLAY =====
+(function(){
+  // Also close custom sheets when overlay is tapped
+  const _origOverlayClick=document.getElementById('overlay')?.onclick;
+  document.getElementById('overlay')?.addEventListener('click',function(){
+    window._closeCustomSheets?.();
+  });
+})();
+
+// ===== FEATURE: UPDATE BACK BUTTON FOR CUSTOM SHEETS =====
+(function(){
+  // Patch closeAll to also close custom sheets
+  const _origCloseAll=window.closeAll;
+  window.closeAll=function(){
+    _origCloseAll?.();
+    window._closeCustomSheets?.();
+  };
+})();
+
+// ===== FEATURE: PATCH renderCatsPage TO ADD BANNER & STORIES =====
+(function(){
+  const _origRenderCatsPage=window.renderCatsPage;
+  window.renderCatsPage=function(){
+    _origRenderCatsPage?.();
+    const mainArea=document.getElementById('mainArea');
+    if(!mainArea)return;
+    // Insert banner container at top if not exists
+    if(!document.getElementById('bannerContainer')){
+      const bc=document.createElement('div');bc.id='bannerContainer';
+      mainArea.insertBefore(bc,mainArea.firstChild);
+    }
+    // Insert stories container after banner
+    if(!document.getElementById('storiesContainer')){
+      const sc=document.createElement('div');sc.id='storiesContainer';
+      const bannerEl=document.getElementById('bannerContainer');
+      if(bannerEl&&bannerEl.nextSibling){
+        mainArea.insertBefore(sc,bannerEl.nextSibling);
+      }else{
+        mainArea.insertBefore(sc,mainArea.firstChild?.nextSibling||null);
+      }
+    }
+    window.renderAdminBanner?.();
+    window.renderStories?.();
+  };
+})();
+
+// ===== FEATURE: FIX PROFILE LANGUAGE BUTTON FOR EN =====
+(function(){
+  const _origLoadMyOrders=window.loadMyOrders;
+  if(window.loadMyOrders){
+    window.loadMyOrders=function(...args){
+      const result=_origLoadMyOrders.apply(this,args);
+      setTimeout(()=>{
+        const langBtn=document.querySelector('.setting-btn[onclick*="toggleLang"]');
+        if(langBtn){
+          const L=window.currentLang;
+          const map={'uz':'🇺🇿 O\'zbek','ru':'🇷🇺 Rus','en':'🇬🇧 English'};
+          langBtn.textContent=map[L]||'🇷🇺 Rus';
+        }
+        // Add EN to profile order status labels
+        document.querySelectorAll('.prof-stat-lbl').forEach(el=>{
+          // already handled by L variable in JS
+        });
+      },50);
+      return result;
+    };
+  }
+})();
+
+// ===== FEATURE: ADD BANNER EDITOR BUTTON TO ADMIN STATS =====
+(function(){
+  const _origLoadStats=window.loadStats;
+  window.loadStats=function(){
+    const result=_origLoadStats.apply(this,arguments);
+    setTimeout(()=>{
+      const statsEl=document.getElementById('aStats');
+      if(!statsEl)return;
+      // Add banner editor button if not already there
+      if(!document.getElementById('adminBannerBtn')){
+        const btn=document.createElement('button');
+        btn.id='adminBannerBtn';
+        btn.className='big-btn';
+        btn.style.marginTop='12px';
+        btn.style.width='100%';
+        btn.innerHTML='🖼 '+(window.currentLang==='uz'?'Banner sozlamalari':window.currentLang==='en'?'Banner settings':'Настройки баннера');
+        btn.onclick=window.openBannerEditor;
+        statsEl.appendChild(btn);
+      }
+    },100);
+    return result;
+  };
+})();
+
+// ===== FEATURE: INIT ON LOAD =====
+(function(){
+  // Init banner
+  setTimeout(()=>{
+    if(!sessionStorage.getItem('bannerDismissed'))window.renderAdminBanner?.();
+  },600);
+  // Init stories
+  setTimeout(()=>window.renderStories?.(),800);
+  console.log('✅ 10 features loaded');
+})();
+</script>
+
 </body></html>
