@@ -19,10 +19,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 <link rel="preload" href="https://kerasys-dokon-default-rtdb.firebaseio.com/products.json" as="fetch" crossorigin>
+<!-- Preload Firebase JS so they download in parallel with HTML/CSS parsing — saves 1-3s on slow mobile -->
+<link rel="preload" href="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" as="script" crossorigin>
+<link rel="preload" href="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" as="script" crossorigin>
+<link rel="preload" href="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" as="script" crossorigin>
 <script>
 // Eager fetch products before any other script (saves ~200-500ms on first paint)
-window.__earlyProducts = fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'})
+window.__earlyProducts = fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json')
   .then(r=>r.ok?r.json():null).catch(()=>null);
+// As soon as products arrive, also stash the parsed array so the main script can use it
+window.__earlyProducts.then(val=>{
+  if(!val)return;
+  try{
+    const arr=Object.entries(val).map(([id,data])=>({id,...data}));
+    window.__earlyProductsArr=arr;
+    // Cache to localStorage immediately (slim — strip large image dataURIs)
+    const slim=arr.map(p=>{
+      const o={...p};
+      if(typeof o.img==='string'&&o.img.startsWith('data:')&&o.img.length>50000)delete o.img;
+      if(Array.isArray(o.imgs))o.imgs=o.imgs.filter(x=>!(typeof x==='string'&&x.startsWith('data:')&&x.length>50000));
+      return o;
+    });
+    localStorage.setItem('cache_products',JSON.stringify(slim));
+    // If main script already booted, trigger re-render
+    if(typeof window.__earlyApply==='function')window.__earlyApply(arr);
+  }catch(_){}
+});
 </script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
@@ -2804,12 +2826,23 @@ trackUser();
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
 
+// Apply early-fetched products to UI (called from <head> as soon as data arrives, even before this script finishes loading)
+function __applyProducts(arr){
+  if(productsLoaded||!Array.isArray(arr)||!arr.length)return;
+  products=arr;
+  productsLoaded=true;
+  if(currentPage==='cats'&&typeof renderCatsPage==='function')renderCatsPage();
+  else if(currentPage==='products'&&typeof renderProductsPage==='function')renderProductsPage();
+}
+window.__earlyApply=__applyProducts;
+// If early-fetch already resolved before main script loaded, apply it now
+if(Array.isArray(window.__earlyProductsArr))__applyProducts(window.__earlyProductsArr);
+
 // Race RTDB SDK against direct REST fetch — whichever returns first paints products
 function fetchProductsREST(){
   if(productsLoaded)return;
   // Reuse the early-fetch promise kicked off in <head> if available
-  const p = window.__earlyProducts || fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);
-  window.__earlyProducts = null;
+  const p = window.__earlyProducts || fetch('https://kerasys-dokon-default-rtdb.firebaseio.com/products.json').then(r=>r.ok?r.json():null);
   Promise.resolve(p).then(val=>{
     if(productsLoaded||!val)return;
     products=Object.entries(val).map(([id,data])=>({id,...data}));
