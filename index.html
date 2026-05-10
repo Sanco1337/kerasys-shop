@@ -1,15 +1,15 @@
 <html lang="uz" style="--tg-viewport-height: 100vh; --tg-viewport-stable-height: 100vh;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Kerasys Shop</title>
-<meta name="description" content="Kerasys Shop — gigiyena va kir yuvish vositalari">
+<title>Online Shop</title>
+<meta name="description" content="Online Shop — gigiyena va kir yuvish vositalari">
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#1FA150" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B100C" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Kerasys">
+<meta name="apple-mobile-web-app-title" content="Online Shop">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -734,6 +734,12 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .add-mode-btn{flex:1;padding:10px 12px;border:none;background:transparent;border-radius:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text2);cursor:pointer;transition:all 0.15s;}
 .add-mode-btn.on{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(31,161,80,0.25);}
 .add-mode-btn:active{transform:scale(0.96);}
+/* Apple-style emoji (replaces system emoji with iOS-look images via Twemoji+iamcal) */
+img.apple-emoji{display:inline-block;width:1.15em;height:1.15em;vertical-align:-0.18em;margin:0;pointer-events:none;user-select:none;}
+.btn-fab img.apple-emoji,.scan-btn-ic img.apple-emoji{width:1em;height:1em;}
+.cat-ic img.apple-emoji,.cat-ic-emoji img.apple-emoji{width:1em;height:1em;}
+/* Don't let twemoji touch input values displayed in dropdown options (browsers render option text raw) */
+option img.apple-emoji{width:1em;height:1em;}
 /* Barcode scan button */
 .scan-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;margin-bottom:14px;background:linear-gradient(135deg,#3B9DF5 0%,#1F6FBA 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(59,157,245,0.28);transition:all 0.18s var(--tr);text-align:left;}
 .scan-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,157,245,0.42);}
@@ -1140,7 +1146,7 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
 <div id="app-root">
 <div class="hdr">
   <div class="logo">
-    <div class="logo-tx">Kerasys<span>Shop</span></div>
+    <div class="logo-tx">Online<span>Shop</span></div>
   </div>
   <div class="hdr-right">
     <button class="hbtn" onclick="openSearch()" data-icon-only title="Search">🔍</button>
@@ -2103,7 +2109,7 @@ function renderHeroBanner({saleCnt,newCnt,lab}){
     emoji='✨';
   }else{
     eyebrow=t3('👋 Salom','👋 Привет','👋 Hello');
-    title=t3(`${greet}, Kerasys'ga xush kelibsiz`,`${greet}, добро пожаловать в Kerasys`,`${greet}, welcome to Kerasys`);
+    title=t3(`${greet}, Online Shop'ga xush kelibsiz`,`${greet}, добро пожаловать в Online Shop`,`${greet}, welcome to Online Shop`);
     sub=t3('Sifatli mahsulotlar, tez yetkazib berish','Качественные товары, быстрая доставка','Quality products, fast delivery');
     cta=lab.top+' →';
     onclick=`openVirtualCat('__top')`;
@@ -3132,7 +3138,7 @@ window.testBotMessage=async()=>{
   // Use the form values directly so user can test before saving
   const tmp={token,chatId};
   const prev=botConfig;botConfig=tmp;
-  const ok=await notifyBot('🧪 <b>Test xabar</b>\nKerasysShop bot ulanishi muvaffaqiyatli!');
+  const ok=await notifyBot('🧪 <b>Test xabar</b>\nOnline Shop bot ulanishi muvaffaqiyatli!');
   botConfig=prev;
   toast(ok?'✅ Yuborildi':'❌ Xatolik (token/chat ID tekshiring)');
   haptic(ok?'success':'error');
@@ -3172,7 +3178,7 @@ window.buildYandexGoUrl=function(o){
     params.set('start-lon',String(sLon));
     if(custAddr)params.set('end-text',custAddr);
     params.set('vertical','cargo');
-    params.set('ref','KerasysShop');
+    params.set('ref','OnlineShop');
     return 'https://3.redirect.appmetrica.yandex.com/route?'+params.toString();
   }
   // No store coords → open Yandex Maps with text-based route between addresses
@@ -3675,7 +3681,7 @@ window.openInvoice=async(orderId)=>{
     const L=currentLang;
     const t={
       title:{uz:'CHEK',ru:'СЧЁТ',en:'INVOICE'},
-      shop:{uz:'Kerasys do\'koni',ru:'Магазин Kerasys',en:'Kerasys Shop'},
+      shop:{uz:'Online Shop',ru:'Online Shop',en:'Online Shop'},
       ord_num:{uz:'Buyurtma raqami',ru:'Номер заказа',en:'Order number'},
       date:{uz:'Sana',ru:'Дата',en:'Date'},
       time:{uz:'Vaqt',ru:'Время',en:'Time'},
@@ -3825,12 +3831,12 @@ window.copyRefLink=()=>{
 window.shareRef=()=>{
   const inp=$('myRefLink');if(!inp)return;
   const link=inp.value;
-  const txt=currentLang==='uz'?`Kerasys do'koniga keling — buyurtma berib 5% chegirma oling: ${link}`:currentLang==='en'?`Visit Kerasys shop — order and get 5% off: ${link}`:`Загляните в Kerasys — закажите и получите 5%: ${link}`;
+  const txt=currentLang==='uz'?`Online Shop'ga keling — buyurtma berib 5% chegirma oling: ${link}`:currentLang==='en'?`Visit Online Shop — order and get 5% off: ${link}`:`Загляните в Online Shop — закажите и получите 5%: ${link}`;
   if(tg?.openTelegramLink){
     const shareUrl=`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(txt)}`;
     tg.openTelegramLink(shareUrl);
   } else if(navigator.share){
-    navigator.share({title:'Kerasys',text:txt,url:link}).catch(()=>{});
+    navigator.share({title:'Online Shop',text:txt,url:link}).catch(()=>{});
   } else {
     window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(txt)}`,'_blank');
   }
@@ -5682,4 +5688,71 @@ window.installPWA=async()=>{
 </div>
 
 </div><!-- /app-root -->
+<script>
+/* Apple-style emoji rendering — replace native system emoji with iOS-look PNG images.
+   Uses Twemoji parsing engine + iamcal/emoji-data Apple emoji images via jsdelivr.
+   Skips form controls (input/textarea/select) to keep their .value intact. */
+(function(){
+  var OPTS={
+    base:'https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/',
+    folder:'img-apple-64',
+    ext:'.png',
+    className:'apple-emoji',
+    attributes:function(){return{loading:'lazy',decoding:'async'};}
+  };
+  var ready=false,pending=false,obs=null;
+  function shouldSkip(node){
+    if(!node||node.nodeType!==1)return false;
+    var t=node.tagName;
+    return t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||t==='OPTION'||t==='SCRIPT'||t==='STYLE'||t==='NOSCRIPT';
+  }
+  function parseNode(root){
+    if(!ready||!window.twemoji||!root)return;
+    if(shouldSkip(root))return;
+    try{window.twemoji.parse(root,OPTS);}catch(_){}
+  }
+  function parseAll(){
+    pending=false;
+    parseNode(document.body);
+  }
+  function schedule(){
+    if(pending||!ready)return;
+    pending=true;
+    var cb=parseAll;
+    if(window.requestIdleCallback)requestIdleCallback(cb,{timeout:250});
+    else setTimeout(cb,16);
+  }
+  function init(){
+    ready=true;
+    parseAll();
+    obs=new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var m=muts[i];
+        if(m.type==='childList'&&m.addedNodes.length){
+          for(var j=0;j<m.addedNodes.length;j++){
+            var n=m.addedNodes[j];
+            if(n.nodeType===1&&n.classList&&n.classList.contains('apple-emoji'))continue;
+            if(n.nodeType===1||n.nodeType===3){schedule();return;}
+          }
+        }else if(m.type==='characterData'){schedule();return;}
+      }
+    });
+    obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+  }
+  var s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js';
+  s.async=true;
+  s.crossOrigin='anonymous';
+  s.onload=init;
+  s.onerror=function(){
+    // fallback CDN
+    var s2=document.createElement('script');
+    s2.src='https://unpkg.com/twemoji@14.0.2/dist/twemoji.min.js';
+    s2.async=true;
+    s2.onload=init;
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+})();
+</script>
 </body></html>
