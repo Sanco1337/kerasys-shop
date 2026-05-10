@@ -679,7 +679,8 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .adm-name{font-size:13px;font-weight:800;color:var(--text);}
 .adm-meta{font-size:11px;color:var(--text2);margin-top:2px;}
 .adm-acts{display:flex;gap:5px;flex-shrink:0;}
-.ia{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.ia{width:36px;height:36px;border-radius:9px;border:none;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+@media(max-width:380px){.ia{width:32px;height:32px;font-size:13px;}.adm-acts{gap:4px;}}
 .ia.edit{background:var(--accent-lt);color:var(--accent);}
 .ia.tog{background:rgba(31,161,80,0.15);color:#1FA150;}
 .ia.tog.off{background:rgba(255,107,138,0.15);color:var(--a2);}
@@ -1614,8 +1615,12 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
         </div>
       </div>
-      <button class="big-btn pri" id="saveBtnFull" style="margin-top:14px" onclick="saveProduct()">💾 Saqlash</button>
-      <button class="big-btn pri" id="saveBtnQuick" style="margin-top:14px" onclick="saveProductQuick()">💾 Saqlash va davom etish ⚡</button>
+      <label class="ch-post-row" id="postChannelRow" style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 14px;background:rgba(34,158,217,0.08);border:1px solid rgba(34,158,217,0.25);border-radius:12px;cursor:pointer;user-select:none;">
+        <input type="checkbox" id="pPostChannel" checked style="width:20px;height:20px;accent-color:#1c95cf;flex-shrink:0;">
+        <span style="font-weight:700;color:#1c95cf;font-size:14px;">📢 Saqlash bilan kanalga ham yuborish</span>
+      </label>
+      <button class="big-btn pri" id="saveBtnFull" style="margin-top:10px" onclick="saveProduct()">💾 Saqlash</button>
+      <button class="big-btn pri" id="saveBtnQuick" style="margin-top:10px" onclick="saveProductQuick()">💾 Saqlash va davom etish ⚡</button>
       <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor</button>
       <div class="quick-recent-strip" id="quickRecentStrip" style="display:none;">
         <h4>📚 Bu sessiyada qo'shilganlar (<span id="quickRecentCount">0</span>)</h4>
@@ -3093,13 +3098,10 @@ async function tgSendMessageWithBtn(chatId,text,buttonUrl,buttonText){
     return d;
   }catch(e){return {ok:false,error:e.message};}
 }
-window.postProductToChannel=async(pid)=>{
-  const p=PRODUCTS.find(x=>x.id===pid);
-  if(!p){toast('❌ Mahsulot topilmadi');return;}
-  if(!botConfig.token){toast('❗ Avval botni sozlang');haptic('warning');return;}
-  if(!botConfig.channelId){toast('❗ Kanal ID kiritilmagan (Sozlamalar → Bot)');haptic('warning');return;}
-  if(!confirm(`📤 "${p.name}" mahsulotini kanalga yuborilsinmi?\n\nKanal: ${botConfig.channelId}`))return;
-  haptic('light');
+// Build caption + send to channel for any product object (used by both manual button and auto-post)
+async function postProductObjToChannel(p,pid){
+  if(!botConfig.token){toast('❗ Avval botni sozlang (Sozlamalar → Bot)');haptic('warning');return{ok:false,error:'no_token'};}
+  if(!botConfig.channelId){toast('❗ Kanal ID kiritilmagan (Sozlamalar → Bot)');haptic('warning');return{ok:false,error:'no_channel'};}
   const cat=CATS.find(c=>c.id===p.cat);
   const catName=cat?(cat.label_uz||cat.label||cat.id):'';
   const lines=[
@@ -3112,23 +3114,33 @@ window.postProductToChannel=async(pid)=>{
   ].filter(Boolean);
   const caption=lines.join('\n');
   const botU=(botConfig.username||'kerasys_shop_bot').replace(/^@/,'');
-  const buyUrl=`https://t.me/${botU}?start=p_${pid}`;
+  const buyUrl=pid?`https://t.me/${botU}?start=p_${pid}`:null;
   let res;
-  // Try sendPhoto first if image is a real URL (not base64)
   if(p.img&&typeof p.img==='string'&&!p.img.startsWith('data:')&&p.img.startsWith('http')){
     res=await tgSendPhoto(botConfig.channelId,p.img,caption,buyUrl,'🛒 Sotib olish');
   }else{
-    // Fallback to text message (Telegram cannot fetch base64 images)
     res=await tgSendMessageWithBtn(botConfig.channelId,'🛍 <b>Yangi mahsulot!</b>\n\n'+caption,buyUrl,'🛒 Sotib olish');
   }
   if(res.ok){
-    toast('✅ Kanalga yuborildi');haptic('success');
-    try{await db.collection('products').doc(pid).update({channelPostedAt:new Date()});}catch(_){}
+    haptic('success');
+    if(pid){try{await rtdb.ref('products/'+pid).update({channelPostedAt:Date.now()});}catch(_){}}
   }else{
     const err=res.description||res.error||'noma\'lum xato';
-    toast('❌ '+err.slice(0,80));haptic('error');
+    haptic('error');
     console.warn('Channel post error:',res);
   }
+  return res;
+}
+window.postProductToChannel=async(pid)=>{
+  const p=products.find(x=>x.id===pid);
+  if(!p){toast('❌ Mahsulot topilmadi');return;}
+  if(!botConfig.token){toast('❗ Avval botni sozlang');haptic('warning');return;}
+  if(!botConfig.channelId){toast('❗ Kanal ID kiritilmagan (Sozlamalar → Bot)');haptic('warning');return;}
+  if(!confirm(`📤 "${p.name}" mahsulotini kanalga yuborilsinmi?\n\nKanal: ${botConfig.channelId}`))return;
+  haptic('light');
+  const res=await postProductObjToChannel(p,pid);
+  if(res.ok)toast('✅ Kanalga yuborildi');
+  else toast('❌ '+(res.description||res.error||'xato').slice(0,80));
 };
 
 window.testBotMessage=async()=>{
@@ -4963,6 +4975,8 @@ window.editP=id=>{
   editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
   editExtraImgs=Array.isArray(p.images)?[...p.images]:[];renderExtraImgs();
   $('cancelEdit').style.display='block';
+  // Hide channel-post checkbox while editing (it's only for new products)
+  const pr=$('postChannelRow');if(pr)pr.style.display='none';
   // While editing, force FULL mode so all fields visible
   setAddMode('full');
   aTab('add',document.querySelectorAll('.a-tab')[12]);
@@ -4976,6 +4990,9 @@ window.cancelEditFn=()=>{
   const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
   $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
   $('cancelEdit').style.display='none';
+  // Restore channel-post checkbox for next add
+  const pr=$('postChannelRow');if(pr)pr.style.display='flex';
+  const cb=$('pPostChannel');if(cb)cb.checked=true;
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
 window.togP=async(id,active)=>{
@@ -5018,16 +5035,25 @@ window.saveProduct=async()=>{
   if(barcode)data.barcode=barcode;
 
   const editId=g('editId');
+  const wantPost=!editId&&$('pPostChannel')&&$('pPostChannel').checked;
   toast('⏳ Saqlanmoqda...');
   try{
+    let newId=null;
     if(editId){
       await rtdb.ref('products/'+editId).update(data);
       toast('✅ Yangilandi!');
     } else {
-      await rtdb.ref('products').push({...data,createdAt:Date.now()});
+      const ref=await rtdb.ref('products').push({...data,createdAt:Date.now()});
+      newId=ref.key;
       toast('✅ Mahsulot qo\'shildi!');
     }
     cancelEditFn();
+    if(wantPost&&newId){
+      toast('⏳ Kanalga yuborilmoqda...');
+      const res=await postProductObjToChannel({...data,id:newId},newId);
+      if(res.ok)toast('✅ Saqlandi va kanalga yuborildi');
+      else toast('❌ Kanal: '+(res.description||res.error||'xato').slice(0,80));
+    }
   }catch(e){
     console.error('saveProduct:',e);
     toast('❌ Xatolik: '+(e.message||''));
@@ -5086,20 +5112,29 @@ window.saveProductQuick=async()=>{
   };
   if(barcode)data.barcode=barcode;
 
+  const wantPost=$('pPostChannel')&&$('pPostChannel').checked;
   const btn=$('saveBtnQuick');if(btn)btn.disabled=true;
   toast('⏳ Saqlanmoqda...');
   try{
-    await rtdb.ref('products').push(data);
+    const ref=await rtdb.ref('products').push(data);
+    const newId=ref.key;
     toast('✅ Saqlandi! Keyingisini kiriting');
     haptic('confirm');
     quickRecent.push({name,price,img});
     renderQuickRecent();
-    // Reset only product fields, KEEP category
+    // Reset only product fields, KEEP category and channel-post preference
     ['pName','pDesc','pPrice','pImg','pBarcode'].forEach(id=>{const e=$(id);if(e)e.value='';});
     $('pImgBase64').value='';
     const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
     $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
     setTimeout(()=>$('pName')?.focus(),50);
+    if(wantPost){
+      // Fire-and-forget so user can keep typing the next product
+      postProductObjToChannel({...data,id:newId},newId).then(res=>{
+        if(res.ok)toast('📢 Kanalga yuborildi');
+        else toast('❌ Kanal: '+(res.description||res.error||'xato').slice(0,80));
+      });
+    }
   }catch(e){
     console.error('saveProductQuick:',e);
     toast('❌ Xatolik: '+(e.message||''));
