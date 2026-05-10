@@ -3070,12 +3070,45 @@ window.saveBotConfig=async()=>{
 };
 
 /* ─── Channel auto-post (admin approval per product) ─── */
+// Convert base64 data: URL to Blob (for multipart upload to Telegram)
+function dataUrlToBlob(dataUrl){
+  try{
+    const m=/^data:([^;,]+)?(?:;base64)?,(.*)$/i.exec(dataUrl);
+    if(!m)return null;
+    const mime=m[1]||'image/jpeg';
+    const data=m[2];
+    if(dataUrl.includes(';base64,')){
+      const bin=atob(data);
+      const arr=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+      return new Blob([arr],{type:mime});
+    }else{
+      return new Blob([decodeURIComponent(data)],{type:mime});
+    }
+  }catch(e){console.warn('dataUrlToBlob:',e);return null;}
+}
 async function tgSendPhoto(chatId,photoUrl,caption,buttonUrl,buttonText){
   if(!botConfig.token||!chatId)return {ok:false,error:'no_config'};
-  const body={chat_id:chatId,photo:photoUrl,caption,parse_mode:'HTML'};
-  if(buttonUrl){
-    body.reply_markup={inline_keyboard:[[{text:buttonText||'🛒 Sotib olish',url:buttonUrl}]]};
+  const replyMarkup=buttonUrl?{inline_keyboard:[[{text:buttonText||'🛒 Sotib olish',url:buttonUrl}]]}:null;
+  // If photoUrl is base64 data URL, upload as multipart so Telegram can accept it
+  if(typeof photoUrl==='string'&&photoUrl.startsWith('data:')){
+    const blob=dataUrlToBlob(photoUrl);
+    if(!blob)return {ok:false,error:'bad_base64'};
+    const fd=new FormData();
+    fd.append('chat_id',chatId);
+    fd.append('caption',caption||'');
+    fd.append('parse_mode','HTML');
+    if(replyMarkup)fd.append('reply_markup',JSON.stringify(replyMarkup));
+    const ext=(blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');
+    fd.append('photo',blob,'product.'+ext);
+    try{
+      const r=await fetch(`https://api.telegram.org/bot${botConfig.token}/sendPhoto`,{method:'POST',body:fd});
+      return await r.json();
+    }catch(e){return {ok:false,error:e.message};}
   }
+  // HTTP(S) URL or file_id: use JSON
+  const body={chat_id:chatId,photo:photoUrl,caption,parse_mode:'HTML'};
+  if(replyMarkup)body.reply_markup=replyMarkup;
   try{
     const r=await fetch(`https://api.telegram.org/bot${botConfig.token}/sendPhoto`,{
       method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
@@ -3116,8 +3149,15 @@ async function postProductObjToChannel(p,pid){
   const botU=(botConfig.username||'kerasys_shop_bot').replace(/^@/,'');
   const buyUrl=pid?`https://t.me/${botU}?start=p_${pid}`:null;
   let res;
-  if(p.img&&typeof p.img==='string'&&!p.img.startsWith('data:')&&p.img.startsWith('http')){
+  // sendPhoto works with HTTPS URLs (JSON) or base64 (multipart). For anything else (e.g., no image), fall back to text.
+  const hasUploadable=p.img&&typeof p.img==='string'&&(p.img.startsWith('http')||p.img.startsWith('data:'));
+  if(hasUploadable){
     res=await tgSendPhoto(botConfig.channelId,p.img,caption,buyUrl,'🛒 Sotib olish');
+    // If photo upload fails (e.g., Telegram couldn't fetch URL), retry as text so the post still goes out
+    if(!res.ok){
+      console.warn('sendPhoto failed, falling back to text:',res);
+      res=await tgSendMessageWithBtn(botConfig.channelId,'🛍 <b>Yangi mahsulot!</b>\n\n'+caption,buyUrl,'🛒 Sotib olish');
+    }
   }else{
     res=await tgSendMessageWithBtn(botConfig.channelId,'🛍 <b>Yangi mahsulot!</b>\n\n'+caption,buyUrl,'🛒 Sotib olish');
   }
