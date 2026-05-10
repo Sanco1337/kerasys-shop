@@ -734,6 +734,36 @@ body.dark .qchip.top .qc{color:#ffd24a;}
 .add-mode-btn{flex:1;padding:10px 12px;border:none;background:transparent;border-radius:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text2);cursor:pointer;transition:all 0.15s;}
 .add-mode-btn.on{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(31,161,80,0.25);}
 .add-mode-btn:active{transform:scale(0.96);}
+/* Barcode scan button */
+.scan-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;margin-bottom:14px;background:linear-gradient(135deg,#3B9DF5 0%,#1F6FBA 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(59,157,245,0.28);transition:all 0.18s var(--tr);text-align:left;}
+.scan-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,157,245,0.42);}
+.scan-btn:active{transform:translateY(0) scale(0.98);}
+.scan-btn-ic{font-size:32px;flex:0 0 auto;}
+.scan-btn-tx{flex:1;}
+.scan-btn-tt{font-size:15px;font-weight:900;margin-bottom:2px;}
+.scan-btn-sub{font-size:11px;opacity:0.92;font-weight:700;}
+.scan-btn-arr{font-size:18px;opacity:0.9;flex:0 0 auto;}
+/* Barcode scanner sheet */
+.scan-stage{display:flex;flex-direction:column;gap:14px;}
+.scan-video-wrap{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;}
+.scan-video-wrap video{width:100%;height:100%;object-fit:cover;display:block;}
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.scan-frame{width:80%;height:42%;border:3px solid rgba(43,212,120,0.95);border-radius:14px;box-shadow:0 0 0 4000px rgba(0,0,0,0.42);}
+.scan-line{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent 0,rgba(43,212,120,0.92) 30%,rgba(43,212,120,0.92) 70%,transparent 100%);box-shadow:0 0 12px rgba(43,212,120,0.7);animation:scanLine 1.6s ease-in-out infinite;}
+@keyframes scanLine{0%,100%{top:30%;}50%{top:70%;}}
+.scan-hint{font-size:12px;color:var(--text2);text-align:center;line-height:1.5;}
+.scan-manual{display:flex;flex-direction:column;gap:8px;border-top:1.5px solid var(--border);padding-top:12px;}
+.scan-result{display:flex;flex-direction:column;gap:14px;}
+.scan-result-status{font-size:14px;font-weight:800;color:var(--text);text-align:center;padding:10px;}
+.scan-result-card{display:flex;gap:12px;background:var(--card2);border:1.5px solid var(--border);border-radius:14px;padding:12px;}
+.scan-result-img{flex:0 0 96px;width:96px;height:96px;background:var(--bg2);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.scan-result-img img{width:100%;height:100%;object-fit:cover;}
+.scan-result-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.scan-result-name{font-size:14px;font-weight:900;color:var(--text);word-break:break-word;}
+.scan-result-brand{font-size:11px;color:var(--text2);font-weight:700;}
+.scan-result-desc{font-size:11px;color:var(--text2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.scan-result-code{font-size:10px;color:var(--text3);font-family:monospace;margin-top:4px;}
+.scan-result-actions{display:flex;flex-direction:column;gap:8px;}
 body.add-quick .full-only{display:none;}
 body.add-quick #imgGalArea .img-upload-area{padding:32px 18px;}
 body.add-quick #imgGalArea .img-upload-icon{font-size:42px;}
@@ -1506,10 +1536,19 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
     <div id="aAdd" style="display:none">
       <input type="hidden" id="editId">
       <input type="hidden" id="pImgBase64">
+      <input type="hidden" id="pBarcode">
       <div class="add-mode" id="addModeToggle">
         <button class="add-mode-btn on" id="addModeQuickBtn" type="button" onclick="setAddMode('quick')">⚡ Tezkor</button>
         <button class="add-mode-btn" id="addModeFullBtn" type="button" onclick="setAddMode('full')">🔧 To'liq</button>
       </div>
+      <button class="scan-btn" type="button" onclick="openBarcodeScanner()">
+        <span class="scan-btn-ic">📷</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Shtrix-kodni skanerlash</div>
+          <div class="scan-btn-sub" id="scanBtnSub">Mahsulot ma'lumotlari avtomatik to'ldiriladi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
       <div class="f-grp">
         <label class="f-lbl">Asosiy rasm</label>
         <div class="img-tabs full-only">
@@ -3351,7 +3390,9 @@ window.removePromo=()=>{
 
 window.closeAll=()=>{
   $('overlay').classList.remove('on');
-  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet','revSheet','spinSheet','invSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  ['cartSheet','orderSheet','varSheet','successSheet','contactSheet','adminSheet','profileSheet','chatSheet','preorderSheet','searchSheet','favSheet','pdSheet','revSheet','spinSheet','invSheet','scanSheet'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  // Stop camera if barcode scanner is open
+  try{if(typeof stopBarcodeCamera==='function')stopBarcodeCamera();}catch(_){}
   try{if(pdReviewsUnsub){pdReviewsUnsub();pdReviewsUnsub=null;}}catch(_){}
   updateBackBtn();
 };
@@ -4896,6 +4937,7 @@ function renderVarTags(){
 window.editP=id=>{
   const p=products.find(x=>x.id===id);if(!p)return;
   $('editId').value=id;$('pImgBase64').value='';
+  if($('pBarcode'))$('pBarcode').value=p.barcode||'';
   $('pName').value=p.name;$('pDesc').value=p.desc||'';
   $('pPrice').value=p.price;$('pCat').value=p.cat;
   $('pImg').value=p.img||'';$('pBadge').value=p.badge||'';$('pOld').value=p.oldPrice||'';
@@ -4920,7 +4962,7 @@ window.editP=id=>{
   aTab('add',document.querySelectorAll('.a-tab')[12]);
 };
 window.cancelEditFn=()=>{
-  $('editId').value='';$('pImgBase64').value='';
+  $('editId').value='';$('pImgBase64').value='';if($('pBarcode'))$('pBarcode').value='';
   ['pName','pDesc','pPrice','pImg','pBadge','pOld','pExtraImgUrl'].forEach(id=>{const e=$(id);if(e)e.value='';});
   $('pCat').value=(CATS[0]&&CATS[0].id)||'kukun';editVars=[];editVarPrices={};renderVarTags();
   editExtraImgs=[];renderExtraImgs();
@@ -4952,6 +4994,7 @@ window.saveProduct=async()=>{
 
   if(!name||!price){toast('❗ Nom va narx kiritilsin');return;}
 
+  const barcode=g('pBarcode')||'';
   const data={
     name,
     desc,
@@ -4966,6 +5009,7 @@ window.saveProduct=async()=>{
     active:true,
     updatedAt:Date.now()
   };
+  if(barcode)data.barcode=barcode;
 
   const editId=g('editId');
   toast('⏳ Saqlanmoqda...');
@@ -5025,6 +5069,7 @@ window.saveProductQuick=async()=>{
   if(editId){return saveProduct();} // editing → fallback to full save+exit
 
   const img=imgBase64||imgUrl;
+  const barcode=g('pBarcode')||'';
   const data={
     name,desc,price,cat:category,img,
     images:[],badge:'',oldPrice:0,
@@ -5033,6 +5078,7 @@ window.saveProductQuick=async()=>{
     updatedAt:Date.now(),
     createdAt:Date.now()
   };
+  if(barcode)data.barcode=barcode;
 
   const btn=$('saveBtnQuick');if(btn)btn.disabled=true;
   toast('⏳ Saqlanmoqda...');
@@ -5043,7 +5089,7 @@ window.saveProductQuick=async()=>{
     quickRecent.push({name,price,img});
     renderQuickRecent();
     // Reset only product fields, KEEP category
-    ['pName','pDesc','pPrice','pImg'].forEach(id=>{const e=$(id);if(e)e.value='';});
+    ['pName','pDesc','pPrice','pImg','pBarcode'].forEach(id=>{const e=$(id);if(e)e.value='';});
     $('pImgBase64').value='';
     const prev=$('imgPreview');prev.classList.remove('show');prev.src='';
     $('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
@@ -5055,6 +5101,215 @@ window.saveProductQuick=async()=>{
   } finally {
     if(btn)btn.disabled=false;
   }
+};
+
+/* ─── BARCODE SCANNER ─── */
+let scanStream=null,scanReader=null,scanRAF=null,scanLastCode='',scanResultData=null;
+let zxingLoading=null;
+
+function loadZXing(){
+  if(window.ZXing&&window.ZXing.BrowserMultiFormatReader)return Promise.resolve(window.ZXing);
+  if(zxingLoading)return zxingLoading;
+  zxingLoading=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+    s.onload=()=>res(window.ZXing);
+    s.onerror=()=>{
+      // Fallback CDN
+      const s2=document.createElement('script');
+      s2.src='https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js';
+      s2.onload=()=>res(window.ZXing);
+      s2.onerror=()=>rej(new Error('ZXing yuklanmadi'));
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s);
+  });
+  return zxingLoading;
+}
+
+window.openBarcodeScanner=async()=>{
+  $('overlay').classList.add('on');
+  $('scanSheet').classList.add('on');
+  $('scanStage').style.display='block';
+  $('scanResult').style.display='none';
+  $('scanHint').textContent="📷 Kameraga ruxsat bering va shtrix-kodni ramka ichiga tushiring";
+  $('scanManualInp').value='';
+  scanLastCode='';
+  scanResultData=null;
+  haptic('light');
+  updateBackBtn();
+  try{
+    if(!navigator.mediaDevices?.getUserMedia){
+      $('scanHint').innerHTML="❌ Brauzer kamerani qo'llab-quvvatlamaydi. Quyida kodni qo'lda kiriting.";
+      return;
+    }
+    const ZX=await loadZXing();
+    if(!ZX){$('scanHint').textContent='❌ Skaner yuklanmadi. Internetni tekshiring.';return;}
+    scanReader=new ZX.BrowserMultiFormatReader();
+    const video=$('scanVideo');
+    // Prefer back camera
+    let constraints={video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}};
+    let stream;
+    try{stream=await navigator.mediaDevices.getUserMedia(constraints);}
+    catch(e1){
+      // Fallback to any camera
+      try{stream=await navigator.mediaDevices.getUserMedia({video:true});}
+      catch(e2){$('scanHint').innerHTML="❌ Kameraga ruxsat berilmadi.<br>Brauzer sozlamalaridan ruxsat bering yoki kodni qo'lda kiriting.";return;}
+    }
+    scanStream=stream;
+    video.srcObject=stream;
+    await video.play().catch(()=>{});
+    $('scanHint').textContent="🔍 Skanerlanyapti...";
+    scanReader.decodeFromVideoElement(video,(result,err)=>{
+      if(result){
+        const code=result.getText();
+        if(code&&code!==scanLastCode){
+          scanLastCode=code;
+          haptic('confirm');
+          stopBarcodeCamera();
+          lookupBarcode(code);
+        }
+      }
+    });
+  }catch(e){
+    console.warn('scanner:',e);
+    $('scanHint').textContent='❌ Xatolik: '+(e.message||e);
+  }
+};
+
+function stopBarcodeCamera(){
+  try{scanReader&&scanReader.reset&&scanReader.reset();}catch(_){}
+  scanReader=null;
+  if(scanStream){try{scanStream.getTracks().forEach(t=>t.stop());}catch(_){}scanStream=null;}
+  if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null;}
+  const v=$('scanVideo');if(v){v.pause();v.srcObject=null;}
+}
+
+window.closeBarcodeScanner=()=>{
+  stopBarcodeCamera();
+  $('scanSheet').classList.remove('on');
+  $('overlay').classList.remove('on');
+  updateBackBtn();
+};
+
+window.rescanBarcode=()=>{
+  $('scanResult').style.display='none';
+  $('scanStage').style.display='block';
+  scanLastCode='';
+  scanResultData=null;
+  // Restart camera
+  openBarcodeScanner();
+};
+
+window.lookupBarcodeManual=()=>{
+  const code=($('scanManualInp').value||'').trim().replace(/\D/g,'');
+  if(!code||code.length<6){toast('❗ 6 dan ortiq raqam kiriting');haptic('error');return;}
+  stopBarcodeCamera();
+  lookupBarcode(code);
+};
+
+async function lookupBarcode(code){
+  $('scanStage').style.display='none';
+  $('scanResult').style.display='block';
+  $('scanResultStatus').textContent=t3('⏳ Qidirilmoqda: '+code,'⏳ Поиск: '+code,'⏳ Looking up: '+code);
+  $('scanResultCard').style.display='none';
+  $('scanApplyBtn').style.display='none';
+  scanResultData=null;
+  // Try Open Food Facts first (best for cleaning/cosmetics/food)
+  let info=await lookupOpenFoodFacts(code);
+  if(!info){
+    info=await lookupUPCItemDB(code);
+  }
+  if(!info){
+    $('scanResultStatus').innerHTML=`❌ <b>Topilmadi</b><br><span style="font-size:11px;font-weight:600;color:var(--text2)">Kod: <code>${code}</code> bazada yo'q.<br>Mahsulot ma'lumotlarini qo'lda kiriting.</span>`;
+    // Still allow saving with just the barcode
+    scanResultData={barcode:code};
+    $('scanApplyBtn').style.display='block';
+    $('scanApplyBtn').innerHTML='✅ Faqat kodni saqlash';
+    return;
+  }
+  scanResultData={...info,barcode:code};
+  // Render preview card
+  $('scanResultStatus').innerHTML='✅ <b>Topildi!</b> Quyidagi ma\'lumotlarni mahsulotga qo\'llaysizmi?';
+  $('scanResultCard').style.display='flex';
+  $('scanResultName').textContent=info.name||'(nomsiz)';
+  $('scanResultBrand').textContent=info.brand||'';
+  $('scanResultDesc').textContent=info.desc||'';
+  $('scanResultCode').textContent=code;
+  const imgEl=$('scanResultImg');
+  imgEl.innerHTML='';
+  if(info.img){
+    const im=document.createElement('img');
+    im.src=info.img;
+    im.onerror=()=>{imgEl.innerHTML='📦';};
+    imgEl.appendChild(im);
+  }else{imgEl.innerHTML='📦';}
+  $('scanApplyBtn').style.display='block';
+  $('scanApplyBtn').innerHTML='✅ Mahsulotga qo\'llash';
+}
+
+async function lookupOpenFoodFacts(code){
+  // Try Open Food Facts, Open Beauty Facts, Open Products Facts (sister DBs by same org)
+  const hosts=[
+    'https://world.openfoodfacts.org',     // food
+    'https://world.openbeautyfacts.org',   // cosmetics, hair care, body care
+    'https://world.openproductsfacts.org'  // cleaning, household
+  ];
+  const fields='product_name,product_name_ru,product_name_en,product_name_uz,brands,generic_name,generic_name_ru,generic_name_en,image_front_url,image_url,categories,quantity';
+  for(const host of hosts){
+    try{
+      const r=await fetch(`${host}/api/v2/product/${encodeURIComponent(code)}.json?fields=${fields}`);
+      if(!r.ok)continue;
+      const d=await r.json();
+      if(d.status===1&&d.product){
+        const p=d.product;
+        const name=p.product_name_ru||p.product_name_en||p.product_name_uz||p.product_name||'';
+        const brand=(p.brands||'').split(',')[0].trim();
+        const qty=(p.quantity||'').toString();
+        const generic=p.generic_name_ru||p.generic_name_en||p.generic_name||'';
+        const desc=[generic,qty&&qty!=='0kg'?qty:''].filter(Boolean).join(' · ').slice(0,180);
+        const img=p.image_front_url||p.image_url||'';
+        if(name||img)return{name:name||(brand?brand+(qty?' '+qty:''):''),brand,desc,img,source:host.split('//')[1].split('.')[1]};
+      }
+    }catch(e){console.warn('OFF lookup:',host,e);}
+  }
+  return null;
+}
+
+async function lookupUPCItemDB(code){
+  try{
+    const r=await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(code)}`);
+    if(!r.ok)return null;
+    const d=await r.json();
+    if(d.code==='OK'&&Array.isArray(d.items)&&d.items.length){
+      const it=d.items[0];
+      const img=Array.isArray(it.images)&&it.images.length?it.images[0]:'';
+      return{name:it.title||'',brand:it.brand||'',desc:it.description||'',img,source:'UPC'};
+    }
+  }catch(e){console.warn('UPC lookup:',e);}
+  return null;
+}
+
+window.applyScanResult=()=>{
+  if(!scanResultData){toast('❌ Ma\'lumot yo\'q');return;}
+  const d=scanResultData;
+  // Apply only fields not yet filled (don't overwrite admin's own input)
+  const setIfEmpty=(id,v)=>{const e=$(id);if(e&&!e.value&&v)e.value=v;};
+  setIfEmpty('pName',d.name||(d.brand?d.brand:''));
+  setIfEmpty('pDesc',d.desc||'');
+  if($('pBarcode'))$('pBarcode').value=d.barcode||'';
+  // Image: use URL field
+  if(d.img){
+    const pImg=$('pImg');
+    if(pImg&&!pImg.value){
+      pImg.value=d.img;
+      // Try to switch to URL tab so admin sees it
+      try{switchImgTab('url');}catch(_){}
+    }
+  }
+  haptic('confirm');
+  toast('✅ Mahsulotga qo\'llandi');
+  closeBarcodeScanner();
 };
 
 /* ─── CSV IMPORT ─── */
@@ -5384,6 +5639,46 @@ window.installPWA=async()=>{
     <button class="s-close" onclick="closeAll()">✕</button>
   </div>
   <div class="s-body" id="revBody"></div>
+</div>
+
+<div class="sheet" id="scanSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">📷 Shtrix-kodni skanerlash</div>
+    <button class="s-close" onclick="closeBarcodeScanner()">✕</button>
+  </div>
+  <div class="s-body">
+    <div class="scan-stage" id="scanStage">
+      <div class="scan-video-wrap">
+        <video id="scanVideo" playsinline muted autoplay></video>
+        <div class="scan-overlay">
+          <div class="scan-frame"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+      <div class="scan-hint" id="scanHint">📷 Kameraga ruxsat bering va shtrix-kodni ramka ichiga tushiring</div>
+      <div class="scan-manual">
+        <input class="f-inp" id="scanManualInp" type="text" inputmode="numeric" placeholder="Yoki kodni qo'lda kiriting (8-13 raqam)">
+        <button class="big-btn" onclick="lookupBarcodeManual()">🔍 Qidirish</button>
+      </div>
+    </div>
+    <div class="scan-result" id="scanResult" style="display:none">
+      <div class="scan-result-status" id="scanResultStatus">⏳ Qidirilmoqda...</div>
+      <div class="scan-result-card" id="scanResultCard" style="display:none">
+        <div class="scan-result-img" id="scanResultImg"></div>
+        <div class="scan-result-info">
+          <div class="scan-result-name" id="scanResultName"></div>
+          <div class="scan-result-brand" id="scanResultBrand"></div>
+          <div class="scan-result-desc" id="scanResultDesc"></div>
+          <div class="scan-result-code">📋 <span id="scanResultCode"></span></div>
+        </div>
+      </div>
+      <div class="scan-result-actions">
+        <button class="big-btn pri" id="scanApplyBtn" onclick="applyScanResult()" style="display:none">✅ Mahsulotga qo'llash</button>
+        <button class="big-btn sec" onclick="rescanBarcode()">🔄 Qayta skanerlash</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </div><!-- /app-root -->
