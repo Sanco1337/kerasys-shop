@@ -1582,6 +1582,15 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
         <span class="scan-btn-arr">→</span>
       </button>
+      <button class="scan-btn" type="button" onclick="document.getElementById('vitrinaFileInput').click()" style="background:linear-gradient(135deg,#f59e0b,#dc2626);">
+        <span class="scan-btn-ic">📸</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Vitrinadan AI bilan tanish</div>
+          <div class="scan-btn-sub">Rasm yuklang — OCR + AI mahsulotlarni topadi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
+      <input type="file" id="vitrinaFileInput" accept="image/*" style="display:none" onchange="handleVitrinaPhoto(this)">
       <button class="scan-btn" id="smartVoiceBtn" type="button" onclick="smartVoiceFill()" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
         <span class="scan-btn-ic" id="smartVoiceIc">🎤</span>
         <div class="scan-btn-tx">
@@ -1745,6 +1754,25 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
   </div>
 </div>
 
+<!-- 📸 Vitrina AI scan modal -->
+<div id="vitrinaModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--bg);width:100%;max-width:600px;max-height:90vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">📸</span>
+      <div style="flex:1;">
+        <div style="font-weight:900;font-size:15px;">Vitrinadan tanilgan mahsulotlar</div>
+        <div id="vitrinaStatus" style="font-size:11px;color:var(--text2);font-weight:700;">AI tahlil qilmoqda...</div>
+      </div>
+      <button onclick="closeVitrinaModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text);">✕</button>
+    </div>
+    <div id="vitrinaPreviewImg" style="text-align:center;padding:8px;border-bottom:1px solid var(--border);"></div>
+    <div id="vitrinaList" style="flex:1;overflow-y:auto;padding:12px;"></div>
+    <div style="padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;">
+      <button onclick="closeVitrinaModal()" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-weight:800;cursor:pointer;">Bekor</button>
+      <button id="vitrinaSaveBtn" onclick="saveVitrinaProducts()" style="flex:2;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;font-weight:900;cursor:pointer;" disabled>💾 Hammasini saqlash</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -5618,6 +5646,185 @@ window.handleMultiImgFiles=async input=>{
   toast(`✅ ${ok} ta yaratildi (nofaol)`);haptic('confirm');
   input.value='';
   setTimeout(()=>{if(el)el.innerHTML='';},6000);
+};
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
+/* ── 📸 VITRINA AI SCAN (photo → AI vision → list of products) ── */
+let vitrinaItems=[]; // {name, suggestedCat, exists, dup, priceInputId}
+function openVitrinaModal(){
+  $('vitrinaModal').style.display='flex';
+  $('vitrinaSaveBtn').disabled=true;
+  $('vitrinaList').innerHTML='<div style="text-align:center;padding:30px;font-weight:800;color:var(--text2);">⏳ AI rasm tahlil qilmoqda... (10-30 sekund)</div>';
+}
+window.closeVitrinaModal=()=>{
+  $('vitrinaModal').style.display='none';
+  vitrinaItems=[];
+  $('vitrinaPreviewImg').innerHTML='';
+  $('vitrinaList').innerHTML='';
+};
+async function compressImg(file,maxDim=1024){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        const sc=Math.min(1,maxDim/Math.max(w,h));
+        w=Math.round(w*sc);h=Math.round(h*sc);
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        res(c.toDataURL('image/jpeg',0.78));
+      };
+      img.onerror=rej;img.src=fr.result;
+    };
+    fr.onerror=rej;
+    fr.readAsDataURL(file);
+  });
+}
+let _tesseractWorker=null;
+async function getOcrWorker(){
+  if(_tesseractWorker)return _tesseractWorker;
+  if(!window.Tesseract){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js';
+      s.onload=res;s.onerror=()=>rej(new Error('Tesseract yuklanmadi'));
+      document.head.appendChild(s);
+    });
+  }
+  const w=await Tesseract.createWorker(['eng','rus'],1,{
+    logger:m=>{if(m.status&&m.progress!=null){$('vitrinaStatus').textContent=`${m.status} ${Math.round(m.progress*100)}%`;}}
+  });
+  _tesseractWorker=w;
+  return w;
+}
+window.handleVitrinaPhoto=async input=>{
+  const file=(input.files||[])[0];
+  if(!file)return;
+  input.value=''; // reset
+  openVitrinaModal();
+  haptic('light');
+  try{
+    const dataUrl=await compressImg(file,1400);
+    $('vitrinaPreviewImg').innerHTML=`<img src="${dataUrl}" style="max-width:100%;max-height:160px;border-radius:10px;object-fit:contain;">`;
+    $('vitrinaStatus').textContent='OCR yuklanmoqda...';
+    // STEP 1: OCR (extract all text from photo via Tesseract.js)
+    const worker=await getOcrWorker();
+    $('vitrinaStatus').textContent='Rasm o\'qilmoqda...';
+    const {data:{text:ocrText}}=await worker.recognize(dataUrl);
+    if(!ocrText||ocrText.trim().length<3){
+      $('vitrinaList').innerHTML='<div style="text-align:center;padding:24px;font-weight:800;color:#dc2626;">😕 Hech qanday matn topilmadi.<br><span style="font-size:12px;font-weight:700;color:var(--text2);">Yorqinroq rasm yuklang yoki yaqinroq tushiring.</span></div>';
+      $('vitrinaStatus').textContent='Bo\'sh';return;
+    }
+    // STEP 2: Send OCR text to free LLM to extract product names
+    $('vitrinaStatus').textContent='AI mahsulotlarni tanimoqda...';
+    const cats=CATS.map(c=>`${c.id} (${c.label_uz||c.label||c.id})`).join(', ');
+    const langLabel=currentLang==='ru'?'Russian':currentLang==='en'?'English':'Uzbek';
+    const prompt=`OCR text extracted from a shelf photo of a hygiene/household goods store. Extract distinct product names (brand + product type) from this messy OCR text. Output ONLY a JSON array (no markdown, no code fences). Each item: {"name":"...","cat":"<id from list>"}. Use ${langLabel} for names. Categories available (use exact id): ${cats}. Skip nonsense/single-letter OCR artifacts. Don't repeat. Combine brand and product when both visible (e.g. "Ariel 3kg", "Lenor Sakura").\n\nOCR TEXT:\n${ocrText.trim().slice(0,3000)}\n\nJSON:`;
+    let txt='';
+    try{
+      const r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai&private=true',{
+        signal:AbortSignal.timeout?AbortSignal.timeout(30000):undefined
+      });
+      if(r.ok)txt=(await r.text()).trim();
+    }catch(e){console.warn('llm fail',e);}
+    if(!txt){
+      // Fallback: simple line-based parsing
+      const lines=ocrText.split(/[\n\r]+/).map(l=>l.trim()).filter(l=>l.length>=3&&/[a-zA-Zа-яА-Я]/.test(l));
+      const arr=lines.slice(0,30).map(n=>({name:n,cat:(CATS[0]&&CATS[0].id)||'boshqa'}));
+      txt=JSON.stringify(arr);
+    }
+    // Parse JSON (strip code fences)
+    let cleaned=txt.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    const jsStart=cleaned.indexOf('[');const jsEnd=cleaned.lastIndexOf(']');
+    if(jsStart>=0&&jsEnd>jsStart)cleaned=cleaned.slice(jsStart,jsEnd+1);
+    let arr=[];
+    try{arr=JSON.parse(cleaned);}catch(e){
+      console.warn('json parse',e,cleaned);
+      $('vitrinaList').innerHTML='<div style="padding:14px;background:#fef3c7;border-radius:10px;font-size:12px;font-weight:700;color:#92400e;">⚠️ AI javobi noto\'g\'ri formatda. Qayta urinib ko\'ring.<br><br><b>Xom javob:</b><br><pre style="font-size:10px;max-height:160px;overflow:auto;white-space:pre-wrap;">'+escapeHtml(txt.slice(0,500))+'</pre></div>';
+      $('vitrinaStatus').textContent='Format xato';return;
+    }
+    if(!Array.isArray(arr)||!arr.length){
+      $('vitrinaList').innerHTML='<div style="text-align:center;padding:24px;font-weight:800;color:#dc2626;">😕 Mahsulot topilmadi.<br><span style="font-size:12px;font-weight:700;color:var(--text2);">Yorqinroq, yaqinroq rasm yuklang.</span></div>';
+      $('vitrinaStatus').textContent='Bo\'sh';return;
+    }
+    // Dedupe within array + check existing products
+    const normalize=s=>(s||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'').trim();
+    const existingNames=new Set(products.map(p=>normalize(p.name)));
+    const seen=new Set();
+    vitrinaItems=[];
+    for(const it of arr){
+      const nm=(it.name||'').trim();
+      if(!nm)continue;
+      const key=normalize(nm);
+      if(seen.has(key))continue;
+      seen.add(key);
+      const catId=CATS.find(c=>c.id===it.cat)?it.cat:(CATS[0]&&CATS[0].id)||'kukun';
+      vitrinaItems.push({
+        name:nm,cat:catId,exists:existingNames.has(key)
+      });
+    }
+    renderVitrinaList();
+    $('vitrinaStatus').textContent=`${vitrinaItems.length} ta mahsulot tanildi`;
+    haptic('confirm');
+  }catch(e){
+    console.error('vitrina',e);
+    $('vitrinaList').innerHTML='<div style="text-align:center;padding:24px;font-weight:800;color:#dc2626;">❌ Xato: '+escapeHtml(e.message||'noma\'lum')+'</div>';
+    $('vitrinaStatus').textContent='Xato';
+    haptic('error');
+  }
+};
+function renderVitrinaList(){
+  const list=$('vitrinaList');
+  if(!vitrinaItems.length){list.innerHTML='';return;}
+  const catOpts=CATS.map(c=>`<option value="${c.id}">${c.icon||'📦'} ${c.label_uz||c.label||c.id}</option>`).join('');
+  list.innerHTML=vitrinaItems.map((it,i)=>{
+    const skip=it.skip;
+    return `<div style="background:${skip?'rgba(220,38,38,0.06)':it.exists?'rgba(245,158,11,0.08)':'var(--card2)'};border:1.5px solid ${skip?'rgba(220,38,38,0.4)':it.exists?'rgba(245,158,11,0.4)':'var(--border)'};border-radius:12px;padding:10px;margin-bottom:8px;${skip?'opacity:0.5;':''}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <input type="text" value="${escapeHtml(it.name)}" oninput="vitrinaItems[${i}].name=this.value" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-weight:700;font-size:13px;">
+        ${it.exists?'<span title="Bazada bor" style="font-size:11px;font-weight:800;color:#d97706;background:rgba(245,158,11,0.15);padding:3px 8px;border-radius:6px;white-space:nowrap;">⚠️ BAZADA BOR</span>':''}
+        <button onclick="vitrinaItems[${i}].skip=!vitrinaItems[${i}].skip;renderVitrinaList();updateVitrinaSaveBtn();" title="O'tkazib yuborish" style="background:${skip?'#dc2626':'rgba(0,0,0,0.05)'};color:${skip?'#fff':'var(--text)'};border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:14px;">${skip?'↺':'✕'}</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <input type="number" placeholder="💰 Narx" value="${it.price||''}" oninput="vitrinaItems[${i}].price=parseInt(this.value)||0;updateVitrinaSaveBtn()" style="flex:1;min-width:100px;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-weight:800;font-size:13px;">
+        <select onchange="vitrinaItems[${i}].cat=this.value" style="flex:1;min-width:120px;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-weight:700;font-size:12px;">
+          ${catOpts.replace(`value="${it.cat}"`,`value="${it.cat}" selected`)}
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+  // Top info
+  const ready=vitrinaItems.filter(it=>!it.skip&&!it.exists&&it.price>0).length;
+  const total=vitrinaItems.filter(it=>!it.skip&&!it.exists).length;
+  list.insertAdjacentHTML('afterbegin',`<div style="background:linear-gradient(135deg,#06b6d4,#7c5cff);color:#fff;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:800;margin-bottom:10px;">💡 Narxni to'ldiring va saqlang. <span style="opacity:0.9;">${ready}/${total} tayyor</span></div>`);
+  updateVitrinaSaveBtn();
+}
+function updateVitrinaSaveBtn(){
+  const btn=$('vitrinaSaveBtn');if(!btn)return;
+  const valid=vitrinaItems.filter(it=>!it.skip&&!it.exists&&it.price>0);
+  btn.disabled=valid.length===0;
+  btn.innerHTML=`💾 ${valid.length} ta saqlash`;
+}
+window.saveVitrinaProducts=async()=>{
+  const valid=vitrinaItems.filter(it=>!it.skip&&!it.exists&&it.price>0);
+  if(!valid.length)return;
+  const btn=$('vitrinaSaveBtn');
+  btn.disabled=true;btn.innerHTML='⏳ Saqlanmoqda...';
+  haptic('light');
+  let ok=0,fail=0;
+  for(const it of valid){
+    try{
+      await rtdb.ref('products').push({
+        name:it.name,price:it.price,cat:it.cat,desc:'',img:'',
+        variants:[],variantPrices:{},active:true,
+        createdAt:Date.now(),updatedAt:Date.now()
+      });
+      ok++;
+    }catch(e){console.warn('save vit',e);fail++;}
+  }
+  toast(`✅ ${ok} ta saqlandi${fail?` (${fail} xato)`:''}`);haptic('confirm');
+  closeVitrinaModal();
 };
 
 /* ── 📁 QUICK EDIT (inline price edit in list) ── */
