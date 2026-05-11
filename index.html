@@ -1556,6 +1556,14 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
         <span class="scan-btn-arr">→</span>
       </button>
+      <button class="scan-btn" type="button" onclick="openUrlImport()" style="background:linear-gradient(135deg,#7c5cff,#5b3df0);">
+        <span class="scan-btn-ic">🌐</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Saytdan import (Uzum, OLX...)</div>
+          <div class="scan-btn-sub">Mahsulot havolasini yopishtirsangiz to'ldiriladi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
       <div class="f-grp">
         <label class="f-lbl">Asosiy rasm</label>
         <div class="img-tabs full-only">
@@ -1572,6 +1580,8 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
             </div>
           </div>
           <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+          <button type="button" id="bgRemoveBtn" onclick="aiRemoveBg()" style="display:none;width:100%;margin-top:8px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;border-radius:10px;padding:9px 12px;cursor:pointer;">✂️ AI bilan fonni tozalash</button>
+          <div id="bgRemoveStatus" style="display:none;font-size:11px;color:var(--text2);margin-top:6px;text-align:center;font-weight:700;"></div>
         </div>
         <div id="imgUrlArea" class="full-only" style="display:none">
           <input class="f-inp" id="pImg" placeholder="https://...rasm.jpg">
@@ -1590,7 +1600,13 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           </select>
         </div>
       </div>
-      <div class="f-grp"><label class="f-lbl">Tavsif</label><input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun"></div>
+      <div class="f-grp">
+        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>Tavsif</span>
+          <button type="button" id="aiDescBtn" onclick="aiGenerateDesc()" style="font-size:11px;font-weight:800;background:linear-gradient(135deg,#06b6d4,#7c5cff);color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🤖 AI bilan yozish</button>
+        </label>
+        <input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun">
+      </div>
       <div class="f-grp full-only">
         <label class="f-lbl">Qo'shimcha rasmlar (galereya)</label>
         <div id="extraImgsRow" class="extra-imgs-row"></div>
@@ -1607,12 +1623,23 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         <div class="f-grp"><label class="f-lbl">Eski narx</label><input class="f-inp" id="pOld" type="number" placeholder="30000"></div>
       </div>
       <div class="vars-admin full-only">
-        <div class="vars-admin-lbl">Xillar — har birining narxi bilan</div>
+        <div class="vars-admin-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>Xillar — har birining narxi bilan</span>
+          <button type="button" onclick="toggleBulkVars()" id="bulkVarsToggleBtn" style="font-size:10px;font-weight:800;background:rgba(124,92,255,0.12);color:#7c5cff;border:1px solid rgba(124,92,255,0.3);border-radius:7px;padding:4px 8px;cursor:pointer;">📋 Birgalikda</button>
+        </div>
         <div class="var-tag-list" id="varTagList"></div>
         <div class="var-add-row" style="flex-wrap:wrap;gap:6px;">
           <input class="var-add-inp" id="varInput" placeholder="Nomi (3kg, Lavanda...)" style="flex:2;min-width:110px">
           <input class="var-add-inp" id="varPriceInput" type="number" placeholder="Narxi" style="flex:1;min-width:80px">
           <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
+        </div>
+        <div id="bulkVarsArea" style="display:none;margin-top:8px;">
+          <textarea id="bulkVarsInput" placeholder="Har qatorga bitta xil:&#10;Sakura 125000&#10;Lavanda 130000&#10;Color 120000" style="width:100%;min-height:120px;padding:10px;border:2px dashed var(--border);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;background:var(--card2);color:var(--text);resize:vertical;box-sizing:border-box;"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button type="button" onclick="applyBulkVars()" style="flex:1;background:linear-gradient(135deg,#7c5cff,#5b3df0);color:#fff;border:none;border-radius:9px;padding:9px 12px;font-weight:800;font-size:12px;cursor:pointer;">✅ Hammasini qo'shish</button>
+            <button type="button" onclick="$('bulkVarsInput').value=''" style="background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-weight:800;font-size:12px;cursor:pointer;">🧹 Tozalash</button>
+          </div>
+          <div style="font-size:10px;color:var(--text2);margin-top:6px;line-height:1.5;">💡 Format: <b>Nom Narx</b> har qatorda. Narxsiz xillar uchun asosiy narx ishlatiladi.</div>
         </div>
       </div>
       <label class="ch-post-row" id="postChannelRow" style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 14px;background:rgba(34,158,217,0.08);border:1px solid rgba(34,158,217,0.25);border-radius:12px;cursor:pointer;user-select:none;">
@@ -4532,9 +4559,16 @@ window.handleImgFile=input=>{
     prev.src=b64;prev.classList.add('show');
     $('imgPlaceholder').style.display='none';
     $('imgUploadArea').classList.add('has-img');
+    updateBgRemoveBtn();
   };
   reader.readAsDataURL(file);
 };
+function updateBgRemoveBtn(){
+  const btn=$('bgRemoveBtn'),st=$('bgRemoveStatus');if(!btn)return;
+  const hasImg=$('pImgBase64')&&$('pImgBase64').value;
+  btn.style.display=hasImg?'block':'none';
+  if(st)st.style.display='none';
+}
 
 /* EXTRA IMAGES (gallery) */
 function renderExtraImgs(){
@@ -4574,6 +4608,7 @@ window.filterAdminProducts=()=>{
       <div class="adm-info"><div class="adm-name">${p.name}</div><div class="adm-meta">${fmt(p.price)} · ${active?'✅':'❌'}${p.variants?.length?` · ${p.variants.length} xil`:''}</div></div>
       <div class="adm-acts">
         <button class="ia post" onclick="window.postProductToChannel('${p.id}')" title="📤 Kanalga yuborish">📤</button>
+        <button class="ia dup" onclick="window.dupeP('${p.id}')" title="📋 Nusxalash" style="background:rgba(124,92,255,0.15);color:#7c5cff;">📋</button>
         <button class="ia edit" onclick="window.editP('${p.id}')">✏️</button>
         <button class="ia tog ${active?'':'off'}" onclick="window.togP('${p.id}',${active})">${active?'👁':'🚫'}</button>
         <button class="ia del" onclick="window.delP('${p.id}')">🗑</button>
@@ -5063,6 +5098,7 @@ window.editP=id=>{
     switchImgTab('gal');
     prev.src=p.img;prev.classList.add('show');
     $('imgPlaceholder').style.display='none';$('imgUploadArea').classList.add('has-img');
+    $('pImgBase64').value=p.img;
   } else {
     switchImgTab('gal');
     prev.classList.remove('show');$('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
@@ -5075,6 +5111,44 @@ window.editP=id=>{
   // While editing, force FULL mode so all fields visible
   setAddMode('full');
   aTab('add',document.querySelectorAll('.a-tab')[12]);
+  updateBgRemoveBtn();
+};
+window.dupeP=id=>{
+  const p=products.find(x=>x.id===id);if(!p){toast('❌ Mahsulot topilmadi');return;}
+  haptic('light');
+  // Pre-fill form as a NEW product (no editId so save creates new)
+  $('editId').value='';$('pImgBase64').value='';
+  if($('pBarcode'))$('pBarcode').value=''; // don't copy barcode
+  $('pName').value=(p.name||'')+' (nusxa)';
+  $('pDesc').value=p.desc||'';
+  $('pPrice').value=p.price||'';
+  $('pCat').value=p.cat||(CATS[0]&&CATS[0].id)||'kukun';
+  $('pBadge').value=p.badge||'';
+  $('pOld').value=p.oldPrice||'';
+  $('pImg').value=(p.img&&!p.img.startsWith('data:'))?p.img:'';
+  const prev=$('imgPreview');
+  if(p.img&&p.img.startsWith('data:')){
+    switchImgTab('gal');
+    prev.src=p.img;prev.classList.add('show');
+    $('imgPlaceholder').style.display='none';$('imgUploadArea').classList.add('has-img');
+    $('pImgBase64').value=p.img;
+  }else if(p.img){
+    switchImgTab('url');
+    prev.classList.remove('show');$('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
+  }else{
+    switchImgTab('gal');
+    prev.classList.remove('show');$('imgPlaceholder').style.display='block';$('imgUploadArea').classList.remove('has-img');
+  }
+  editVars=[...(p.variants||[])];editVarPrices={...p.variantPrices||{}};renderVarTags();
+  editExtraImgs=Array.isArray(p.images)?[...p.images]:[];renderExtraImgs();
+  $('cancelEdit').style.display='none';
+  const pr=$('postChannelRow');if(pr)pr.style.display='flex';
+  const cb=$('pPostChannel');if(cb)cb.checked=true;
+  setAddMode('full');
+  aTab('add',document.querySelectorAll('.a-tab')[12]);
+  updateBgRemoveBtn();
+  toast('📋 Nusxa: nomni o\'zgartirib saqlang');
+  setTimeout(()=>{$('pName')&&$('pName').focus();},120);
 };
 window.cancelEditFn=()=>{
   $('editId').value='';$('pImgBase64').value='';if($('pBarcode'))$('pBarcode').value='';
@@ -5088,6 +5162,7 @@ window.cancelEditFn=()=>{
   // Restore channel-post checkbox for next add
   const pr=$('postChannelRow');if(pr)pr.style.display='flex';
   const cb=$('pPostChannel');if(cb)cb.checked=true;
+  updateBgRemoveBtn();
   aTab('products',document.querySelectorAll('.a-tab')[2]);
 };
 window.togP=async(id,active)=>{
@@ -5098,6 +5173,218 @@ window.delP=async id=>{
   if(!confirm('O\'chirish?'))return;
   await rtdb.ref('products/'+id).remove();
   toast('🗑 O\'chirildi');
+};
+
+/* ── 🤖 AI DESCRIPTION (Pollinations.ai, no API key needed) ── */
+window.aiGenerateDesc=async()=>{
+  const name=g('pName');
+  if(!name){toast('❗ Avval mahsulot nomini yozing');haptic('warning');return;}
+  const price=$('pPrice').value||'';
+  const catId=$('pCat').value||'';
+  const catObj=CATS.find(c=>c.id===catId);
+  const catName=catObj?(catObj.label_uz||catObj.label||catObj.id):catId;
+  const btn=$('aiDescBtn'),descInp=$('pDesc');
+  if(!btn||!descInp)return;
+  const orig=btn.innerHTML;
+  btn.innerHTML='⏳ Yozilmoqda...';btn.disabled=true;
+  haptic('light');
+  const langLabel=currentLang==='ru'?'Russian':currentLang==='en'?'English':'Uzbek';
+  const prompt=`Write a concise, friendly product description in ${langLabel} for this hygiene/household product. Max 120 characters. No emojis. No quotes. No "Description:" prefix. Just the description text.\n\nProduct: ${name}\nCategory: ${catName}${price?'\nPrice: '+price+' UZS':''}`;
+  try{
+    const r=await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&private=true`,{
+      signal:AbortSignal.timeout?AbortSignal.timeout(25000):undefined
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    let txt=(await r.text()).trim();
+    // Clean common AI artifacts
+    txt=txt.replace(/^["'`]+|["'`]+$/g,'').replace(/^Description:\s*/i,'').replace(/\n.*/g,'').slice(0,180);
+    if(!txt)throw new Error('bo\'sh javob');
+    descInp.value=txt;
+    toast('✅ Tavsif yozildi');haptic('confirm');
+  }catch(e){
+    console.error('AI desc:',e);
+    toast('❌ AI ishlamadi: '+(e.message||'xato'));haptic('error');
+  }finally{
+    btn.innerHTML=orig;btn.disabled=false;
+  }
+};
+
+/* ── 🌐 URL IMPORT (Uzum direct + generic og:tags via CORS proxy) ── */
+window.openUrlImport=()=>{
+  const url=prompt('🌐 Mahsulot havolasini yopishtiring:\n\n• Uzum: https://uzum.uz/...\n• OLX, Yandex Market, AliExpress va boshqalar');
+  if(!url||!url.trim())return;
+  importFromUrl(url.trim());
+};
+async function importFromUrl(url){
+  toast('⏳ Internetdan olinmoqda...');haptic('light');
+  try{
+    // ─── Uzum special case ─── (their API is open CORS)
+    if(/uzum\.uz/i.test(url)){
+      const m=url.match(/(\d{4,})(?:[/?#]|$)/);
+      const pid=m?m[1]:null;
+      if(pid){
+        const r=await fetch(`https://api.uzum.uz/api/v2/product/${pid}`,{
+          signal:AbortSignal.timeout?AbortSignal.timeout(15000):undefined
+        });
+        if(r.ok){
+          const d=await r.json();
+          const p=d.payload?.data;
+          if(p){
+            const titleObj=p.localizableTitle||{};
+            const name=titleObj[currentLang]||titleObj.uz||titleObj.ru||p.title||'';
+            // Strip HTML from description
+            const descHtml=p.description||'';
+            const desc=descHtml.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,200);
+            // First photo, biggest size
+            let img='';
+            const ph=(p.photos||[])[0];
+            if(ph){
+              const sizes=ph.photo||{};
+              const sk=Object.keys(sizes).sort((a,b)=>parseInt(b)-parseInt(a))[0];
+              img=sizes[sk]?.high||sizes[sk]?.low||'';
+            }
+            // Price from first SKU
+            const sku=(p.skuList||[])[0];
+            const price=sku?(sku.fullPrice||sku.sellPrice||0):0;
+            const brand=p.seller?.title||'';
+            applyImportResult({name:name||(brand+' '+(p.id||'')).trim(),desc,img,price,brand},'Uzum');
+            return;
+          }
+        }
+      }
+    }
+    // ─── Generic site: CORS proxy + og:tags + JSON-LD ───
+    const proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
+    const r=await fetch(proxyUrl,{signal:AbortSignal.timeout?AbortSignal.timeout(20000):undefined});
+    if(!r.ok)throw new Error('Sayt ochilmadi: HTTP '+r.status);
+    const html=await r.text();
+    const meta={};
+    const ogRe=/<meta\s+[^>]*property=["']og:([^"']+)["'][^>]*content=["']([^"']+)["']/gi;
+    const ogRe2=/<meta\s+[^>]*content=["']([^"']+)["'][^>]*property=["']og:([^"']+)["']/gi;
+    let m;
+    while((m=ogRe.exec(html))!==null)meta[m[1]]=m[2];
+    while((m=ogRe2.exec(html))!==null)meta[m[2]]=meta[m[2]]||m[1];
+    // JSON-LD product info
+    const ldRe=/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+    let priceFromLd='',nameFromLd='',imgFromLd='',descFromLd='';
+    while((m=ldRe.exec(html))!==null){
+      try{
+        const ld=JSON.parse(m[1].trim());
+        const items=Array.isArray(ld)?ld:[ld];
+        for(const it of items){
+          if(it['@type']==='Product'||(Array.isArray(it['@type'])&&it['@type'].includes('Product'))){
+            nameFromLd=nameFromLd||it.name||'';
+            imgFromLd=imgFromLd||(Array.isArray(it.image)?it.image[0]:it.image)||'';
+            descFromLd=descFromLd||it.description||'';
+            const off=it.offers;
+            if(off){
+              const o=Array.isArray(off)?off[0]:off;
+              priceFromLd=priceFromLd||o.price||o.lowPrice||'';
+            }
+          }
+        }
+      }catch(_){}
+    }
+    const name=meta.title||nameFromLd||'';
+    const img=meta.image||imgFromLd||'';
+    const desc=(meta.description||descFromLd||'').replace(/\s+/g,' ').trim().slice(0,200);
+    const price=parseInt((meta['price:amount']||priceFromLd||'').toString().replace(/[^\d]/g,''))||0;
+    if(!name&&!img){throw new Error('Mahsulot ma\'lumoti topilmadi');}
+    const hostname=new URL(url).hostname.replace('www.','');
+    applyImportResult({name,desc,img,price},hostname);
+  }catch(e){
+    console.error('Import:',e);
+    toast('❌ Import: '+(e.message||'xato'));haptic('error');
+  }
+}
+function applyImportResult(d,source){
+  const applied=[];
+  const setIfEmpty=(id,v,label)=>{const e=$(id);if(e&&!e.value&&v){e.value=v;applied.push(label);}};
+  setIfEmpty('pName',d.name,'nom');
+  setIfEmpty('pDesc',d.desc,'tavsif');
+  if(d.price>0)setIfEmpty('pPrice',d.price,'narx');
+  if(d.img){
+    const pImg=$('pImg');
+    if(pImg&&!pImg.value&&!$('pImgBase64').value){
+      pImg.value=d.img;
+      applied.push('rasm');
+      try{switchImgTab('url');}catch(_){}
+    }
+  }
+  toast(applied.length?`✅ ${source}'dan: `+applied.join(', '):'⚠️ Hech narsa to\'ldirilmadi');
+  haptic('confirm');
+}
+
+/* ── ✂️ AI BACKGROUND REMOVAL (client-side via imgly) ── */
+let imglyBg=null;
+window.aiRemoveBg=async()=>{
+  const b64=($('pImgBase64')||{}).value||'';
+  if(!b64){toast('❗ Avval rasm yuklang');haptic('warning');return;}
+  const btn=$('bgRemoveBtn'),st=$('bgRemoveStatus');
+  btn.disabled=true;st.style.display='block';st.textContent='⏳ AI modulini yuklash (birinchi marta ~50MB)...';
+  haptic('light');
+  try{
+    if(!imglyBg){
+      const mod=await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
+      imglyBg=mod.removeBackground||mod.default?.removeBackground||mod.default;
+      if(!imglyBg)throw new Error('Kutubxona yuklanmadi');
+    }
+    st.textContent='⏳ Fon olib tashlanmoqda...';
+    const blob=dataUrlToBlob(b64);
+    if(!blob)throw new Error('Rasm o\'qilmadi');
+    const resultBlob=await imglyBg(blob,{
+      progress:(key,cur,total)=>{
+        if(total){st.textContent=`⏳ ${key}: ${Math.round(cur/total*100)}%`;}
+      },
+      output:{format:'image/png'}
+    });
+    // Convert result blob to data URL
+    const newB64=await new Promise((res,rej)=>{
+      const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(resultBlob);
+    });
+    $('pImgBase64').value=newB64;
+    const prev=$('imgPreview');prev.src=newB64;prev.classList.add('show');
+    $('imgUploadArea').classList.add('has-img');
+    $('imgPlaceholder').style.display='none';
+    st.textContent='✅ Fon olib tashlandi';
+    setTimeout(()=>{st.style.display='none';},2500);
+    toast('✅ Fon tozalandi');haptic('confirm');
+  }catch(e){
+    console.error('BG removal:',e);
+    st.textContent='❌ Xato: '+(e.message||'noma\'lum');
+    toast('❌ Fon tozalanmadi');haptic('error');
+  }finally{
+    btn.disabled=false;
+  }
+};
+
+/* ── 🎨 BULK VARIANTS ── */
+window.toggleBulkVars=()=>{
+  const a=$('bulkVarsArea'),btn=$('bulkVarsToggleBtn');
+  const on=a.style.display==='none';
+  a.style.display=on?'block':'none';
+  if(btn)btn.innerHTML=on?'❎ Yashirish':'📋 Birgalikda';
+};
+window.applyBulkVars=()=>{
+  const txt=($('bulkVarsInput')||{}).value||'';
+  const lines=txt.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){toast('❗ Qatorlar bo\'sh');return;}
+  let added=0;
+  for(const line of lines){
+    // Parse: try "Name 12345" / "Name - 12345" / "Name: 12345" / "Name | 12345"
+    const m=line.match(/^(.+?)[\s:\-|]+(\d[\d\s.,]*)$/);
+    let nm,pr;
+    if(m){nm=m[1].trim();pr=parseInt(m[2].replace(/[^\d]/g,''))||0;}
+    else{nm=line;pr=0;}
+    if(!nm||editVars.includes(nm))continue;
+    editVars.push(nm);
+    if(pr>0)editVarPrices[nm]=pr;
+    added++;
+  }
+  renderVarTags();
+  $('bulkVarsInput').value='';
+  toast(added?`✅ ${added} ta xil qo'shildi`:'⚠️ Hech narsa qo\'shilmadi');
+  haptic('confirm');
 };
 
 window.saveProduct=async()=>{
