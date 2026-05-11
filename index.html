@@ -1775,9 +1775,9 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 const FB={
   apiKey:"AIzaSyCaS_-p9gxwN2O64WoYLlRERisq2s7CEPs",
@@ -1788,8 +1788,21 @@ const FB={
   appId:"1:890867885170:web:2d989c60f4d4dbb5348eeb",
   databaseURL:"https://kerasys-dokon-default-rtdb.firebaseio.com"
 };
-firebase.initializeApp(FB);
-const db=firebase.firestore();
+// Firebase SDKs are loaded async (don't block parsing). Wait helpers:
+let __fbInited=false;
+let db=null,rtdb=null;
+const __fbReady=new Promise(resolve=>{
+  (function check(){
+    if(window.firebase&&firebase.firestore&&firebase.database){
+      if(!__fbInited){try{firebase.initializeApp(FB);}catch(_){}__fbInited=true;}
+      db=firebase.firestore();
+      rtdb=firebase.database();
+      resolve();
+    }else setTimeout(check,25);
+  })();
+});
+// For older sync-style code paths, also expose .then helpers
+window.whenFirebase=cb=>__fbReady.then(cb);
 
 
 const ADMINS=["snchwww","Suhrob8860"];
@@ -2971,7 +2984,7 @@ window.shareProduct=async pid=>{
 };
 
 // ─── Realtime Database (mahsulotlar uchun) ───
-const rtdb=firebase.database();
+// rtdb is already initialized async in __fbReady (see top of script)
 
 // ─── User analytics (har bir kirishni yozish) ───
 function getUserUid(){
@@ -3018,7 +3031,8 @@ async function trackUser(){
     await ref.update(data);
   }catch(e){console.warn('trackUser:',e);}
 }
-trackUser();
+// Defer analytics until firebase + first paint is done (don't block initial render)
+whenFirebase(()=>setTimeout(trackUser,800));
 
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
@@ -3076,8 +3090,7 @@ function fetchProductsREST(){
 }
 function initProducts(){
   if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
-  if(productsListenerRef){try{productsListenerRef.off();}catch(_){}}
-  productsListenerRef=rtdb.ref('products');
+  // Start REST fetch immediately (no firebase SDK needed for this) — paints products fastest
   fetchProductsREST();
   // Silent fallback: if nothing arrived in 15s, mark as loaded with empty state (no banner)
   productsTimeoutHandle=setTimeout(()=>{
@@ -3087,7 +3100,11 @@ function initProducts(){
       else if(currentPage==='products')renderProductsPage();
     }
   },15000);
-  productsListenerRef.on('value', snap=>{
+  // Realtime listener attaches AFTER firebase SDKs load (deferred so it doesn't block first paint)
+  whenFirebase(()=>{
+    if(productsListenerRef){try{productsListenerRef.off();}catch(_){}}
+    productsListenerRef=rtdb.ref('products');
+    productsListenerRef.on('value', snap=>{
     if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     const val=snap.val();
     if(!val){ products=[]; }
@@ -3116,6 +3133,7 @@ function initProducts(){
     productsLoaded=true;
     if(currentPage==='cats')renderCatsPage();
     else if(currentPage==='products')renderProductsPage();
+  });
   });
 }
 window.retryProducts=()=>{
@@ -6580,11 +6598,11 @@ else bootUI();
 
 /* ─── PWA: register service worker + install prompt ─── */
 let pwaInstallPrompt=null;
-if('serviceWorker' in navigator&&!tg){
-  // SW registration only outside Telegram (TG WebView already has its own host)
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+if('serviceWorker' in navigator){
+  // Register on idle so it never delays first paint. Works in browser + Telegram WebView.
+  const reg=()=>navigator.serviceWorker.register('sw.js').catch(()=>{});
+  if('requestIdleCallback' in window)requestIdleCallback(reg,{timeout:2000});
+  else window.addEventListener('load',()=>setTimeout(reg,500));
 }
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();
