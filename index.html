@@ -2133,6 +2133,17 @@ function renderCatsPage(){
   currentPage='cats';
   // Show search FAB on home page
   const fs=$('fabSearch');if(fs)fs.classList.remove('hidden');
+  // If products not yet loaded — show loading state instead of 0 0 0
+  if(!products.length){
+    $('mainArea').innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:18px;">
+        <div class="spin"></div>
+        <div style="font-size:15px;font-weight:800;color:var(--text2);text-align:center">${t3('Mahsulotlar yuklanmoqda...','Загрузка товаров...','Loading products...')}</div>
+        <div style="font-size:12px;color:var(--text2);opacity:0.7">${t3('Internet tezligiga bog\'liq','Зависит от скорости интернета','Depends on internet speed')}</div>
+      </div>`;
+    updateBackBtn();
+    return;
+  }
   const counts={};
   products.forEach(p=>{if(p.active!==false)counts[p.cat]=(counts[p.cat]||0)+1;});
   const favCnt=favIds.filter(id=>products.some(p=>p.id===id&&p.active!==false)).length;
@@ -2276,6 +2287,16 @@ function productCardHTML(p,opts){
 function renderProductsPage(){
   // Hide search FAB on inner pages
   const fs=$('fabSearch');if(fs)fs.classList.add('hidden');
+  if(!products.length){
+    $('mainArea').innerHTML=`
+      <div class="back-btn" onclick="window.goBack()">← ${tr('back')}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:18px;">
+        <div class="spin"></div>
+        <div style="font-size:15px;font-weight:800;color:var(--text2);text-align:center">${t3('Mahsulotlar yuklanmoqda...','Загрузка товаров...','Loading products...')}</div>
+      </div>`;
+    updateBackBtn();
+    return;
+  }
   const isVirtual=typeof currentCat==='string'&&currentCat.startsWith('__');
   let cat,all,virtualLoading=false;
   if(isVirtual){
