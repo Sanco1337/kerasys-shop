@@ -3173,6 +3173,7 @@ function refreshOpenViews(){
 })();
 
 function initCategories(){
+  whenFirebase(()=>{
   rtdb.ref('categories').on('value', snap=>{
     const val=snap.val();
     if(!val||Object.keys(val).length===0){
@@ -3205,10 +3206,12 @@ function initCategories(){
     }
     if(adminTab==='cats'&&typeof loadAdminCats==='function')loadAdminCats();
   }, err=>{console.error('Categories RTDB error:',err);categoriesLoaded=true;});
+  });
 }
 initCategories();
 
 function initPromos(){
+  whenFirebase(()=>{
   rtdb.ref('promos').on('value', snap=>{
     const val=snap.val()||{};
     promos=Object.entries(val).map(([id,d])=>({id,...d})).filter(p=>p.active!==false).sort((a,b)=>(a.order||0)-(b.order||0));
@@ -3216,6 +3219,7 @@ function initPromos(){
     if(currentPage==='cats')renderCatsPage();
     if(adminTab==='banners'&&typeof loadAdminPromos==='function')loadAdminPromos();
   }, err=>console.warn('Promos RTDB:',err));
+  });
 }
 initPromos();
 
@@ -3229,7 +3233,7 @@ function rebuildCatSelect(){
 
 /* ─── Telegram bot integration ─── */
 let botConfig={token:'',chatId:'',channelId:''};
-rtdb.ref('config/bot').on('value', s=>{
+whenFirebase(()=>rtdb.ref('config/bot').on('value', s=>{
   botConfig=s.val()||{token:'',chatId:'',channelId:''};
   const t=document.getElementById('botTokenInp');if(t&&!t.matches(':focus'))t.value=botConfig.token||'';
   const c=document.getElementById('botChatInp');if(c&&!c.matches(':focus'))c.value=botConfig.chatId||'';
@@ -3241,7 +3245,7 @@ rtdb.ref('config/bot').on('value', s=>{
     if(botConfig.channelId)parts.push('📢 Kanal: '+botConfig.channelId);
     st.textContent=parts.join(' · ');
   }
-}, e=>console.warn('bot config:',e));
+}, e=>console.warn('bot config:',e)));
 
 async function notifyBot(text,chatId){
   if(!botConfig.token)return false;
@@ -3397,7 +3401,7 @@ window.testBotMessage=async()=>{
 
 /* ─── Yandex Go store config ─── */
 let storeConfig={address:'',lat:null,lon:null};
-rtdb.ref('config/store').on('value', s=>{
+whenFirebase(()=>rtdb.ref('config/store').on('value', s=>{
   const v=s.val()||{};
   storeConfig={address:v.address||'',lat:Number(v.lat)||null,lon:Number(v.lon)||null};
   const a=document.getElementById('storeAddrInp');if(a&&!a.matches(':focus'))a.value=storeConfig.address||'';
@@ -3405,7 +3409,7 @@ rtdb.ref('config/store').on('value', s=>{
   const lo=document.getElementById('storeLonInp');if(lo&&!lo.matches(':focus'))lo.value=storeConfig.lon||'';
   const st=document.getElementById('storeStatus');
   if(st)st.textContent=storeConfig.address?(storeConfig.lat&&storeConfig.lon?'🟢 Manzil va koordinata saqlangan':'🟡 Manzil saqlangan (koordinatasiz)'):'🔴 Do\'kon manzili kiritilmagan';
-}, e=>console.warn('store config:',e));
+}, e=>console.warn('store config:',e)));
 
 window.saveStoreConfig=async()=>{
   const address=(g('storeAddrInp')||'').trim();
@@ -5001,14 +5005,14 @@ window.sendChatMsg=async()=>{
   }catch(e){toast('❌ '+(e.message||'Xatolik'));haptic('error');}
 };
 // Unread badge — works for both TG users and persistent guests
-(function(){
+whenFirebase(()=>{
   const myUid=getMyChatId();
   db.collection('chats').where('chatId','==',myUid).where('from','==','admin').where('read','==',false).onSnapshot(snap=>{
     const cnt=snap.size;
     const badge=$('chatBadge');if(!badge)return;
     badge.textContent=cnt;badge.classList.toggle('show',cnt>0);
   },err=>console.warn('chat badge:',err));
-})();
+});
 
 /* ADMIN CHATS */
 let adminChatsListUnsub=null;
