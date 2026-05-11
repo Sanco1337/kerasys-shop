@@ -750,6 +750,11 @@ option img.apple-emoji{width:1em;height:1em;}
 .scan-btn-tt{font-size:15px;font-weight:900;margin-bottom:2px;}
 .scan-btn-sub{font-size:11px;opacity:0.92;font-weight:700;}
 .scan-btn-arr{font-size:18px;opacity:0.9;flex:0 0 auto;}
+/* Mic / voice button */
+.mic-btn{width:30px;height:30px;border-radius:50%;border:none;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;box-shadow:0 2px 6px rgba(220,38,38,0.3);}
+.mic-btn:hover{transform:scale(1.08);}
+.mic-btn.rec{background:linear-gradient(135deg,#22c55e,#16a34a);animation:micPulse 1s infinite;box-shadow:0 0 0 0 rgba(34,197,94,0.7);}
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,0.7);}70%{box-shadow:0 0 0 8px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
 /* Barcode scanner sheet */
 .scan-stage{display:flex;flex-direction:column;gap:14px;}
 .scan-video-wrap{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;}
@@ -1399,6 +1404,19 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
       <div class="adm-search-wrap">
         <input class="adm-search-inp" id="prodSearch" placeholder="🔍 Mahsulot qidirish..." oninput="filterAdminProducts()">
       </div>
+      <div id="bulkBar" style="display:none;background:linear-gradient(135deg,#7c5cff,#5b3df0);color:#fff;border-radius:12px;padding:10px 12px;margin-bottom:10px;display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span id="bulkCount" style="font-weight:900;font-size:13px;">0 ta tanlandi</span>
+        <span style="flex:1;"></span>
+        <button onclick="bulkActMove()" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">📁 Kategoriya</button>
+        <button onclick="bulkActToggle(true)" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">👁 Yoqish</button>
+        <button onclick="bulkActToggle(false)" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">🚫 O'chirish</button>
+        <button onclick="bulkActDelete()" style="background:rgba(239,68,68,0.9);color:#fff;border:none;border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">🗑 O'chirish</button>
+        <button onclick="bulkClear()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        <button onclick="toggleBulkSelMode()" id="bulkSelToggleBtn" style="font-size:11px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;">☑️ Tanlash rejimi</button>
+        <button onclick="bulkSelectAll()" style="font-size:11px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;display:none;" id="bulkSelectAllBtn">✓ Hammasini tanlash</button>
+      </div>
       <div id="prodList"></div>
     </div>
     <div id="aOrders" style="display:none"></div>
@@ -1564,6 +1582,14 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
         <span class="scan-btn-arr">→</span>
       </button>
+      <button class="scan-btn" id="smartVoiceBtn" type="button" onclick="smartVoiceFill()" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
+        <span class="scan-btn-ic" id="smartVoiceIc">🎤</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt" id="smartVoiceTt">Ovoz orqali to'ldirish</div>
+          <div class="scan-btn-sub" id="smartVoiceSub">"Ariel 3 kilo 90 ming" deb ayting</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
       <div class="f-grp">
         <label class="f-lbl">Asosiy rasm</label>
         <div class="img-tabs full-only">
@@ -1587,7 +1613,13 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <input class="f-inp" id="pImg" placeholder="https://...rasm.jpg">
         </div>
       </div>
-      <div class="f-grp"><label class="f-lbl">Nomi *</label><input class="f-inp" id="pName" placeholder="Ariel kir kukuni 3kg"></div>
+      <div class="f-grp">
+        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>Nomi *</span>
+          <button type="button" class="mic-btn" onclick="voiceInput('pName')" title="🎤 Ovozli kiritish">🎤</button>
+        </label>
+        <input class="f-inp" id="pName" placeholder="Ariel kir kukuni 3kg">
+      </div>
       <div class="f-row">
         <div class="f-grp"><label class="f-lbl">Narx *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
         <div class="f-grp"><label class="f-lbl">Kategoriya</label>
@@ -1601,9 +1633,12 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
         </div>
       </div>
       <div class="f-grp">
-        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
           <span>Tavsif</span>
-          <button type="button" id="aiDescBtn" onclick="aiGenerateDesc()" style="font-size:11px;font-weight:800;background:linear-gradient(135deg,#06b6d4,#7c5cff);color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🤖 AI bilan yozish</button>
+          <span style="display:inline-flex;gap:6px;align-items:center;">
+            <button type="button" class="mic-btn" onclick="voiceInput('pDesc')" title="🎤 Ovozli">🎤</button>
+            <button type="button" id="aiDescBtn" onclick="aiGenerateDesc()" style="font-size:11px;font-weight:800;background:linear-gradient(135deg,#06b6d4,#7c5cff);color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🤖 AI bilan yozish</button>
+          </span>
         </label>
         <input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun">
       </div>
@@ -1679,7 +1714,10 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           <label style="font-size:12px;font-weight:800;color:var(--text);align-self:center;">Kategoriya:</label>
           <select class="f-sel" id="chatBulkCat" style="flex:1;min-width:140px;font-size:12px;padding:8px;"></select>
         </div>
-        <textarea id="chatBulkInput" placeholder="Ariel 3kg 90000&#10;Persil 3kg 85000&#10;Fairy 1L 25000&#10;Lenor Sakura 50000" style="width:100%;min-height:140px;margin-top:10px;padding:10px;border:2px dashed var(--border);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;background:var(--card2);color:var(--text);resize:vertical;box-sizing:border-box;"></textarea>
+        <div style="position:relative;margin-top:10px;">
+          <textarea id="chatBulkInput" placeholder="Ariel 3kg 90000&#10;Persil 3kg 85000&#10;Fairy 1L 25000&#10;Lenor Sakura 50000" style="width:100%;min-height:140px;padding:10px 50px 10px 10px;border:2px dashed var(--border);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;background:var(--card2);color:var(--text);resize:vertical;box-sizing:border-box;"></textarea>
+          <button type="button" class="mic-btn" onclick="voiceInput('chatBulkInput',true)" title="🎤 Ovozli kiritish" style="position:absolute;top:8px;right:8px;width:34px;height:34px;font-size:15px;">🎤</button>
+        </div>
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
           <button type="button" onclick="previewChatBulk()" style="flex:1;min-width:140px;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px;font-weight:800;font-size:12px;cursor:pointer;">👁 Oldindan ko'rish</button>
           <button type="button" onclick="applyChatBulk()" style="flex:1;min-width:140px;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;border-radius:9px;padding:10px;font-weight:800;font-size:12px;cursor:pointer;">💾 Hammasini saqlash</button>
@@ -1689,6 +1727,19 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
           💡 Narx oxirgi raqam bo'lishi kerak. Masalan: "Ariel uch kilo 90000" → nom "Ariel uch kilo", narx 90000.<br>
           📷 Saqlangach mahsulotlar ro'yxatidan ✏️ orqali rasm qo'shasiz.
         </div>
+      </details>
+      <details class="csv-section" style="margin-top:10px;">
+        <summary>📸 Bir nechta rasmdan toplab qo'shish</summary>
+        <div style="padding-top:10px;font-size:12px;color:var(--text2);font-weight:700;line-height:1.5;">
+          Galereyadan bir nechta rasm tanlasangiz, har bir rasm uchun alohida mahsulot yaratiladi. Nomi va narxi keyin tahrirlanadi.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+          <label style="font-size:12px;font-weight:800;color:var(--text);align-self:center;">Kategoriya:</label>
+          <select class="f-sel" id="multiImgCat" style="flex:1;min-width:140px;font-size:12px;padding:8px;"></select>
+        </div>
+        <button type="button" onclick="document.getElementById('multiImgFileInput').click()" style="width:100%;margin-top:10px;padding:14px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:10px;font-weight:900;font-size:13px;cursor:pointer;">📸 Rasmlarni tanlash (ko'p tanlash mumkin)</button>
+        <input type="file" id="multiImgFileInput" accept="image/*" multiple style="display:none" onchange="handleMultiImgFiles(this)">
+        <div id="multiImgPreview" style="margin-top:10px;"></div>
       </details>
     </div>
   </div>
@@ -4623,9 +4674,19 @@ window.filterAdminProducts=()=>{
   if(!filtered.length){el.innerHTML='<div style="color:var(--text2);text-align:center;padding:20px;font-weight:700">Topilmadi</div>';return;}
   el.innerHTML=filtered.map(p=>{
     const active=p.active!==false;
-    return `<div class="adm-p">
+    const sel=bulkSelected.has(p.id);
+    return `<div class="adm-p${sel?' sel':''}" style="${sel?'background:rgba(124,92,255,0.12);border-color:#7c5cff;':''}">
+      ${bulkSelMode?`<input type="checkbox" ${sel?'checked':''} onclick="bulkToggleProd('${p.id}',this.checked)" style="width:20px;height:20px;accent-color:#7c5cff;flex-shrink:0;margin-right:2px;">`:''}
       <div class="adm-thumb">${p.img?`<img src="${p.img}" onerror="this.classList.add('err')">`:''}${ICONS[p.cat]||'📦'}</div>
-      <div class="adm-info"><div class="adm-name">${p.name}</div><div class="adm-meta">${fmt(p.price)} · ${active?'✅':'❌'}${p.variants?.length?` · ${p.variants.length} xil`:''}</div></div>
+      <div class="adm-info">
+        <div class="adm-name">${p.name}</div>
+        <div class="adm-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span class="quick-price" onclick="quickEditPrice('${p.id}',${p.price||0},this)" style="cursor:pointer;font-weight:900;color:var(--accent-dk);border-bottom:1px dashed var(--accent-dk);" title="Bosib o'zgartirish">${fmt(p.price)}</span>
+          <span style="opacity:0.5;">·</span>
+          <span>${active?'✅':'❌'}</span>
+          ${p.variants?.length?`<span style="opacity:0.5;">·</span><span>${p.variants.length} xil</span>`:''}
+        </div>
+      </div>
       <div class="adm-acts">
         <button class="ia post" onclick="window.postProductToChannel('${p.id}')" title="📤 Kanalga yuborish">📤</button>
         <button class="ia dup" onclick="window.dupeP('${p.id}')" title="📋 Nusxalash" style="background:rgba(124,92,255,0.15);color:#7c5cff;">📋</button>
@@ -4635,6 +4696,7 @@ window.filterAdminProducts=()=>{
       </div>
     </div>`;
   }).join('');
+  updateBulkUI();
 };
 function loadAdminProducts(){filterAdminProducts();}
 
@@ -5195,6 +5257,122 @@ window.delP=async id=>{
   toast('🗑 O\'chirildi');
 };
 
+/* ── 🎤 VOICE INPUT (Web Speech Recognition) ── */
+let voiceRec=null;let voiceRecActive=null;
+function getRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return null;
+  const r=new SR();
+  const langMap={uz:'uz-UZ',ru:'ru-RU',en:'en-US'};
+  r.lang=langMap[currentLang]||'uz-UZ';
+  r.interimResults=false;r.maxAlternatives=1;r.continuous=false;
+  return r;
+}
+window.voiceInput=(targetId,append=false)=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('❌ Brauzeringiz ovoz tanimaydi');haptic('error');return;}
+  const inp=$(targetId);if(!inp)return;
+  // Find the mic button that triggered this
+  const btn=document.querySelector(`button.mic-btn[onclick*="'${targetId}'"]`);
+  if(voiceRec&&voiceRecActive===targetId){
+    try{voiceRec.stop();}catch(_){}
+    return;
+  }
+  if(voiceRec){try{voiceRec.stop();}catch(_){}}
+  voiceRec=getRecognition();voiceRecActive=targetId;
+  if(btn)btn.classList.add('rec');
+  haptic('light');toast('🎤 Tinglayapman...');
+  voiceRec.onresult=e=>{
+    const txt=e.results[0][0].transcript.trim();
+    if(append&&inp.value)inp.value=inp.value.replace(/\s+$/,'')+'\n'+txt;
+    else inp.value=txt;
+    inp.dispatchEvent(new Event('input',{bubbles:true}));
+    toast('✅ Tanildi');haptic('confirm');
+  };
+  voiceRec.onerror=e=>{
+    console.warn('voice err',e.error);
+    if(e.error==='not-allowed'||e.error==='service-not-allowed')toast('❌ Mikrofonga ruxsat kerak');
+    else if(e.error==='no-speech')toast('⚠️ Ovoz eshitilmadi');
+    else toast('❌ Xato: '+e.error);
+    haptic('error');
+  };
+  voiceRec.onend=()=>{
+    if(btn)btn.classList.remove('rec');
+    voiceRec=null;voiceRecActive=null;
+  };
+  try{voiceRec.start();}catch(e){console.error('start',e);voiceRec=null;voiceRecActive=null;if(btn)btn.classList.remove('rec');}
+};
+
+/* Smart voice fill: speak "Ariel 3 kilo 90 ming so'm" → name + price */
+window.smartVoiceFill=()=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('❌ Brauzeringiz ovoz tanimaydi');haptic('error');return;}
+  const btn=$('smartVoiceBtn'),ic=$('smartVoiceIc'),tt=$('smartVoiceTt'),sub=$('smartVoiceSub');
+  if(voiceRec&&voiceRecActive==='__smart'){try{voiceRec.stop();}catch(_){}return;}
+  if(voiceRec){try{voiceRec.stop();}catch(_){}}
+  voiceRec=getRecognition();voiceRecActive='__smart';
+  if(ic)ic.textContent='🔴';if(tt)tt.textContent='Tinglayapman...';if(sub)sub.textContent='Ayting va kuting';
+  if(btn)btn.style.animation='micPulse 1s infinite';
+  haptic('light');
+  voiceRec.onresult=e=>{
+    const raw=e.results[0][0].transcript.trim();
+    const parsed=parseVoicedProduct(raw);
+    if(parsed.price>0)$('pPrice').value=parsed.price;
+    if(parsed.name){const ni=$('pName');if(ni){ni.value=parsed.name;ni.dispatchEvent(new Event('input',{bubbles:true}));}}
+    if(parsed.price>0&&parsed.name)toast(`✅ ${parsed.name} · ${fmt(parsed.price)}`);
+    else if(parsed.name)toast(`✅ Nom: ${parsed.name} (narx topilmadi)`);
+    else toast('⚠️ Tushunilmadi: '+raw);
+    haptic('confirm');
+  };
+  voiceRec.onerror=e=>{
+    if(e.error==='not-allowed')toast('❌ Mikrofonga ruxsat kerak');
+    else if(e.error==='no-speech')toast('⚠️ Ovoz eshitilmadi');
+    else toast('❌ '+e.error);
+    haptic('error');
+  };
+  voiceRec.onend=()=>{
+    if(ic)ic.textContent='🎤';if(tt)tt.textContent='Ovoz orqali to\'ldirish';if(sub)sub.textContent='"Ariel 3 kilo 90 ming" deb ayting';
+    if(btn)btn.style.animation='';
+    voiceRec=null;voiceRecActive=null;
+  };
+  try{voiceRec.start();}catch(e){voiceRec=null;voiceRecActive=null;}
+};
+function parseVoicedProduct(raw){
+  let s=raw.replace(/\s+/g,' ').trim();
+  const numMap={
+    'bir':1,'ikki':2,'uch':3,"to'rt":4,'tort':4,'besh':5,'olti':6,'yetti':7,'sakkiz':8,'toqqiz':9,'on':10,'yigirma':20,'ottiz':30,'qirq':40,'ellik':50,'oltmish':60,'yetmish':70,'sakson':80,"to'qson":90,'toqson':90,'yuz':100,
+    'один':1,'одна':1,'два':2,'две':2,'три':3,'четыре':4,'пять':5,'шесть':6,'семь':7,'восемь':8,'девять':9,'десять':10,'двадцать':20,'тридцать':30,'сорок':40,'пятьдесят':50,'шестьдесят':60,'семьдесят':70,'восемьдесят':80,'девяносто':90,'сто':100,
+    'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100
+  };
+  const thousandWords=['ming','тысяч','тысяча','тысячи','thousand'];
+  const millionWords=['million','миллион','миллиона','миллионов','mln'];
+  const currencyWords=["so'm",'som','sum','sumi','sumlik','uzs','рублей','рубль','soum'];
+  const tokens=s.split(/\s+/);
+  // Walk back: split into nameTokens vs priceTokens. The first non-number/non-currency token (from end) marks where name ends.
+  let splitIdx=tokens.length;
+  for(let i=tokens.length-1;i>=0;i--){
+    const t=tokens[i].toLowerCase().replace(/[.,]/g,'');
+    const isNum=/^\d+$/.test(t)||numMap[t]!==undefined||thousandWords.includes(t)||millionWords.includes(t)||currencyWords.includes(t);
+    if(isNum)splitIdx=i;
+    else break;
+  }
+  const nameTokens=tokens.slice(0,splitIdx);
+  const priceTokens=tokens.slice(splitIdx);
+  // Evaluate price
+  let total=0,current=0;
+  for(const tk of priceTokens){
+    const t=tk.toLowerCase().replace(/[.,]/g,'');
+    if(currencyWords.includes(t))continue;
+    if(/^\d+$/.test(t)){current=parseInt(t);}
+    else if(numMap[t]!==undefined){current=(current||0)+numMap[t];}
+    else if(thousandWords.includes(t)){total+=(current||1)*1000;current=0;}
+    else if(millionWords.includes(t)){total+=(current||1)*1000000;current=0;}
+  }
+  total+=current;
+  const name=nameTokens.join(' ').trim().replace(/^./,c=>c.toUpperCase());
+  return {name,price:total};
+}
+
 /* ── 🤖 AI DESCRIPTION (Pollinations.ai, no API key needed) ── */
 window.aiGenerateDesc=async()=>{
   const name=g('pName');
@@ -5405,6 +5583,130 @@ window.applyBulkVars=()=>{
   $('bulkVarsInput').value='';
   toast(added?`✅ ${added} ta xil qo'shildi`:'⚠️ Hech narsa qo\'shilmadi');
   haptic('confirm');
+};
+
+/* ── 📸 MULTI-IMAGE BULK ADD (N images → N products) ── */
+window.handleMultiImgFiles=async input=>{
+  const files=Array.from(input.files||[]);
+  if(!files.length)return;
+  const cat=($('multiImgCat')||{}).value||(CATS[0]&&CATS[0].id)||'kukun';
+  const catLabel=(CATS.find(c=>c.id===cat)||{}).label_uz||cat;
+  if(!confirm(`📸 ${files.length} ta rasm → ${files.length} ta mahsulot yaratiladimi?\n\nKategoriya: ${catLabel}\n\nNomi va narxi keyin tahrirlanadi.`)){
+    input.value='';return;
+  }
+  haptic('light');
+  const el=$('multiImgPreview');
+  let ok=0,fail=0;
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    if(el)el.innerHTML=`<div style="text-align:center;padding:14px;font-weight:900;color:var(--text);">⏳ ${i+1}/${files.length}: ${file.name.slice(0,30)}</div>`;
+    try{
+      const b64=await new Promise((res,rej)=>{
+        const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file);
+      });
+      const baseName=file.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim()||`Mahsulot ${i+1}`;
+      const data={
+        name:baseName,price:0,cat,desc:'',img:b64,
+        variants:[],variantPrices:{},active:false, // inactive by default until user adds price
+        createdAt:Date.now(),updatedAt:Date.now()
+      };
+      await rtdb.ref('products').push(data);
+      ok++;
+    }catch(e){console.warn('multi img',e);fail++;}
+  }
+  if(el)el.innerHTML=`<div style="text-align:center;padding:14px;font-weight:900;color:var(--accent-dk);">✅ ${ok} ta yaratildi · ❌ ${fail} xato<div style="font-size:11px;font-weight:700;color:var(--text2);margin-top:6px;">⚠️ Hammasi <b>NOFAOL</b> holatda. Narx qo'shgach faollashtiring.</div></div>`;
+  toast(`✅ ${ok} ta yaratildi (nofaol)`);haptic('confirm');
+  input.value='';
+  setTimeout(()=>{if(el)el.innerHTML='';},6000);
+};
+
+/* ── 📁 QUICK EDIT (inline price edit in list) ── */
+window.quickEditPrice=(id,oldPrice,el)=>{
+  if(bulkSelMode)return; // disable in select mode
+  const np=prompt('💰 Yangi narx (so\'m):',String(oldPrice||''));
+  if(np===null)return;
+  const v=parseInt(String(np).replace(/[^\d]/g,''));
+  if(!v||v<1){toast('❗ Narx noto\'g\'ri');haptic('warning');return;}
+  haptic('light');
+  rtdb.ref('products/'+id).update({price:v,updatedAt:Date.now()}).then(()=>{
+    toast('✅ Narx: '+fmt(v));haptic('confirm');
+  }).catch(e=>{console.error(e);toast('❌ Saqlanmadi: '+e.message);haptic('error');});
+};
+
+/* ── 🗑 BULK SELECT MODE ── */
+let bulkSelMode=false;
+let bulkSelected=new Set();
+window.toggleBulkSelMode=()=>{
+  bulkSelMode=!bulkSelMode;
+  if(!bulkSelMode)bulkSelected.clear();
+  const btn=$('bulkSelToggleBtn'),allBtn=$('bulkSelectAllBtn');
+  if(btn)btn.innerHTML=bulkSelMode?'✕ Tanlashni bekor':'☑️ Tanlash rejimi';
+  if(btn)btn.style.background=bulkSelMode?'#7c5cff':'';
+  if(btn)btn.style.color=bulkSelMode?'#fff':'';
+  if(allBtn)allBtn.style.display=bulkSelMode?'inline-block':'none';
+  haptic('light');
+  filterAdminProducts();
+};
+window.bulkToggleProd=(id,checked)=>{
+  if(checked)bulkSelected.add(id);else bulkSelected.delete(id);
+  updateBulkUI();
+};
+window.bulkSelectAll=()=>{
+  const q=(g('prodSearch')||'').toLowerCase();
+  const filtered=q?products.filter(p=>p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q)):products;
+  const allSelected=filtered.every(p=>bulkSelected.has(p.id));
+  if(allSelected){bulkSelected.clear();}
+  else {filtered.forEach(p=>bulkSelected.add(p.id));}
+  haptic('light');
+  filterAdminProducts();
+};
+window.bulkClear=()=>{bulkSelected.clear();haptic('light');filterAdminProducts();};
+function updateBulkUI(){
+  const bar=$('bulkBar'),cnt=$('bulkCount');
+  if(!bar)return;
+  if(bulkSelMode&&bulkSelected.size>0){
+    bar.style.display='flex';
+    if(cnt)cnt.textContent=`${bulkSelected.size} ta tanlandi`;
+  }else{
+    bar.style.display='none';
+  }
+}
+window.bulkActDelete=async()=>{
+  if(!bulkSelected.size)return;
+  if(!confirm(`🗑 ${bulkSelected.size} ta mahsulotni o'chirishni tasdiqlaysizmi? Bu amalni qaytarib bo'lmaydi.`))return;
+  haptic('warning');
+  let ok=0,fail=0;
+  for(const id of [...bulkSelected]){
+    try{await rtdb.ref('products/'+id).remove();ok++;}catch(e){fail++;}
+  }
+  toast(`🗑 ${ok} ta o'chirildi${fail?` (${fail} xato)`:''}`);haptic('confirm');
+  bulkSelected.clear();filterAdminProducts();
+};
+window.bulkActToggle=async active=>{
+  if(!bulkSelected.size)return;
+  haptic('light');
+  let ok=0,fail=0;
+  for(const id of [...bulkSelected]){
+    try{await rtdb.ref('products/'+id).update({active});ok++;}catch(e){fail++;}
+  }
+  toast(`${active?'👁':'🚫'} ${ok} ta o'zgartirildi`);haptic('confirm');
+  bulkSelected.clear();filterAdminProducts();
+};
+window.bulkActMove=async()=>{
+  if(!bulkSelected.size)return;
+  const opts=CATS.map((c,i)=>`${i+1}. ${c.icon||'📦'} ${c.label_uz||c.label||c.id}`).join('\n');
+  const choice=prompt(`📁 ${bulkSelected.size} ta mahsulotni qaysi kategoriyaga ko'chiramiz?\n\n${opts}\n\nRaqamini kiriting:`);
+  if(!choice)return;
+  const idx=parseInt(choice)-1;
+  if(idx<0||idx>=CATS.length){toast('❗ Noto\'g\'ri raqam');return;}
+  const newCat=CATS[idx].id;
+  haptic('light');
+  let ok=0;
+  for(const id of [...bulkSelected]){
+    try{await rtdb.ref('products/'+id).update({cat:newCat});ok++;}catch(e){}
+  }
+  toast(`📁 ${ok} ta ${CATS[idx].label_uz||newCat} ga ko'chirildi`);haptic('confirm');
+  bulkSelected.clear();filterAdminProducts();
 };
 
 window.saveProduct=async()=>{
@@ -5989,15 +6291,14 @@ window.runCsvImport=async()=>{
   setTimeout(()=>{const el2=$('csvPreview');if(el2)el2.innerHTML='';},4000);
 };
 function refreshCatIdsList(){
-  const el=$('catIdsList');if(!el)return;
-  el.textContent=CATS.map(c=>c.id).join(', ');
-  // Also populate chat-bulk category select
-  const sel=$('chatBulkCat');
-  if(sel){
+  const el=$('catIdsList');if(el)el.textContent=CATS.map(c=>c.id).join(', ');
+  // Populate chat-bulk + multi-img category selects
+  ['chatBulkCat','multiImgCat'].forEach(selId=>{
+    const sel=$(selId);if(!sel)return;
     const prev=sel.value;
     sel.innerHTML=CATS.map(c=>`<option value="${c.id}">${c.icon||'📦'} ${c.label_uz||c.label||c.id}</option>`).join('');
     if(prev&&CATS.some(c=>c.id===prev))sel.value=prev;
-  }
+  });
 }
 /* ─── CHAT-STYLE BULK IMPORT (one product per line: "Name Price") ─── */
 function parseChatBulkLine(line){
