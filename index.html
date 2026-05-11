@@ -2876,9 +2876,26 @@ trackUser();
 let productsListenerRef=null;
 let productsTimeoutHandle=null;
 
+// ─── INSTANT CACHE: show products from localStorage IMMEDIATELY (0ms) ───
+(function(){
+  if(productsLoaded)return;
+  try{
+    const cached=localStorage.getItem('cache_products');
+    if(cached){
+      const arr=JSON.parse(cached);
+      if(Array.isArray(arr)&&arr.length){
+        products=arr;
+        productsLoaded=true;
+        if(currentPage==='cats'&&typeof renderCatsPage==='function')renderCatsPage();
+        else if(currentPage==='products'&&typeof renderProductsPage==='function')renderProductsPage();
+      }
+    }
+  }catch(_){}
+})();
+
 // Apply early-fetched products to UI (called from <head> as soon as data arrives, even before this script finishes loading)
 function __applyProducts(arr){
-  if(productsLoaded||!Array.isArray(arr)||!arr.length)return;
+  if(!Array.isArray(arr)||!arr.length)return;
   products=arr;
   productsLoaded=true;
   if(currentPage==='cats'&&typeof renderCatsPage==='function')renderCatsPage();
@@ -2972,6 +2989,23 @@ function refreshOpenViews(){
   if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
   if($('favSheet')?.classList.contains('on'))renderFavSheet();
 }
+
+// ─── INSTANT CACHE: categories from localStorage ───
+(function(){
+  if(categoriesLoaded)return;
+  try{
+    const cached=localStorage.getItem('cache_cats');
+    if(cached){
+      const arr=JSON.parse(cached);
+      if(Array.isArray(arr)&&arr.length){
+        CATS=arr;
+        categoriesLoaded=true;
+        rebuildIcons();
+        if(currentPage==='cats'&&typeof renderCatsPage==='function')renderCatsPage();
+      }
+    }
+  }catch(_){}
+})();
 
 function initCategories(){
   rtdb.ref('categories').on('value', snap=>{
@@ -5292,26 +5326,31 @@ window.lookupBarcodeManual=()=>{
 async function lookupBarcode(code){
   $('scanStage').style.display='none';
   $('scanResult').style.display='block';
-  $('scanResultStatus').textContent=t3('⏳ Qidirilmoqda: '+code,'⏳ Поиск: '+code,'⏳ Looking up: '+code);
+  $('scanResultStatus').textContent=t3('⏳ Internetdan qidirilmoqda: '+code,'⏳ Поиск в интернете: '+code,'⏳ Searching online: '+code);
   $('scanResultCard').style.display='none';
   $('scanApplyBtn').style.display='none';
+  $('scanApplyBtn').onclick=window.applyScanResult;
   scanResultData=null;
-  // Try Open Food Facts first (best for cleaning/cosmetics/food)
-  let info=await lookupOpenFoodFacts(code);
-  if(!info){
-    info=await lookupUPCItemDB(code);
+  // ─── Run ALL lookups in PARALLEL for speed ───
+  const results=await Promise.allSettled([
+    lookupOpenFoodFacts(code),
+    lookupUPCItemDB(code),
+    lookupBarcodeMonster(code),
+    lookupGoUPC(code)
+  ]);
+  let info=null;
+  for(const r of results){
+    if(r.status==='fulfilled'&&r.value){info=r.value;break;}
   }
   if(!info){
-    $('scanResultStatus').innerHTML=`❌ <b>Topilmadi</b><br><span style="font-size:11px;font-weight:600;color:var(--text2)">Kod: <code>${code}</code> bazada yo'q.<br>Mahsulot ma'lumotlarini qo'lda kiriting.</span>`;
-    // Still allow saving with just the barcode
+    $('scanResultStatus').innerHTML=`❌ <b>Topilmadi</b><br><span style="font-size:11px;font-weight:600;color:var(--text2)">Kod: <code>${code}</code> internetda topilmadi.<br>Mahsulot ma'lumotlarini qo'lda kiriting.</span>`;
     scanResultData={barcode:code};
     $('scanApplyBtn').style.display='block';
-    $('scanApplyBtn').innerHTML='✅ Faqat kodni saqlash';
+    $('scanApplyBtn').innerHTML='✅ Faqat shtrix-kodni saqlash';
     return;
   }
   scanResultData={...info,barcode:code};
-  // Render preview card
-  $('scanResultStatus').innerHTML='✅ <b>Topildi!</b> Quyidagi ma\'lumotlarni mahsulotga qo\'llaysizmi?';
+  $('scanResultStatus').innerHTML=`✅ <b>Topildi!</b> (${info.source||'internet'})<br><span style="font-size:11px;color:var(--text2)">Quyidagi ma'lumotlarni mahsulotga qo'llaysizmi?</span>`;
   $('scanResultCard').style.display='flex';
   $('scanResultName').textContent=info.name||'(nomsiz)';
   $('scanResultBrand').textContent=info.brand||'';
@@ -5326,71 +5365,118 @@ async function lookupBarcode(code){
     imgEl.appendChild(im);
   }else{imgEl.innerHTML='📦';}
   $('scanApplyBtn').style.display='block';
-  $('scanApplyBtn').innerHTML='✅ Mahsulotga qo\'llash';
+  $('scanApplyBtn').innerHTML='✅ Mahsulotga qo\'llash (nom + rasm + tavsif)';
 }
 
 async function lookupOpenFoodFacts(code){
-  // Try Open Food Facts, Open Beauty Facts, Open Products Facts (sister DBs by same org)
+  // Try ALL Open*Facts databases in parallel (food, beauty, products)
   const hosts=[
-    'https://world.openfoodfacts.org',     // food
-    'https://world.openbeautyfacts.org',   // cosmetics, hair care, body care
-    'https://world.openproductsfacts.org'  // cleaning, household
+    'https://world.openfoodfacts.org',
+    'https://world.openbeautyfacts.org',
+    'https://world.openproductsfacts.org'
   ];
-  const fields='product_name,product_name_ru,product_name_en,product_name_uz,brands,generic_name,generic_name_ru,generic_name_en,image_front_url,image_url,categories,quantity';
-  for(const host of hosts){
-    try{
-      const r=await fetch(`${host}/api/v2/product/${encodeURIComponent(code)}.json?fields=${fields}`);
-      if(!r.ok)continue;
-      const d=await r.json();
-      if(d.status===1&&d.product){
-        const p=d.product;
-        const name=p.product_name_ru||p.product_name_en||p.product_name_uz||p.product_name||'';
-        const brand=(p.brands||'').split(',')[0].trim();
-        const qty=(p.quantity||'').toString();
-        const generic=p.generic_name_ru||p.generic_name_en||p.generic_name||'';
-        const desc=[generic,qty&&qty!=='0kg'?qty:''].filter(Boolean).join(' · ').slice(0,180);
-        const img=p.image_front_url||p.image_url||'';
-        if(name||img)return{name:name||(brand?brand+(qty?' '+qty:''):''),brand,desc,img,source:host.split('//')[1].split('.')[1]};
-      }
-    }catch(e){console.warn('OFF lookup:',host,e);}
+  const fields='product_name,product_name_ru,product_name_en,product_name_uz,brands,generic_name,generic_name_ru,generic_name_en,image_front_url,image_front_small_url,image_url,categories,categories_tags,quantity,net_weight_value,net_weight_unit';
+  const fetches=hosts.map(host=>
+    fetch(`${host}/api/v2/product/${encodeURIComponent(code)}.json?fields=${fields}`,{signal:AbortSignal.timeout?AbortSignal.timeout(8000):undefined})
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{
+        if(d&&d.status===1&&d.product){
+          const p=d.product;
+          const name=p.product_name_ru||p.product_name_en||p.product_name_uz||p.product_name||'';
+          const brand=(p.brands||'').split(',')[0].trim();
+          const qty=(p.quantity||'').toString();
+          const weight=p.net_weight_value?(p.net_weight_value+' '+(p.net_weight_unit||'g')):'';
+          const generic=p.generic_name_ru||p.generic_name_en||p.generic_name||'';
+          const desc=[brand,generic,weight||qty].filter(Boolean).join(' · ').slice(0,200);
+          const img=p.image_front_url||p.image_front_small_url||p.image_url||'';
+          if(name||img)return{name:name||(brand?brand+(qty?' '+qty:''):''),brand,desc,img,source:'OpenFacts'};
+        }
+        return null;
+      }).catch(()=>null)
+  );
+  const results=await Promise.allSettled(fetches);
+  for(const r of results){
+    if(r.status==='fulfilled'&&r.value)return r.value;
   }
   return null;
 }
 
 async function lookupUPCItemDB(code){
   try{
-    const r=await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(code)}`);
+    const r=await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(code)}`,{signal:AbortSignal.timeout?AbortSignal.timeout(6000):undefined});
     if(!r.ok)return null;
     const d=await r.json();
     if(d.code==='OK'&&Array.isArray(d.items)&&d.items.length){
       const it=d.items[0];
       const img=Array.isArray(it.images)&&it.images.length?it.images[0]:'';
-      return{name:it.title||'',brand:it.brand||'',desc:it.description||'',img,source:'UPC'};
+      const weight=it.weight||'';
+      const desc=[it.description||'',weight].filter(Boolean).join(' · ').slice(0,200);
+      return{name:it.title||'',brand:it.brand||'',desc,img,source:'UPCitemdb'};
     }
   }catch(e){console.warn('UPC lookup:',e);}
+  return null;
+}
+
+async function lookupBarcodeMonster(code){
+  try{
+    const r=await fetch(`https://barcode.monster/api/${encodeURIComponent(code)}`,{signal:AbortSignal.timeout?AbortSignal.timeout(6000):undefined});
+    if(!r.ok)return null;
+    const d=await r.json();
+    if(d&&d.description){
+      return{name:d.description||'',brand:d.company||'',desc:(d.size||'')+(d.description?' — '+d.description.slice(0,100):''),img:'',source:'BarcodeMonster'};
+    }
+  }catch(e){console.warn('BarcodeMonster:',e);}
+  return null;
+}
+
+async function lookupGoUPC(code){
+  try{
+    const r=await fetch(`https://go-upc.com/api/v1/code/${encodeURIComponent(code)}`,{
+      headers:{'Accept':'application/json'},
+      signal:AbortSignal.timeout?AbortSignal.timeout(6000):undefined
+    });
+    if(!r.ok)return null;
+    const d=await r.json();
+    if(d&&d.product&&d.product.name){
+      const p=d.product;
+      const desc=[p.description||'',p.category||''].filter(Boolean).join(' · ').slice(0,200);
+      return{name:p.name||'',brand:p.brand||'',desc,img:p.imageUrl||'',source:'GoUPC'};
+    }
+  }catch(e){console.warn('GoUPC:',e);}
   return null;
 }
 
 window.applyScanResult=()=>{
   if(!scanResultData){toast('❌ Ma\'lumot yo\'q');return;}
   const d=scanResultData;
-  // Apply only fields not yet filled (don't overwrite admin's own input)
-  const setIfEmpty=(id,v)=>{const e=$(id);if(e&&!e.value&&v)e.value=v;};
-  setIfEmpty('pName',d.name||(d.brand?d.brand:''));
-  setIfEmpty('pDesc',d.desc||'');
-  if($('pBarcode'))$('pBarcode').value=d.barcode||'';
+  const applied=[];
+  // Apply fields (don't overwrite admin's own input)
+  const setIfEmpty=(id,v,label)=>{const e=$(id);if(e&&!e.value&&v){e.value=v;applied.push(label);}};
+  // Name: combine brand + name if both exist
+  const fullName=d.brand&&d.name&&!d.name.toLowerCase().includes(d.brand.toLowerCase())
+    ?d.brand+' '+d.name
+    :d.name||(d.brand||'');
+  setIfEmpty('pName',fullName,'nom');
+  setIfEmpty('pDesc',d.desc||'','tavsif');
+  if($('pBarcode')){$('pBarcode').value=d.barcode||'';applied.push('barcode');}
   // Image: use URL field
   if(d.img){
     const pImg=$('pImg');
     if(pImg&&!pImg.value){
       pImg.value=d.img;
-      // Try to switch to URL tab so admin sees it
+      applied.push('rasm');
       try{switchImgTab('url');}catch(_){}
     }
   }
   haptic('confirm');
-  toast('✅ Mahsulotga qo\'llandi');
+  toast(applied.length?'✅ Qo\'llandi: '+applied.join(', '):'✅ Barcode saqlandi');
   closeBarcodeScanner();
+  // Switch to add tab if not already there
+  if(adminTab!=='add'){
+    const tabs=document.querySelectorAll('.a-tab');
+    const addBtn=tabs[tabs.length-1];
+    if(addBtn)aTab('add',addBtn);
+  }
 };
 
 /* ─── CSV IMPORT ─── */
