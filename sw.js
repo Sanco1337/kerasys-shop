@@ -4,6 +4,7 @@ const DATA_CACHE='kerasys-data-v2';
 const ASSETS=[
   './',
   './index.html',
+  './admin.html',
   './manifest.webmanifest',
   './icon.svg',
   './icon-192.png',
