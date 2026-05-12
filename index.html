@@ -1373,6 +1373,410 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
 <div id="adminUISlot"></div>
 
 <!-- vitrinaModal moved to admin.html -->
+<div class="sheet" id="adminSheet">
+  <div class="s-handle"></div>
+  <div class="s-head">
+    <div class="s-title">⚙️ Admin</div>
+    <button class="s-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="s-body">
+    <div class="adm-tabs">
+      <button class="a-tab on" onclick="aTab('stats',this)"><span class="a-tab-em">📊</span><span class="a-tab-tx">Statistika</span></button>
+      <button class="a-tab" onclick="aTab('search',this)"><span class="a-tab-em">🔍</span><span class="a-tab-tx">Buyurtma qidirish</span></button>
+      <button class="a-tab" onclick="aTab('products',this)"><span class="a-tab-em">📦</span><span class="a-tab-tx">Mahsulotlar</span></button>
+      <button class="a-tab" onclick="aTab('orders',this)"><span class="a-tab-em">📋</span><span class="a-tab-tx">Buyurtmalar</span></button>
+      <button class="a-tab" onclick="aTab('preorders',this)"><span class="a-tab-em">⏳</span><span class="a-tab-tx">Pre-order</span></button>
+      <button class="a-tab" onclick="aTab('chats',this)"><span class="a-tab-em">💬</span><span class="a-tab-tx">Chatlar</span></button>
+      <button class="a-tab" onclick="aTab('debts',this)"><span class="a-tab-em">💳</span><span class="a-tab-tx">Qarzlar</span></button>
+      <button class="a-tab" onclick="aTab('promo',this)"><span class="a-tab-em">🎫</span><span class="a-tab-tx">Promo kodlar</span></button>
+      <button class="a-tab" onclick="aTab('cats',this)"><span class="a-tab-em">📂</span><span class="a-tab-tx">Kategoriyalar</span></button>
+      <button class="a-tab" onclick="aTab('customers',this)"><span class="a-tab-em">👥</span><span class="a-tab-tx">Mijozlar</span></button>
+      <button class="a-tab" onclick="aTab('reviews',this)"><span class="a-tab-em">⭐</span><span class="a-tab-tx">Sharhlar</span></button>
+      <button class="a-tab" onclick="aTab('banners',this)"><span class="a-tab-em">🎨</span><span class="a-tab-tx">Bannerlar</span></button>
+      <button class="a-tab" onclick="aTab('settings',this)"><span class="a-tab-em">⚙️</span><span class="a-tab-tx">Sozlamalar</span></button>
+      <button class="a-tab" onclick="aTab('add',this)"><span class="a-tab-em">➕</span><span class="a-tab-tx">Mahsulot qo'shish</span></button>
+    </div>
+    <div id="aStats"></div>
+    <div id="aSearch" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <input style="flex:1;padding:10px 13px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;" id="codeSearch" placeholder="Buyurtma kodi...">
+        <button style="padding:10px 14px;border-radius:11px;border:none;background:var(--accent);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;" onclick="searchOrder()">Qidir</button>
+      </div>
+      <div id="searchResult"></div>
+    </div>
+    <div id="aProducts" style="display:none">
+      <div class="adm-search-wrap">
+        <input class="adm-search-inp" id="prodSearch" placeholder="🔍 Mahsulot qidirish..." oninput="filterAdminProducts()">
+      </div>
+      <div id="bulkBar" style="display:none;background:linear-gradient(135deg,#7c5cff,#5b3df0);color:#fff;border-radius:12px;padding:10px 12px;margin-bottom:10px;display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span id="bulkCount" style="font-weight:900;font-size:13px;">0 ta tanlandi</span>
+        <span style="flex:1;"></span>
+        <button onclick="bulkActMove()" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">📁 Kategoriya</button>
+        <button onclick="bulkActToggle(true)" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">👁 Yoqish</button>
+        <button onclick="bulkActToggle(false)" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">🚫 O'chirish</button>
+        <button onclick="bulkActDelete()" style="background:rgba(239,68,68,0.9);color:#fff;border:none;border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">🗑 O'chirish</button>
+        <button onclick="bulkClear()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 11px;font-weight:800;font-size:12px;cursor:pointer;">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        <button onclick="toggleBulkSelMode()" id="bulkSelToggleBtn" style="font-size:11px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;">☑️ Tanlash rejimi</button>
+        <button onclick="bulkSelectAll()" style="font-size:11px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;display:none;" id="bulkSelectAllBtn">✓ Hammasini tanlash</button>
+      </div>
+      <div id="prodList"></div>
+    </div>
+    <div id="aOrders" style="display:none"></div>
+    <div id="aPreorders" style="display:none"></div>
+    <div id="aChats" style="display:none"></div>
+    <div id="aDebts" style="display:none">
+      <!-- Qarz qo'shish / tahrirlash formasi -->
+      <div id="debtFormWrap" style="display:none;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:15px;font-weight:900;margin-bottom:12px;" id="debtFormTitle">➕ Yangi qarz</div>
+        <input type="hidden" id="debtEditId">
+        <div class="f-grp"><label class="f-lbl">Mijoz ismi *</label><input class="f-inp" id="dName" placeholder="Sarvar Karimov"></div>
+        <div class="f-grp"><label class="f-lbl">Telefon *</label><input class="f-inp" id="dPhone" placeholder="+998 90 123 45 67" type="tel"></div>
+        <div class="f-grp"><label class="f-lbl">Qarz summasi (so'm) *</label><input class="f-inp" id="dAmount" type="number" placeholder="150000"></div>
+        <div class="f-grp"><label class="f-lbl">Sana *</label><input class="f-inp" id="dDate" type="date"></div>
+        <div class="f-grp"><label class="f-lbl">Izoh</label><textarea class="f-ta" id="dNote" placeholder="Qaysi mahsulot, shartnoma raqami..." style="min-height:60px"></textarea></div>
+        <div style="display:flex;gap:8px;">
+          <button class="big-btn pri" style="margin-top:0" onclick="saveDebt()">💾 Saqlash</button>
+          <button class="big-btn sec" style="margin-top:0;flex:0.5" onclick="cancelDebtForm()">✕</button>
+        </div>
+      </div>
+      <!-- Qisman to'lov formasi -->
+      <div id="partialFormWrap" style="display:none;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:15px;font-weight:900;margin-bottom:12px;">💵 Qisman to'lov</div>
+        <input type="hidden" id="partialDebtId">
+        <div class="f-grp"><label class="f-lbl">To'lov summasi *</label><input class="f-inp" id="partialAmount" type="number" placeholder="50000"></div>
+        <div class="f-grp"><label class="f-lbl">Izoh (ixtiyoriy)</label><input class="f-inp" id="partialNote" placeholder="Naqd to'lov"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="big-btn pri" style="margin-top:0" onclick="savePartialPayment()">✅ To'lovni saqlash</button>
+          <button class="big-btn sec" style="margin-top:0;flex:0.5" onclick="cancelPartialForm()">✕</button>
+        </div>
+      </div>
+      <!-- Qarzlar ro'yxati -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button class="big-btn pri" style="margin-top:0" onclick="showDebtForm()">➕ Yangi qarz</button>
+      </div>
+      <input class="debt-search" id="debtSearch" placeholder="🔍 Mijoz ismi yoki telefon..." oninput="renderDebts()">
+      <div class="debt-filter-row">
+        <button class="dfilter on" data-f="all" onclick="setDebtFilter('all',this)">Barchasi</button>
+        <button class="dfilter" data-f="unpaid" onclick="setDebtFilter('unpaid',this)">Qarzdor</button>
+        <button class="dfilter" data-f="partial" onclick="setDebtFilter('partial',this)">Qisman</button>
+        <button class="dfilter" data-f="paid" onclick="setDebtFilter('paid',this)">To'langan</button>
+      </div>
+      <div id="debtSummary" class="debt-summary"></div>
+      <div id="debtList"></div>
+    </div>
+    <div id="aPromo" style="display:none"></div>
+    <div id="aCats" style="display:none">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;">➕ Yangi kategoriya</div>
+        <div class="f-row">
+          <div class="f-grp"><label class="f-lbl">ID *</label><input class="f-inp" id="catNewId" placeholder="parfumeriya"></div>
+          <div class="f-grp"><label class="f-lbl">Icon</label><input class="f-inp" id="catNewIcon" placeholder="💐" maxlength="4"></div>
+        </div>
+        <div class="f-row">
+          <div class="f-grp"><label class="f-lbl">Nomi (uz) *</label><input class="f-inp" id="catNewLabelUz" placeholder="Parfumeriya"></div>
+          <div class="f-grp"><label class="f-lbl">Nomi (ru) *</label><input class="f-inp" id="catNewLabelRu" placeholder="Парфюмерия"></div>
+        </div>
+        <button class="big-btn" onclick="addCategory()">➕ Qo'shish</button>
+      </div>
+      <div id="catList"></div>
+    </div>
+    <div id="aCustomers" style="display:none">
+      <div class="search-bar" style="margin-bottom:12px">
+        <span class="search-ic">🔍</span>
+        <input class="search-inp" id="custSearch" placeholder="Ism yoki telefon..." oninput="filterCustomers(this.value)" autocomplete="off">
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="a-tab on" id="custSortTotal" onclick="setCustSort('total')" style="flex:1;min-width:80px"><span class="a-tab-tx">💰 Sarflagani</span></button>
+        <button class="a-tab" id="custSortRecent" onclick="setCustSort('recent')" style="flex:1;min-width:80px"><span class="a-tab-tx">🕒 So'nggi</span></button>
+        <button class="a-tab" id="custSortCount" onclick="setCustSort('count')" style="flex:1;min-width:80px"><span class="a-tab-tx">📦 Buyurtma</span></button>
+      </div>
+      <div id="custStats" style="font-size:11px;color:var(--text2);margin-bottom:8px;font-weight:700;"></div>
+      <div id="customerList"></div>
+    </div>
+    <div id="aReviews" style="display:none">
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="a-tab on" id="revTabAll" onclick="loadAdminReviews('all')" style="flex:1;min-width:80px"><span class="a-tab-tx">Hammasi</span></button>
+        <button class="a-tab" id="revTabPend" onclick="loadAdminReviews('pending')" style="flex:1;min-width:80px"><span class="a-tab-tx">Tasdiqlanmagan</span></button>
+        <button class="a-tab" id="revTabApp" onclick="loadAdminReviews('approved')" style="flex:1;min-width:80px"><span class="a-tab-tx">Tasdiqlangan</span></button>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+    <div id="aBanners" style="display:none">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🎨 Banner / Story qo'shish</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Bosh sahifada ko'rinadigan reklama banner yoki yumaloq story-stikeri qo'shing.</div>
+        <div class="f-grp"><label class="f-lbl">Tur</label>
+          <select class="f-inp" id="banType">
+            <option value="story">📜 Story (yumaloq stiker)</option>
+            <option value="banner">🖼 Banner (katta rasm)</option>
+          </select>
+        </div>
+        <div class="f-grp"><label class="f-lbl">Sarlavha (UZ)</label><input class="f-inp" id="banTtUz" placeholder="Aksiya boshlandi!"></div>
+        <div class="f-grp"><label class="f-lbl">Sarlavha (RU)</label><input class="f-inp" id="banTtRu" placeholder="Акция началась!"></div>
+        <div class="f-grp"><label class="f-lbl">Sarlavha (EN)</label><input class="f-inp" id="banTtEn" placeholder="Sale started!"></div>
+        <div class="f-grp"><label class="f-lbl">Tavsif (UZ)</label><input class="f-inp" id="banSubUz" placeholder="Mahsulotlar 30% chegirma bilan"></div>
+        <div class="f-grp"><label class="f-lbl">Tavsif (RU)</label><input class="f-inp" id="banSubRu" placeholder="Товары со скидкой 30%"></div>
+        <div class="f-grp"><label class="f-lbl">Tavsif (EN)</label><input class="f-inp" id="banSubEn" placeholder="Products at 30% off"></div>
+        <div class="f-grp"><label class="f-lbl">Rasm</label><input class="f-inp" id="banImgUrl" placeholder="https://... yoki yuklang"><input type="file" id="banImgFile" accept="image/*" style="margin-top:6px"></div>
+        <div class="f-grp"><label class="f-lbl">Havola turi</label>
+          <select class="f-inp" id="banLinkType">
+            <option value="none">Hech qaysi</option>
+            <option value="category">Kategoriya</option>
+            <option value="product">Mahsulot</option>
+            <option value="url">Tashqi havola</option>
+          </select>
+        </div>
+        <div class="f-grp"><label class="f-lbl">Havola qiymati</label><input class="f-inp" id="banLinkVal" placeholder="kategoriya ID / mahsulot ID / URL"></div>
+        <div class="f-grp"><label class="f-lbl">Tartib (raqam)</label><input class="f-inp" id="banOrder" type="number" placeholder="0"></div>
+        <button class="big-btn pri" onclick="saveBanner()">💾 Saqlash</button>
+      </div>
+      <div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;">Mavjud bannerlar va storylar</div>
+      <div id="bannerList"></div>
+    </div>
+    <div id="aSettings" style="display:none">
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🤖 Telegram bot integratsiyasi</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Yangi buyurtma va pre-order kelganida bot avtomatik ushbu chatga xabar yuboradi.</div>
+        <div class="f-grp"><label class="f-lbl">Bot token</label><input class="f-inp" id="botTokenInp" placeholder="123456:ABC-DEF..."></div>
+        <div class="f-grp"><label class="f-lbl">Admin chat ID</label><input class="f-inp" id="botChatInp" placeholder="-100123... yoki 12345678"></div>
+        <div class="f-grp"><label class="f-lbl">📢 Kanal (ixtiyoriy)</label><input class="f-inp" id="botChannelInp" placeholder="@kerasys_kanal yoki -100..."></div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;">💡 Chat ID olish: <b>@userinfobot</b> ga "/start" yuboring (shaxsiy chat) yoki guruhga botni qo'shib, <b>@RawDataBot</b> orqali aniqlang. Kanalga post yuborish uchun: bot kanalga admin sifatida qo'shilgan bo'lishi kerak.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="big-btn" style="flex:1;" onclick="saveBotConfig()">💾 Saqlash</button>
+          <button class="big-btn" style="flex:1;background:var(--card);color:var(--accent);border:1.5px solid var(--accent);" onclick="testBotMessage()">📤 Test xabar</button>
+        </div>
+        <div id="botStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
+      </div>
+      <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;">🚕 Yandex Go yetkazib berish</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">Do'kon manzili Yandex Go orqali yetkazib berish uchun ishlatiladi. Yandex buyurtmalarga "Yandex Go chaqirish" tugmasi paydo bo'ladi.</div>
+        <div class="f-grp"><label class="f-lbl">📍 Do'kon manzili</label><textarea class="f-ta" id="storeAddrInp" rows="2" placeholder="Toshkent shahar, Yunusobod tumani, X-mavze, 5-uy"></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="f-grp" style="margin-bottom:0"><label class="f-lbl">Latitude (ixtiyoriy)</label><input class="f-inp" id="storeLatInp" placeholder="41.3111" inputmode="decimal"></div>
+          <div class="f-grp" style="margin-bottom:0"><label class="f-lbl">Longitude (ixtiyoriy)</label><input class="f-inp" id="storeLonInp" placeholder="69.2797" inputmode="decimal"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin:10px 0;line-height:1.5;">💡 Koordinata kiritish ixtiyoriy. Agar kiritsangiz, Yandex Go aniq joydan boshlaydi (yo'l haqi to'g'ri hisoblanadi). Koordinatani <a href="https://yandex.uz/maps" target="_blank" style="color:var(--accent)">yandex.uz/maps</a> dan olishingiz mumkin (do'kon ustiga bossangiz pastda chiqadi).</div>
+        <button class="big-btn" style="width:100%" onclick="saveStoreConfig()">💾 Saqlash</button>
+        <div id="storeStatus" style="font-size:11px;color:var(--text2);text-align:center;margin-top:10px;"></div>
+      </div>
+    </div>
+    <div id="aAdd" style="display:none">
+      <input type="hidden" id="editId">
+      <input type="hidden" id="pImgBase64">
+      <input type="hidden" id="pBarcode">
+      <div class="add-mode" id="addModeToggle">
+        <button class="add-mode-btn on" id="addModeQuickBtn" type="button" onclick="setAddMode('quick')">⚡ Tezkor</button>
+        <button class="add-mode-btn" id="addModeFullBtn" type="button" onclick="setAddMode('full')">🔧 To'liq</button>
+      </div>
+      <button class="scan-btn" type="button" onclick="openBarcodeScanner()">
+        <span class="scan-btn-ic">📷</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Shtrix-kodni skanerlash</div>
+          <div class="scan-btn-sub" id="scanBtnSub">Mahsulot ma'lumotlari avtomatik to'ldiriladi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
+      <button class="scan-btn" type="button" onclick="openUrlImport()" style="background:linear-gradient(135deg,#7c5cff,#5b3df0);">
+        <span class="scan-btn-ic">🌐</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Saytdan import (Uzum, OLX...)</div>
+          <div class="scan-btn-sub">Mahsulot havolasini yopishtirsangiz to'ldiriladi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
+      <button class="scan-btn" type="button" onclick="document.getElementById('vitrinaFileInput').click()" style="background:linear-gradient(135deg,#f59e0b,#dc2626);">
+        <span class="scan-btn-ic">📸</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt">Vitrinadan AI bilan tanish</div>
+          <div class="scan-btn-sub">Rasm yuklang — OCR + AI mahsulotlarni topadi</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
+      <input type="file" id="vitrinaFileInput" accept="image/*" style="display:none" onchange="handleVitrinaPhoto(this)">
+      <button class="scan-btn" id="smartVoiceBtn" type="button" onclick="smartVoiceFill()" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
+        <span class="scan-btn-ic" id="smartVoiceIc">🎤</span>
+        <div class="scan-btn-tx">
+          <div class="scan-btn-tt" id="smartVoiceTt">Ovoz orqali to'ldirish</div>
+          <div class="scan-btn-sub" id="smartVoiceSub">"Ariel 3 kilo 90 ming" deb ayting</div>
+        </div>
+        <span class="scan-btn-arr">→</span>
+      </button>
+      <div class="f-grp">
+        <label class="f-lbl">Asosiy rasm</label>
+        <div class="img-tabs full-only">
+          <button class="img-tab on" id="imgTabGal" onclick="switchImgTab('gal')">📷 Galereya</button>
+          <button class="img-tab" id="imgTabUrl" onclick="switchImgTab('url')">🔗 URL</button>
+        </div>
+        <div id="imgGalArea">
+          <div class="img-upload-area" id="imgUploadArea" onclick="document.getElementById('imgFileInput').click()">
+            <img class="img-upload-preview" id="imgPreview" src="">
+            <div id="imgPlaceholder">
+              <div class="img-upload-icon">📷</div>
+              <div class="img-upload-txt">Rasmni tanlash uchun bosing</div>
+              <div class="img-upload-sub">Galereya yoki kamera</div>
+            </div>
+          </div>
+          <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+          <button type="button" id="bgRemoveBtn" onclick="aiRemoveBg()" style="display:none;width:100%;margin-top:8px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;border-radius:10px;padding:9px 12px;cursor:pointer;">✂️ AI bilan fonni tozalash</button>
+          <div id="bgRemoveStatus" style="display:none;font-size:11px;color:var(--text2);margin-top:6px;text-align:center;font-weight:700;"></div>
+        </div>
+        <div id="imgUrlArea" class="full-only" style="display:none">
+          <input class="f-inp" id="pImg" placeholder="https://...rasm.jpg">
+        </div>
+      </div>
+      <div class="f-grp">
+        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>Nomi *</span>
+          <button type="button" class="mic-btn" onclick="voiceInput('pName')" title="🎤 Ovozli kiritish">🎤</button>
+        </label>
+        <input class="f-inp" id="pName" placeholder="Ariel kir kukuni 3kg">
+      </div>
+      <div class="f-row">
+        <div class="f-grp"><label class="f-lbl">Narx *</label><input class="f-inp" id="pPrice" type="number" placeholder="25000"></div>
+        <div class="f-grp"><label class="f-lbl">Kategoriya</label>
+          <select class="f-sel" id="pCat">
+            <option value="kukun">🧺 Kukunlar</option>
+            <option value="gel">🧴 Gellar</option>
+            <option value="shampun">🚿 Shampunlar</option>
+            <option value="sovun">🧼 Sovunlar</option>
+            <option value="boshqa">📦 Boshqa</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-grp">
+        <label class="f-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+          <span>Tavsif</span>
+          <span style="display:inline-flex;gap:6px;align-items:center;">
+            <button type="button" class="mic-btn" onclick="voiceInput('pDesc')" title="🎤 Ovozli">🎤</button>
+            <button type="button" id="aiDescBtn" onclick="aiGenerateDesc()" style="font-size:11px;font-weight:800;background:linear-gradient(135deg,#06b6d4,#7c5cff);color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🤖 AI bilan yozish</button>
+          </span>
+        </label>
+        <input class="f-inp" id="pDesc" placeholder="Kir yuvish uchun">
+      </div>
+      <div class="f-grp full-only">
+        <label class="f-lbl">Qo'shimcha rasmlar (galereya)</label>
+        <div id="extraImgsRow" class="extra-imgs-row"></div>
+        <div style="display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;">
+          <input class="f-inp" id="pExtraImgUrl" placeholder="https://...rasm.jpg" style="flex:2;min-width:140px">
+          <button class="var-add-btn" type="button" onclick="addExtraImgUrl()">+ Qo'sh URL</button>
+          <button class="var-add-btn" type="button" onclick="document.getElementById('extraImgFileInput').click()">📷 Fayl</button>
+          <input type="file" id="extraImgFileInput" accept="image/*" multiple style="display:none" onchange="handleExtraImgFiles(this)">
+        </div>
+        <div style="font-size:10px;color:var(--text2);margin-top:4px;">Asosiy rasm + 4 tagacha qo'shimcha</div>
+      </div>
+      <div class="f-row full-only">
+        <div class="f-grp"><label class="f-lbl">Badge</label><input class="f-inp" id="pBadge" placeholder="Yangi"></div>
+        <div class="f-grp"><label class="f-lbl">Eski narx</label><input class="f-inp" id="pOld" type="number" placeholder="30000"></div>
+      </div>
+      <div class="vars-admin full-only">
+        <div class="vars-admin-lbl" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>Xillar — har birining narxi bilan</span>
+          <button type="button" onclick="toggleBulkVars()" id="bulkVarsToggleBtn" style="font-size:10px;font-weight:800;background:rgba(124,92,255,0.12);color:#7c5cff;border:1px solid rgba(124,92,255,0.3);border-radius:7px;padding:4px 8px;cursor:pointer;">📋 Birgalikda</button>
+        </div>
+        <div class="var-tag-list" id="varTagList"></div>
+        <div class="var-add-row" style="flex-wrap:wrap;gap:6px;">
+          <input class="var-add-inp" id="varInput" placeholder="Nomi (3kg, Lavanda...)" style="flex:2;min-width:110px">
+          <input class="var-add-inp" id="varPriceInput" type="number" placeholder="Narxi" style="flex:1;min-width:80px">
+          <button class="var-add-btn" onclick="addVarTag()">+ Qo'sh</button>
+        </div>
+        <div id="bulkVarsArea" style="display:none;margin-top:8px;">
+          <textarea id="bulkVarsInput" placeholder="Har qatorga bitta xil:&#10;Sakura 125000&#10;Lavanda 130000&#10;Color 120000" style="width:100%;min-height:120px;padding:10px;border:2px dashed var(--border);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;background:var(--card2);color:var(--text);resize:vertical;box-sizing:border-box;"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button type="button" onclick="applyBulkVars()" style="flex:1;background:linear-gradient(135deg,#7c5cff,#5b3df0);color:#fff;border:none;border-radius:9px;padding:9px 12px;font-weight:800;font-size:12px;cursor:pointer;">✅ Hammasini qo'shish</button>
+            <button type="button" onclick="$('bulkVarsInput').value=''" style="background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-weight:800;font-size:12px;cursor:pointer;">🧹 Tozalash</button>
+          </div>
+          <div style="font-size:10px;color:var(--text2);margin-top:6px;line-height:1.5;">💡 Format: <b>Nom Narx</b> har qatorda. Narxsiz xillar uchun asosiy narx ishlatiladi.</div>
+        </div>
+      </div>
+      <label class="ch-post-row" id="postChannelRow" style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 14px;background:rgba(34,158,217,0.08);border:1px solid rgba(34,158,217,0.25);border-radius:12px;cursor:pointer;user-select:none;">
+        <input type="checkbox" id="pPostChannel" checked style="width:20px;height:20px;accent-color:#1c95cf;flex-shrink:0;">
+        <span style="font-weight:700;color:#1c95cf;font-size:14px;">📢 Saqlash bilan kanalga ham yuborish</span>
+      </label>
+      <button class="big-btn pri" id="saveBtnFull" style="margin-top:10px" onclick="saveProduct()">💾 Saqlash</button>
+      <button class="big-btn pri" id="saveBtnQuick" style="margin-top:10px" onclick="saveProductQuick()">💾 Saqlash va davom etish ⚡</button>
+      <button class="big-btn sec" id="cancelEdit" style="display:none" onclick="cancelEditFn()">Bekor</button>
+      <div class="quick-recent-strip" id="quickRecentStrip" style="display:none;">
+        <h4>📚 Bu sessiyada qo'shilganlar (<span id="quickRecentCount">0</span>)</h4>
+        <div class="quick-recent-row" id="quickRecentRow"></div>
+      </div>
+      <details class="csv-section">
+        <summary>📥 Excel/CSV orqali toplab import</summary>
+        <div style="padding-top:10px;font-size:12px;color:var(--text2);font-weight:700;line-height:1.5;">
+          Excel'da yoki Google Sheets'da template'ni to'ldiring va shu yerga yuklang. Har bir qator — bir mahsulot.
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+          <button class="big-btn sec" type="button" style="flex:1;min-width:140px;margin:0;padding:10px;font-size:12px;" onclick="downloadCsvTemplate()">⬇️ Template yuklash (.csv)</button>
+          <button class="big-btn sec" type="button" style="flex:1;min-width:140px;margin:0;padding:10px;font-size:12px;" onclick="document.getElementById('csvFileInput').click()">📂 Fayl tanlash (.csv)</button>
+          <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none" onchange="handleCsvFile(this)">
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.5;">
+          <b>Ustunlar:</b> <code>name, name_ru, cat, price, desc, desc_ru, img, badge, oldPrice</code><br>
+          <b>Kategoriya ID'lari:</b> <span id="catIdsList" style="color:var(--accent);font-weight:900"></span><br>
+          <b>Majburiy:</b> name, cat, price · <b>Ixtiyoriy:</b> qolganlari
+        </div>
+        <div id="csvPreview" style="margin-top:12px;"></div>
+      </details>
+      <details class="csv-section" style="margin-top:10px;">
+        <summary>💬 Chat ko'rinishida toplab qo'shish</summary>
+        <div style="padding-top:10px;font-size:12px;color:var(--text2);font-weight:700;line-height:1.5;">
+          Har qatorga bitta mahsulot: <b>nom narx</b>. Kategoriyani tanlang (hammasi shu kategoriyaga). Rasm va tavsifni keyin tahrirlaysiz.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+          <label style="font-size:12px;font-weight:800;color:var(--text);align-self:center;">Kategoriya:</label>
+          <select class="f-sel" id="chatBulkCat" style="flex:1;min-width:140px;font-size:12px;padding:8px;"></select>
+        </div>
+        <div style="position:relative;margin-top:10px;">
+          <textarea id="chatBulkInput" placeholder="Ariel 3kg 90000&#10;Persil 3kg 85000&#10;Fairy 1L 25000&#10;Lenor Sakura 50000" style="width:100%;min-height:140px;padding:10px 50px 10px 10px;border:2px dashed var(--border);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;background:var(--card2);color:var(--text);resize:vertical;box-sizing:border-box;"></textarea>
+          <button type="button" class="mic-btn" onclick="voiceInput('chatBulkInput',true)" title="🎤 Ovozli kiritish" style="position:absolute;top:8px;right:8px;width:34px;height:34px;font-size:15px;">🎤</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          <button type="button" onclick="previewChatBulk()" style="flex:1;min-width:140px;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px;font-weight:800;font-size:12px;cursor:pointer;">👁 Oldindan ko'rish</button>
+          <button type="button" onclick="applyChatBulk()" style="flex:1;min-width:140px;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;border-radius:9px;padding:10px;font-weight:800;font-size:12px;cursor:pointer;">💾 Hammasini saqlash</button>
+        </div>
+        <div id="chatBulkPreview" style="margin-top:10px;"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px;line-height:1.5;">
+          💡 Narx oxirgi raqam bo'lishi kerak. Masalan: "Ariel uch kilo 90000" → nom "Ariel uch kilo", narx 90000.<br>
+          📷 Saqlangach mahsulotlar ro'yxatidan ✏️ orqali rasm qo'shasiz.
+        </div>
+      </details>
+      <details class="csv-section" style="margin-top:10px;">
+        <summary>📸 Bir nechta rasmdan toplab qo'shish</summary>
+        <div style="padding-top:10px;font-size:12px;color:var(--text2);font-weight:700;line-height:1.5;">
+          Galereyadan bir nechta rasm tanlasangiz, har bir rasm uchun alohida mahsulot yaratiladi. Nomi va narxi keyin tahrirlanadi.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+          <label style="font-size:12px;font-weight:800;color:var(--text);align-self:center;">Kategoriya:</label>
+          <select class="f-sel" id="multiImgCat" style="flex:1;min-width:140px;font-size:12px;padding:8px;"></select>
+        </div>
+        <button type="button" onclick="document.getElementById('multiImgFileInput').click()" style="width:100%;margin-top:10px;padding:14px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:10px;font-weight:900;font-size:13px;cursor:pointer;">📸 Rasmlarni tanlash (ko'p tanlash mumkin)</button>
+        <input type="file" id="multiImgFileInput" accept="image/*" multiple style="display:none" onchange="handleMultiImgFiles(this)">
+        <div id="multiImgPreview" style="margin-top:10px;"></div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- 📸 Vitrina AI scan modal -->
+<div id="vitrinaModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--bg);width:100%;max-width:600px;max-height:90vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">📸</span>
+      <div style="flex:1;">
+        <div style="font-weight:900;font-size:15px;">Vitrinadan tanilgan mahsulotlar</div>
+        <div id="vitrinaStatus" style="font-size:11px;color:var(--text2);font-weight:700;">AI tahlil qilmoqda...</div>
+      </div>
+      <button onclick="closeVitrinaModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text);">✕</button>
+    </div>
+    <div id="vitrinaPreviewImg" style="text-align:center;padding:8px;border-bottom:1px solid var(--border);"></div>
+    <div id="vitrinaList" style="flex:1;overflow-y:auto;padding:12px;"></div>
+    <div style="padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;">
+      <button onclick="closeVitrinaModal()" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-weight:800;cursor:pointer;">Bekor</button>
+      <button id="vitrinaSaveBtn" onclick="saveVitrinaProducts()" style="flex:2;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;font-weight:900;cursor:pointer;" disabled>💾 Hammasini saqlash</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -5292,6 +5696,7 @@ function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;',
 let vitrinaItems=[]; // {name, suggestedCat, exists, dup, priceInputId}
 async function openVitrinaModal(){
   await window.__adminUIReady;
+function openVitrinaModal(){
   $('vitrinaModal').style.display='flex';
   $('vitrinaSaveBtn').disabled=true;
   $('vitrinaList').innerHTML='<div style="text-align:center;padding:30px;font-weight:800;color:var(--text2);">⏳ AI rasm tahlil qilmoqda... (10-30 sekund)</div>';
