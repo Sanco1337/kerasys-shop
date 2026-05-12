@@ -2139,6 +2139,30 @@ function isNewProduct(p){
   if(p.createdAt&&(Date.now()-Number(p.createdAt)<NEW_DAYS*24*3600*1000))return true;
   return false;
 }
+// ... yuqoridagi kodlar tugagan joyda ...
+
+// --- RASM OPTIMALLASHTIRISH FUNKSIYASI ---
+async function optimizeProductImage(file, size = 600) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = size;
+                canvas.height = size;
+                let sW = img.width, sH = img.height, sX = 0, sY = 0;
+                if (sW > sH) { sX = (sW - sH) / 2; sW = sH; }
+                else { sY = (sH - sW) / 2; sH = sW; }
+                ctx.drawImage(img, sX, sY, sW, sH, 0, 0, size, size);
+                canvas.toBlob((blob) => { resolve(blob); }, 'image/webp', 0.8);
+            };
+        };
+    });
+}
 let topSellerIds=null;
 async function getTopSellers(){
   if(Array.isArray(topSellerIds))return topSellerIds;
