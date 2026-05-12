@@ -1,7 +1,7 @@
 {
-  "name": "Kerasys Shop",
-  "short_name": "Kerasys",
-  "description": "Kerasys Shop — gigiyena va kir yuvish vositalari",
+  "name": "Online Shop",
+  "short_name": "Online Shop",
+  "description": "Online Shop — gigiyena va kir yuvish vositalari",
   "lang": "uz",
   "start_url": "./",
   "scope": "./",

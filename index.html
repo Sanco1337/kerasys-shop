@@ -1369,6 +1369,10 @@ body.dark .toast{background:#2A2A2A;color:#fff;border:1px solid var(--border);}
   <div class="s-body"></div>
 </div>
 
+<!-- adminSheet, vitrinaModal, scanSheet are loaded from admin.html on demand for admins only -->
+<div id="adminUISlot"></div>
+
+<!-- vitrinaModal moved to admin.html -->
 <div class="sheet" id="adminSheet">
   <div class="s-handle"></div>
   <div class="s-head">
@@ -1829,6 +1833,22 @@ const tgUser=tg?.initDataUnsafe?.user;
 const isAdmin=isAdminUser(tgUser?.username)||window.location.search.includes('admin=1');
 const adminBtnEl=document.getElementById('adminBtn');
 if(adminBtnEl&&isAdmin) adminBtnEl.style.display='flex';
+
+// ─── Lazy-load admin UI HTML (36KB savings for non-admin users) ───
+// Customers never download adminSheet/vitrinaModal/scanSheet HTML.
+// Admins: HTML is fetched in background as soon as we know they're admin, then injected.
+window.__adminUIReady = isAdmin ? (async()=>{
+  try{
+    const r=await fetch('admin.html',{cache:'force-cache'});
+    if(!r.ok)throw new Error('admin.html '+r.status);
+    const html=await r.text();
+    const slot=document.getElementById('adminUISlot');
+    if(slot){slot.innerHTML=html;}
+    // Re-run twemoji parse so admin UI emojis become Apple-styled
+    if(typeof window.__reparseEmojis==='function')window.__reparseEmojis();
+  }catch(e){console.warn('admin.html load:',e);}
+})() : Promise.resolve();
+window.whenAdminUI=cb=>window.__adminUIReady.then(cb);
 
 const DEFAULT_CATS=[
   {id:'kukun',label_uz:'Kir yuvish kukunlari',label_ru:'Стиральные порошки',icon:'🧺',order:0},
@@ -3126,7 +3146,7 @@ function initProducts(){
     else if(currentPage==='products')renderProductsPage();
     if($('searchSheet')?.classList.contains('on'))renderSearchSheet();
     if($('favSheet')?.classList.contains('on'))renderFavSheet();
-    if(isAdmin)loadAdminProducts();
+    if(isAdmin)window.__adminUIReady.then(()=>loadAdminProducts());
   }, err=>{
     if(productsTimeoutHandle){clearTimeout(productsTimeoutHandle);productsTimeoutHandle=null;}
     console.error('RTDB error:',err);
@@ -4267,11 +4287,12 @@ async function loadMyOrders(){
 }
 
 /* ADMIN */
-window.openAdmin=()=>{$('overlay').classList.add('on');$('adminSheet').classList.add('on');loadStats();haptic('light');updateBackBtn();};
-window.openAdminAddForCat=(catId)=>{
+window.openAdmin=async()=>{await window.__adminUIReady;$('overlay').classList.add('on');$('adminSheet')?.classList.add('on');loadStats();haptic('light');updateBackBtn();};
+window.openAdminAddForCat=async(catId)=>{
   if(!isAdmin)return;
   haptic('light');
-  $('overlay').classList.add('on');$('adminSheet').classList.add('on');
+  await window.__adminUIReady;
+  $('overlay').classList.add('on');$('adminSheet')?.classList.add('on');
   // Find the "add" tab button (last one — index 12)
   const tabs=document.querySelectorAll('.a-tab');
   const addBtn=tabs[tabs.length-1];
@@ -5673,6 +5694,8 @@ window.handleMultiImgFiles=async input=>{
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
 /* ── 📸 VITRINA AI SCAN (photo → AI vision → list of products) ── */
 let vitrinaItems=[]; // {name, suggestedCat, exists, dup, priceInputId}
+async function openVitrinaModal(){
+  await window.__adminUIReady;
 function openVitrinaModal(){
   $('vitrinaModal').style.display='flex';
   $('vitrinaSaveBtn').disabled=true;
@@ -6102,8 +6125,9 @@ function loadZXing(){
 }
 
 window.openBarcodeScanner=async()=>{
+  await window.__adminUIReady;
   $('overlay').classList.add('on');
-  $('scanSheet').classList.add('on');
+  $('scanSheet')?.classList.add('on');
   $('scanStage').style.display='block';
   $('scanResult').style.display='none';
   $('scanHint').textContent="📷 Kameraga ruxsat bering va shtrix-kodni ramka ichiga tushiring";
@@ -6739,45 +6763,7 @@ window.installPWA=async()=>{
   <div class="s-body" id="revBody"></div>
 </div>
 
-<div class="sheet" id="scanSheet">
-  <div class="s-handle"></div>
-  <div class="s-head">
-    <div class="s-title">📷 Shtrix-kodni skanerlash</div>
-    <button class="s-close" onclick="closeBarcodeScanner()">✕</button>
-  </div>
-  <div class="s-body">
-    <div class="scan-stage" id="scanStage">
-      <div class="scan-video-wrap">
-        <video id="scanVideo" playsinline muted autoplay></video>
-        <div class="scan-overlay">
-          <div class="scan-frame"></div>
-          <div class="scan-line"></div>
-        </div>
-      </div>
-      <div class="scan-hint" id="scanHint">📷 Kameraga ruxsat bering va shtrix-kodni ramka ichiga tushiring</div>
-      <div class="scan-manual">
-        <input class="f-inp" id="scanManualInp" type="text" inputmode="numeric" placeholder="Yoki kodni qo'lda kiriting (8-13 raqam)">
-        <button class="big-btn" onclick="lookupBarcodeManual()">🔍 Qidirish</button>
-      </div>
-    </div>
-    <div class="scan-result" id="scanResult" style="display:none">
-      <div class="scan-result-status" id="scanResultStatus">⏳ Qidirilmoqda...</div>
-      <div class="scan-result-card" id="scanResultCard" style="display:none">
-        <div class="scan-result-img" id="scanResultImg"></div>
-        <div class="scan-result-info">
-          <div class="scan-result-name" id="scanResultName"></div>
-          <div class="scan-result-brand" id="scanResultBrand"></div>
-          <div class="scan-result-desc" id="scanResultDesc"></div>
-          <div class="scan-result-code">📋 <span id="scanResultCode"></span></div>
-        </div>
-      </div>
-      <div class="scan-result-actions">
-        <button class="big-btn pri" id="scanApplyBtn" onclick="applyScanResult()" style="display:none">✅ Mahsulotga qo'llash</button>
-        <button class="big-btn sec" onclick="rescanBarcode()">🔄 Qayta skanerlash</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- scanSheet moved to admin.html -->
 
 </div><!-- /app-root -->
 <script>
